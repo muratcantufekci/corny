@@ -8,8 +8,10 @@ import MailSignUpScreen from "./src/screens/MailSignUpScreen";
 import ProfileSelectionScreen from "./src/screens/ProfileSelectionScreen";
 import { useEffect, useState } from "react";
 import HomeScreen from "./src/screens/HomeScreen";
-import Logo from './assets/logo.svg'
+import Logo from './src/assets/svg/logo.svg'
 import OnboardingStartScreen from "./src/screens/onboarding/OnboardingStartScreen";
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 const Stack = createStackNavigator();
@@ -63,41 +65,51 @@ const AuthStack = () => (
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
 
+  const [fontsLoaded, error] = useFonts({
+    'RethinkSans-Regular': require('./src/assets/fonts/RethinkSans-Regular.ttf'),
+    'RethinkSans-Medium': require('./src/assets/fonts/RethinkSans-Medium.ttf'),
+    'RethinkSans-SemiBold': require('./src/assets/fonts/RethinkSans-SemiBold.ttf'),
+    'RethinkSans-Bold': require('./src/assets/fonts/RethinkSans-Bold.ttf'),
+    'RethinkSans-ExtraBold': require('./src/assets/fonts/RethinkSans-ExtraBold.ttf'),
+  });
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 4000);
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    if (fontsLoaded || error) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, error]);
+
   if (isLoading) {
     return (
       <View style={styles.splashContainer}>
-          <Logo width={120} height={40} style={styles.splasgImg}/>
-          <StatusBar style="dark" />
+        <Logo width={120} height={40} style={styles.splasgImg}/>
+        <StatusBar style="dark" />
       </View>
     );
   }
+
+  if (!fontsLoaded && !error) {
+    return null;
+  }
+
   const isLoggedIn = false;
+
   return (
     <View style={styles.wrapper}>
       <NavigationContainer theme={{ colors: { background: "transparent" } }}>
-        {isLoggedIn ? <Text>Hello</Text> :  <AuthStack />}
+        {isLoggedIn ? <Text>Hello</Text> : <AuthStack />}
       </NavigationContainer>
       <StatusBar style="dark" />
     </View>
   );
-
-  // const isLoggedIn = false;
-  // return (
-  //   <View style={styles.wrapper}>
-  //     <NavigationContainer theme={{ colors: { background: "transparent" } }}>
-  //       {isLoggedIn ? <Text>Hello</Text> : <AuthStack />}
-  //     </NavigationContainer>
-  //     <StatusBar style="dark" />
-  //   </View>
-  // );
 }
 
 const styles = StyleSheet.create({
@@ -105,12 +117,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FF524F',
+    backgroundColor: '#FFFFFF',
   },
   splasgImg: {
-    color: '#FFFFFF'
+    color: '#FF524F'
   },
   wrapper: {
     flex: 1,
+    padding: 16,
   },
 });

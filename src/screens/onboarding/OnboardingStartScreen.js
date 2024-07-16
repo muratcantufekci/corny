@@ -3,15 +3,21 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 import CornChat from '../../assets/svg/corn-chat.svg'
 import CustomText from '../../components/CustomText';
 import Button from '../../components/Button';
+import { useNavigation } from '@react-navigation/native';
 
 const OnboardingStartScreen = () => {
+  const navigation = useNavigation();
+
+  const continuePressHandler = () => {
+    navigation.navigate("NumberEnter");
+  };
   return (
     <View style={styles.container}>
       <View>
         <CornChat style={styles.img}/>
         <CustomText style={styles.text}>Sizin gibi düşünen insanlarla eşleşin!</CustomText>
       </View>
-      <Button variant="black" style={styles.button}>Telefonla Devam Et</Button>
+      <Button variant="black" style={styles.button} onPress={continuePressHandler}>Telefonla Devam Et</Button>
     </View>
   );
 };

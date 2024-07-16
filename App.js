@@ -12,6 +12,7 @@ import Logo from './src/assets/svg/logo.svg'
 import OnboardingStartScreen from "./src/screens/onboarding/OnboardingStartScreen";
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import NumberScreen from "./src/screens/onboarding/NumberScreen";
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 const Stack = createStackNavigator();
@@ -50,7 +51,7 @@ const AuthStack = () => (
       component={OnboardingStartScreen}
       options={{ headerShown: false }}
     />
-    <Stack.Screen name="MailSignup" component={MailSignUpScreen}/>
+    <Stack.Screen name="NumberEnter" component={NumberScreen}/>
     <Stack.Screen name="ProfileSelection" component={ProfileSelectionScreen}/>
   </Stack.Navigator>
 );

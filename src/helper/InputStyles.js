@@ -2,42 +2,32 @@ import { StyleSheet } from 'react-native';
 
 const InputStyles = StyleSheet.create({
   container: {
-    padding: 10,
-    borderRadius: 5,
+    padding: 16,
+    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
     width: '100%',
-    fontSize: 18,
-    fontWeight: '500'
+    fontSize: 16,
+    fontWeight: '400',
   },
   primary: {
     backgroundColor: 'white',
-    borderColor: 'black',
+    borderColor: '#D1D1D6',
     color: 'black'
   },
   secondary: {
     backgroundColor: 'green',
     borderColor: 'green',
   },
-  green: {
-    backgroundColor: 'green',
-    borderColor: 'green',
+  error: {
+    borderColor: '#FF524F',
+    borderWidth: 2,
   },
-  white: {
-    backgroundColor: 'white',
-    borderColor: 'black',
-    color: 'black'
-  },
-  black: {
-    backgroundColor: 'black',
-    borderColor: 'black',
-    color: 'white',
-  },
-  dark: {
-    backgroundColor: 'gray',
-    borderColor: 'gray',
-  },
+  success: {
+    borderColor: '#4CA30D',
+    borderWidth: 2,
+  }
 });
 
 export default InputStyles;

@@ -1,12 +1,11 @@
 import PropTypes from "prop-types";
-import { TextInput, View } from "react-native";
+import { TextInput } from "react-native";
 import styles from "../helper/InputStyles";
 
 const Input = ({
   variant = "primary",
   placeholder,
   value,
-  inputMode = "text",
   onChangeText,
   style,
   ...props
@@ -14,10 +13,8 @@ const Input = ({
   const variantStyles = {
     primary: styles.primary,
     secondary: styles.secondary,
-    green: styles.green,
-    white: styles.white,
-    black: styles.black,
-    dark: styles.dark,
+    error: styles.error,
+    success: styles.success
   };
 
   const textStyle = [styles.container, variantStyles[variant]];
@@ -25,7 +22,6 @@ const Input = ({
   return (
     <TextInput
       style={textStyle}
-      inputMode={inputMode}
       placeholder={placeholder}
       value={value}
       onChangeText={onChangeText}
@@ -38,10 +34,8 @@ Input.propTypes = {
   variant: PropTypes.oneOf([
     "primary",
     "secondary",
-    "green",
-    "white",
-    "black",
-    "dark",
+    "error",
+    "success"
   ]),
   placeholder: PropTypes.string,
   value: PropTypes.string,

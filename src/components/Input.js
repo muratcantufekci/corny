@@ -8,6 +8,7 @@ const Input = ({
   value,
   onChangeText,
   style,
+  inputMode= "text",
   ...props
 }) => {
   const variantStyles = {
@@ -25,6 +26,8 @@ const Input = ({
       placeholder={placeholder}
       value={value}
       onChangeText={onChangeText}
+      inputMode={inputMode}
+      type
       {...props}
     />
   );

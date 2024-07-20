@@ -13,6 +13,7 @@ import OnboardingStartScreen from "./src/screens/onboarding/OnboardingStartScree
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import NumberScreen from "./src/screens/onboarding/NumberScreen";
+import PhoneCodeScreen from "./src/screens/onboarding/PhoneCodeScreen";
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 const Stack = createStackNavigator();
@@ -52,7 +53,7 @@ const AuthStack = () => (
       options={{ headerShown: false }}
     />
     <Stack.Screen name="NumberEnter" component={NumberScreen}/>
-    <Stack.Screen name="ProfileSelection" component={ProfileSelectionScreen}/>
+    <Stack.Screen name="PhoneCode" component={PhoneCodeScreen}/>
   </Stack.Navigator>
 );
 

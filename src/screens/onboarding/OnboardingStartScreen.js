@@ -1,9 +1,9 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
-import CornChat from '../../assets/svg/corn-chat.svg'
-import CustomText from '../../components/CustomText';
-import Button from '../../components/Button';
-import { useNavigation } from '@react-navigation/native';
+import React from "react";
+import { View, Text, StyleSheet, Image } from "react-native";
+import CornChat from "../../assets/svg/corn-chat.svg";
+import CustomText from "../../components/CustomText";
+import Button from "../../components/Button";
+import { useNavigation } from "@react-navigation/native";
 
 const OnboardingStartScreen = () => {
   const navigation = useNavigation();
@@ -14,10 +14,19 @@ const OnboardingStartScreen = () => {
   return (
     <View style={styles.container}>
       <View>
-        <CornChat style={styles.img}/>
-        <CustomText style={styles.text}>Sizin gibi düşünen insanlarla eşleşin!</CustomText>
+        <Image source={require("../../assets/corns.png")} style={styles.img} />
+        {/* <CornChat style={styles.img}/> */}
+        <CustomText style={styles.text}>
+          Sizin gibi düşünen insanlarla eşleşin!
+        </CustomText>
       </View>
-      <Button variant="black" style={styles.button} onPress={continuePressHandler}>Telefonla Devam Et</Button>
+      <Button
+        variant="black"
+        style={styles.button}
+        onPress={continuePressHandler}
+      >
+        Telefonla Devam Et
+      </Button>
     </View>
   );
 };
@@ -25,25 +34,27 @@ const OnboardingStartScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    justifyContent: 'space-between',
-    paddingBottom: 50
+    alignItems: "center",
+    backgroundColor: "#fff",
+    justifyContent: "space-between",
+    paddingBottom: 50,
   },
   img: {
     marginTop: 60,
+    width: 360,
+    height: 450,
   },
   text: {
     fontSize: 26,
-    fontWeight: '500',
+    fontWeight: "500",
     lineHeight: 30,
     letterSpacing: -0.03,
-    textAlign: 'center',
+    textAlign: "center",
     paddingHorizontal: 30,
   },
   button: {
-    alignSelf: 'flex-end'
-  }
+    alignSelf: "flex-end",
+  },
 });
 
 export default OnboardingStartScreen;

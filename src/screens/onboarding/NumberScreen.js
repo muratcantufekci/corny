@@ -1,10 +1,19 @@
-import { Keyboard, StyleSheet, TouchableWithoutFeedback, View } from "react-native";
+import {
+  Keyboard,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 import CustomText from "../../components/CustomText";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import ErrorText from "../../components/ErrorText";
+import Dropdown from "../../components/Dropdown";
+import useOnboardingStore from "../../store/useOnboardingStore";
+import { useNavigation } from "@react-navigation/native";
+import OnboardingHeading from "../../components/OnboardingHeading";
 
 const validation = Yup.object().shape({
   phone: Yup.string()
@@ -14,13 +23,21 @@ const validation = Yup.object().shape({
 });
 
 const NumberScreen = () => {
+  const onboardingStore = useOnboardingStore();
+  const navigation = useNavigation();
+
+  const phoneInputChangeHandler = (text, handleChangeFunc) => {
+    handleChangeFunc(text);
+    onboardingStore.setPhone(onboardingStore.code + text);
+  };
+
   return (
     <Formik
       initialValues={{ phone: "" }}
       validationSchema={validation}
-      onSubmit={(values) => console.log(values)}
+      onSubmit={() => navigation.navigate("PhoneCode")}
     >
-      {({ 
+      {({
         handleChange,
         handleBlur,
         handleSubmit,
@@ -31,18 +48,18 @@ const NumberScreen = () => {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.container}>
             <View>
-              <CustomText style={styles.headingText}>
-                Numaranızı Giriniz
-              </CustomText>
-              <CustomText style={styles.descText}>
-                Corny, numaranızı doğrulamak için size SMS yoluyla tek kullanımlık
-                bir şifre gönderecek
-              </CustomText>
+              <OnboardingHeading
+                title="Numaranızı Giriniz"
+                desc="Corny, numaranızı doğrulamak için size SMS yoluyla tek kullanımlık
+                bir şifre gönderecek"
+              />
               <View style={styles.content}>
-                <Input placeholder="Telefon numaranız" />
+                <Dropdown />
                 <Input
                   placeholder="Telefon numaranız"
-                  onChangeText={handleChange("phone")}
+                  onChangeText={(text) =>
+                    phoneInputChangeHandler(text, handleChange("phone"))
+                  }
                   onBlur={handleBlur("phone")}
                   value={values.phone}
                   variant={
@@ -72,19 +89,6 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     justifyContent: "space-between",
     paddingBottom: 50,
-  },
-  headingText: {
-    fontSize: 26,
-    fontWeight: "500",
-    lineHeight: 30,
-    color: "#000000",
-    marginBottom: 8,
-  },
-  descText: {
-    fontWeight: "400",
-    fontSize: 16,
-    lineHeight: 16,
-    color: "#51525C",
   },
   content: {
     marginTop: 32,

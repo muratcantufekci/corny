@@ -20,7 +20,7 @@ const NumberScreen = () => {
       validationSchema={validation}
       onSubmit={(values) => console.log(values)}
     >
-      {({
+      {({ 
         handleChange,
         handleBlur,
         handleSubmit,

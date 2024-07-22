@@ -3,6 +3,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import ArrowBottom from "../assets/svg/arrow-bottom.svg";
@@ -19,79 +20,85 @@ const COUNTRIES_DATA = [
   {
     id: 1,
     flag: <Turkiye />,
-    text: "Turkiye (+90)",
+    text: "Turkiye",
     code: "+90"
   },
   {
     id: 2,
     flag: <Italy />,
-    text: "Italy (+39)",
+    text: "Italy",
     code: "+39"
   },
   {
     id: 3,
     flag: <UK />,
-    text: "United Kingdom (+44)",
+    text: "United Kingdom",
     code: "+44"
   },
   {
     id: 4,
     flag: <USA />,
-    text: "United States (+1)",
+    text: "United States",
     code: "+1"
   },
   {
     id: 5,
     flag: <Russia />,
-    text: "Russia (+7)",
+    text: "Russia",
     code: "+7"
   },
 ];
 
-const Dropdown = () => {
+const Dropdown = ({isOpen, setIsOpen}) => {
   const [flagIcon, setFlagIcon] = useState(<Turkiye />);
   const [country, setCountry] = useState("Turkiye (+90)");
-  const [isOpen, setIsOpen] = useState(false);
+  const [countries, setCountries] = useState(COUNTRIES_DATA);
   const onboardingStore = useOnboardingStore()
+
+  const searchInputChangeHandler = (text) => {
+    setCountries(() => COUNTRIES_DATA.filter(item => item.text.includes(text)))
+  }
   
   return (
-    <>
-      <TouchableOpacity
-        style={styles.container}
-        onPress={() => setIsOpen(!isOpen)}
-      >
-        <View style={styles.left}>
-          {flagIcon}
-          <Text style={styles.text}>{country}</Text>
-        </View>
-        <ArrowBottom style={styles.arrow} />
-      </TouchableOpacity>
-      {isOpen && (
-        <View style={styles.wrapper}>
-          <Input placeholder="Ara..."/>
-          <ScrollView style={styles.scrollView}>
-            {COUNTRIES_DATA.map((item, index) => (
-              <TouchableOpacity
-                key={item.id}
-                style={[
-                  styles.dropdownItem,
-                  index % 2 === 1 ? styles.dropdownItemGray : "",
-                ]}
-                onPress={() => {
-                  setFlagIcon(item.flag);
-                  setCountry(item.text);
-                  setIsOpen(false);
-                  onboardingStore.setCode(item.code)
-                }}
-              >
-                {item.flag}
-                <Text style={styles.text}>{item.text}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
-      )}
-    </>
+    <TouchableWithoutFeedback onPress={() => setIsOpen(false)}>
+      < >
+        <TouchableOpacity
+          style={styles.container}
+          onPress={() => setIsOpen(!isOpen)}
+        >
+          <View style={styles.left}>
+            {flagIcon}
+            <Text style={styles.text}>{country}</Text>
+          </View>
+          <ArrowBottom style={styles.arrow} />
+        </TouchableOpacity>
+        {isOpen && (
+          <View style={styles.wrapper}>
+            <Input placeholder="Ara..." onChangeText={(text) => searchInputChangeHandler(text)}/>
+            <ScrollView style={styles.scrollView}>
+              {countries.map((item, index) => (
+                <TouchableOpacity
+                  key={item.id}
+                  style={[
+                    styles.dropdownItem,
+                    index % 2 === 1 ? styles.dropdownItemGray : "",
+                  ]}
+                  onPress={() => {
+                    setFlagIcon(item.flag);
+                    setCountry(`${item.text} (${item.code})`);
+                    setIsOpen(false);
+                    onboardingStore.setCode(item.code)
+                  }}
+                >
+                  {item.flag}
+                  <Text style={styles.text}>{item.text} ({item.code})</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        )}
+      </>
+    </TouchableWithoutFeedback>
   );
 };
 

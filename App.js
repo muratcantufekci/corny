@@ -7,13 +7,13 @@ import { createStackNavigator } from "@react-navigation/stack";
 import MailSignUpScreen from "./src/screens/MailSignUpScreen";
 import ProfileSelectionScreen from "./src/screens/ProfileSelectionScreen";
 import { useEffect, useState } from "react";
-import HomeScreen from "./src/screens/HomeScreen";
 import Logo from './src/assets/svg/logo.svg'
 import OnboardingStartScreen from "./src/screens/onboarding/OnboardingStartScreen";
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import NumberScreen from "./src/screens/onboarding/NumberScreen";
 import PhoneCodeScreen from "./src/screens/onboarding/PhoneCodeScreen";
+import NavigationScreen from "./src/screens/onboarding/NavigationScreen";
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 const Stack = createStackNavigator();
@@ -54,6 +54,7 @@ const AuthStack = () => (
     />
     <Stack.Screen name="NumberEnter" component={NumberScreen}/>
     <Stack.Screen name="PhoneCode" component={PhoneCodeScreen}/>
+    <Stack.Screen name="Navigation" component={NavigationScreen}/>
   </Stack.Navigator>
 );
 

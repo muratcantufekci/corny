@@ -18,7 +18,7 @@ const Input = ({
     success: styles.success
   };
 
-  const textStyle = [styles.container, variantStyles[variant]];
+  const textStyle = [styles.container, variantStyles[variant], style];
 
   return (
     <TextInput

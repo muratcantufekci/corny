@@ -4,7 +4,6 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import CustomText from "../../components/CustomText";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import { Formik } from "formik";
@@ -14,6 +13,7 @@ import Dropdown from "../../components/Dropdown";
 import useOnboardingStore from "../../store/useOnboardingStore";
 import { useNavigation } from "@react-navigation/native";
 import OnboardingHeading from "../../components/OnboardingHeading";
+import { useState } from "react";
 
 const validation = Yup.object().shape({
   phone: Yup.string()
@@ -23,6 +23,7 @@ const validation = Yup.object().shape({
 });
 
 const NumberScreen = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const onboardingStore = useOnboardingStore();
   const navigation = useNavigation();
 
@@ -30,6 +31,11 @@ const NumberScreen = () => {
     handleChangeFunc(text);
     onboardingStore.setPhone(onboardingStore.code + text);
   };
+
+  const pageWrapperPressHandler = () => {
+    Keyboard.dismiss()
+    setIsOpen(false)
+  }
 
   return (
     <Formik
@@ -45,7 +51,7 @@ const NumberScreen = () => {
         errors,
         touched,
       }) => (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <TouchableWithoutFeedback onPress={pageWrapperPressHandler}>
           <View style={styles.container}>
             <View>
               <OnboardingHeading
@@ -54,7 +60,7 @@ const NumberScreen = () => {
                 bir şifre gönderecek"
               />
               <View style={styles.content}>
-                <Dropdown />
+                <Dropdown isOpen={isOpen} setIsOpen={setIsOpen}/>
                 <Input
                   placeholder="Telefon numaranız"
                   onChangeText={(text) =>

@@ -15,6 +15,7 @@ import USA from "../assets/svg/flags/united-states.svg";
 import { useState } from "react";
 import Input from "./Input";
 import useOnboardingStore from "../store/useOnboardingStore";
+import CustomText from "./CustomText";
 
 const COUNTRIES_DATA = [
   {
@@ -68,7 +69,7 @@ const Dropdown = ({isOpen, setIsOpen}) => {
         >
           <View style={styles.left}>
             {flagIcon}
-            <Text style={styles.text}>{country}</Text>
+            <CustomText style={styles.text}>{country}</CustomText>
           </View>
           <ArrowBottom style={styles.arrow} />
         </TouchableOpacity>
@@ -91,7 +92,7 @@ const Dropdown = ({isOpen, setIsOpen}) => {
                   }}
                 >
                   {item.flag}
-                  <Text style={styles.text}>{item.text} ({item.code})</Text>
+                  <CustomText style={styles.text}>{item.text} ({item.code})</CustomText>
                 </TouchableOpacity>
               ))}
             </ScrollView>

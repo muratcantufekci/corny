@@ -14,6 +14,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import NumberScreen from "./src/screens/onboarding/NumberScreen";
 import PhoneCodeScreen from "./src/screens/onboarding/PhoneCodeScreen";
 import NavigationScreen from "./src/screens/onboarding/NavigationScreen";
+import NameScreen from "./src/screens/onboarding/NameScreen";
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 const Stack = createStackNavigator();
@@ -55,6 +56,7 @@ const AuthStack = () => (
     <Stack.Screen name="NumberEnter" component={NumberScreen}/>
     <Stack.Screen name="PhoneCode" component={PhoneCodeScreen}/>
     <Stack.Screen name="Navigation" component={NavigationScreen}/>
+    <Stack.Screen name="Name" component={NameScreen}/>
   </Stack.Navigator>
 );
 

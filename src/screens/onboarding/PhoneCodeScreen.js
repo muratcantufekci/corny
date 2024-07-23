@@ -16,6 +16,7 @@ import * as Yup from "yup";
 import { postPhoneVerification } from "../../services/send-phone-verification";
 import { postVerifyCode } from "../../services/verify-code";
 import { useNavigation } from "@react-navigation/native";
+import CustomText from "../../components/CustomText";
 
 const validation = Yup.object().shape({
   code1: Yup.string().length(1).required(),
@@ -39,8 +40,8 @@ const PhoneCodeScreen = () => {
   useEffect(() => {
     const verifyPhone = async () => {
       try {
-        const res = await postPhoneVerification(data);
-        onboardingStore.setIdentifierCode(res.identifierCode);
+        // const res = await postPhoneVerification(data);
+        // onboardingStore.setIdentifierCode(res.identifierCode);
       } catch (error) {
         console.error(error);
       }
@@ -118,7 +119,7 @@ const PhoneCodeScreen = () => {
                 title="OTP'yi girin"
                 desc="Corny, numaranızı doğrulamak için size SMS yoluyla tek kullanımlık bir şifre gönderecek"
               />
-              <Text style={styles.phone}>{onboardingStore.phone}</Text>
+              <CustomText style={styles.phone}>{onboardingStore.phone}</CustomText>
               <View style={styles.verificationInputs}>
                 {Array.from({ length: 6 }).map((_, index) => (
                   <TextInput
@@ -145,12 +146,12 @@ const PhoneCodeScreen = () => {
                 ))}
               </View>
               <View style={styles.resendWrapper}>
-                <Text style={styles.text}>Kodunuzu almadınız mı? </Text>
+                <CustomText style={styles.text}>Kodunuzu almadınız mı? </CustomText>
                 <TouchableOpacity
                   onPress={handleResend}
                   disabled={!resendEnabled}
                 >
-                  <Text
+                  <CustomText
                     style={[
                       styles.resendText,
                       resendEnabled && styles.resendTextActive,
@@ -158,8 +159,8 @@ const PhoneCodeScreen = () => {
                   >
                     {resendEnabled
                       ? "Yeniden gönder"
-                      : `Yeniden gönder (${timer})`}
-                  </Text>
+                      : `Yeniden gönder ( ${timer} )`}
+                  </CustomText>
                 </TouchableOpacity>
               </View>
             </View>

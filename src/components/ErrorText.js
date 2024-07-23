@@ -1,7 +1,8 @@
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet } from "react-native";
+import CustomText from "./CustomText";
 
 const ErrorText = ({ message }) => {
-  return <Text style={styles.text}>{message}</Text>;
+  return <CustomText style={styles.text}>{message}</CustomText>;
 };
 
 const styles = StyleSheet.create({

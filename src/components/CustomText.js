@@ -1,6 +1,11 @@
+import React from 'react';
 import { Text } from 'react-native';
 
 const CustomText = ({ children, style }) => {
+  const combinedStyle = Array.isArray(style)
+    ? style.reduce((acc, curr) => ({ ...acc, ...curr }), {})
+    : style;
+
   const getFontFamily = (fontWeight) => {
     switch (fontWeight) {
       case '800':
@@ -16,10 +21,11 @@ const CustomText = ({ children, style }) => {
     }
   };
 
-  const { fontWeight, ...otherStyles } = style || {};
+  const { fontWeight, ...otherStyles } = combinedStyle || {};
+  const fontFamily = getFontFamily(fontWeight);
 
   return (
-    <Text style={{ fontFamily: getFontFamily(fontWeight), ...otherStyles }}>
+    <Text style={[{ fontFamily }, otherStyles]}>
       {children}
     </Text>
   );

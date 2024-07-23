@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { TouchableOpacity, Text } from 'react-native';
 import styles from '../helper/ButtonStyles';
+import CustomText from './CustomText';
 
 const Button = ({ type = 'button', variant = 'primary', children, style, ...props }) => {
   const variantStyles = {
@@ -17,7 +18,7 @@ const Button = ({ type = 'button', variant = 'primary', children, style, ...prop
 
   return (
     <TouchableOpacity type={type} style={containerStyle} {...props}>
-      <Text style={textStyle}>{children}</Text>
+      <CustomText style={textStyle}>{children}</CustomText>
     </TouchableOpacity>
   );
 };

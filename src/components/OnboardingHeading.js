@@ -1,9 +1,9 @@
 import { StyleSheet, View } from "react-native";
 import CustomText from "./CustomText";
 
-const OnboardingHeading = ({ title, desc }) => {
+const OnboardingHeading = ({ title, desc, style }) => {
   return (
-    <View>
+    <View style={style}>
       {title && <CustomText style={styles.headingText}>{title}</CustomText>} 
       {desc && <CustomText style={styles.descText}>{desc}</CustomText>} 
     </View>

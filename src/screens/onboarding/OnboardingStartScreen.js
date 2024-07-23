@@ -1,6 +1,5 @@
 import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
-import CornChat from "../../assets/svg/corn-chat.svg";
 import CustomText from "../../components/CustomText";
 import Button from "../../components/Button";
 import { useNavigation } from "@react-navigation/native";
@@ -14,8 +13,7 @@ const OnboardingStartScreen = () => {
   return (
     <View style={styles.container}>
       <View>
-        <Image source={require("../../assets/corns.png")} style={styles.img} />
-        {/* <CornChat style={styles.img}/> */}
+        <Image source={require("../../assets/images/corns.png")} style={styles.img} />
         <CustomText style={styles.text}>
           Sizin gibi düşünen insanlarla eşleşin!
         </CustomText>

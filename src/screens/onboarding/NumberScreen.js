@@ -79,7 +79,7 @@ const NumberScreen = () => {
                 )}
               </View>
             </View>
-            <Button variant="black" onPress={handleSubmit}>
+            <Button variant="primary" onPress={handleSubmit}>
               Devam Et
             </Button>
           </View>

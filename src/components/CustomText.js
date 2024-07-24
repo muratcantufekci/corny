@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text } from 'react-native';
 
-const CustomText = ({ children, style }) => {
+const CustomText = ({ children, style , ...props}) => {
   const combinedStyle = Array.isArray(style)
     ? style.reduce((acc, curr) => ({ ...acc, ...curr }), {})
     : style;
@@ -25,7 +25,7 @@ const CustomText = ({ children, style }) => {
   const fontFamily = getFontFamily(fontWeight);
 
   return (
-    <Text style={[{ fontFamily }, otherStyles]}>
+    <Text style={[{ fontFamily }, otherStyles]} {...props}>
       {children}
     </Text>
   );

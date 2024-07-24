@@ -14,7 +14,7 @@ import { Formik } from "formik";
 import ErrorText from "../../components/ErrorText";
 
 const validation = Yup.object().shape({
-  name: Yup.string().required("Telefon alanı zorunludur!"),
+  name: Yup.string().required("İsim alanı zorunludur!"),
 });
 
 const NameScreen = () => {
@@ -51,7 +51,7 @@ const NameScreen = () => {
                 <ErrorText message={errors.name} />
               )}
             </View>
-            <Button variant="black" onPress={handleSubmit}>
+            <Button variant="primary" onPress={handleSubmit}>
               Sonraki
             </Button>
           </View>

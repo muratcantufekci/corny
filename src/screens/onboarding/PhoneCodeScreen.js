@@ -1,8 +1,6 @@
 import {
   Keyboard,
   StyleSheet,
-  Text,
-  TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
@@ -10,26 +8,15 @@ import {
 import OnboardingHeading from "../../components/OnboardingHeading";
 import useOnboardingStore from "../../store/useOnboardingStore";
 import Button from "../../components/Button";
-import { useEffect, useRef, useState } from "react";
-import { Formik } from "formik";
-import * as Yup from "yup";
+import { useEffect, useState } from "react";
 import { postPhoneVerification } from "../../services/send-phone-verification";
 import { postVerifyCode } from "../../services/verify-code";
 import { useNavigation } from "@react-navigation/native";
 import CustomText from "../../components/CustomText";
-
-const validation = Yup.object().shape({
-  code1: Yup.string().length(1).required(),
-  code2: Yup.string().length(1).required(),
-  code3: Yup.string().length(1).required(),
-  code4: Yup.string().length(1).required(),
-  code5: Yup.string().length(1).required(),
-  code6: Yup.string().length(1).required(),
-});
+import OTPInputView from "@twotalltotems/react-native-otp-input";
 
 const PhoneCodeScreen = () => {
   const onboardingStore = useOnboardingStore();
-  const inputRefs = useRef([]);
   const [timer, setTimer] = useState(20);
   const [resendEnabled, setResendEnabled] = useState(false);
   const [isCodeValid, setIsCodeValid] = useState(true);
@@ -40,8 +27,8 @@ const PhoneCodeScreen = () => {
   useEffect(() => {
     const verifyPhone = async () => {
       try {
-        // const res = await postPhoneVerification(data);
-        // onboardingStore.setIdentifierCode(res.identifierCode);
+        const res = await postPhoneVerification(data);
+        onboardingStore.setIdentifierCode(res.identifierCode);
       } catch (error) {
         console.error(error);
       }
@@ -63,15 +50,6 @@ const PhoneCodeScreen = () => {
     return () => clearInterval(interval);
   }, [timer]);
 
-  const handleTextChange = (text, index, handleChangeFunc) => {
-    handleChangeFunc(text);
-    if (text.length === 1 && index < 5) {
-      inputRefs.current[index + 1].focus();
-    } else if (text.length === 0 && index > 0) {
-      inputRefs.current[index - 1].focus();
-    }
-  };
-
   const handleResend = async () => {
     if (resendEnabled) {
       setTimer(20);
@@ -81,96 +59,67 @@ const PhoneCodeScreen = () => {
     }
   };
 
-  const submitFormHandler = async (data, resetForm) => {
-    const response = await postVerifyCode(data);
-    if (response.isSuccess) {
-      setIsCodeValid(true)
-      navigation.navigate("Navigation");
+  const submitFormHandler = async (code) => {
+    const data = {
+      verificationCode: code,
+      identifierCode: onboardingStore.identifierCode,
+    };
+    if(code && code.length === 6) {
+      setIsCodeValid(true);
+      const response = await postVerifyCode(data);
+      if (response.isSuccess) {
+        navigation.navigate("Navigation");
+      } else {
+        setIsCodeValid(false);
+        // navigation.navigate("Navigation"); // test amaçlı sonradan kaldırılacak
+      }
     } else {
-      setIsCodeValid(false)
+      setIsCodeValid(false);
     }
-    resetForm();
   };
 
   return (
-    <Formik
-      initialValues={{
-        code1: "",
-        code2: "",
-        code3: "",
-        code4: "",
-        code5: "",
-        code6: "",
-      }}
-      validationSchema={validation}
-      onSubmit={(values, { resetForm }) => {
-        const data = {
-          verificationCode: `${values.code1}${values.code2}${values.code3}${values.code4}${values.code5}${values.code6}`,
-          identifierCode: onboardingStore.identifierCode,
-        };
-        submitFormHandler(data, resetForm);
-      }}
-    >
-      {({ handleChange, handleBlur, handleSubmit, errors, touched, values }) => (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={styles.wrapper}>
-            <View>
-              <OnboardingHeading
-                title="OTP'yi girin"
-                desc="Corny, numaranızı doğrulamak için size SMS yoluyla tek kullanımlık bir şifre gönderecek"
-              />
-              <CustomText style={styles.phone}>{onboardingStore.phone}</CustomText>
-              <View style={styles.verificationInputs}>
-                {Array.from({ length: 6 }).map((_, index) => (
-                  <TextInput
-                    key={index}
-                    inputMode="numeric"
-                    value={values[`code${index + 1}`]}
-                    style={[
-                      styles.input,
-                      (touched[`code${index + 1}`] &&
-                        errors[`code${index + 1}`]) || !isCodeValid &&
-                        styles.inputError,
-                    ]}
-                    maxLength={1}
-                    ref={(el) => (inputRefs.current[index] = el)}
-                    onBlur={handleBlur(`code${index + 1}`)}
-                    onChangeText={(text) =>
-                      handleTextChange(
-                        text,
-                        index,
-                        handleChange(`code${index + 1}`)
-                      )
-                    }
-                  />
-                ))}
-              </View>
-              <View style={styles.resendWrapper}>
-                <CustomText style={styles.text}>Kodunuzu almadınız mı? </CustomText>
-                <TouchableOpacity
-                  onPress={handleResend}
-                  disabled={!resendEnabled}
-                >
-                  <CustomText
-                    style={[
-                      styles.resendText,
-                      resendEnabled && styles.resendTextActive,
-                    ]}
-                  >
-                    {resendEnabled
-                      ? "Yeniden gönder"
-                      : `Yeniden gönder ( ${timer} )`}
-                  </CustomText>
-                </TouchableOpacity>
-              </View>
-            </View>
-            <Button variant="black" onPress={handleSubmit}>
-              Devam Et
-            </Button>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.wrapper}>
+        <View>
+          <OnboardingHeading
+            title="OTP'yi girin"
+            desc="Corny, numaranızı doğrulamak için size SMS yoluyla tek kullanımlık bir şifre gönderecek"
+          />
+          <CustomText style={styles.phone}>{onboardingStore.phone}</CustomText>
+          <OTPInputView
+            style={styles.verificationInputs}
+            pinCount={6}
+            onCodeChanged={() => setIsCodeValid(true)}
+            autoFocusOnLoad
+            codeInputFieldStyle={[
+              styles.input,
+              !isCodeValid ? styles.inputError : null,
+            ]}
+            codeInputHighlightStyle={styles.underlineStyleHighLighted}
+            onCodeFilled={(code) => {
+              submitFormHandler(code);
+            }}
+          />
+          <View style={styles.resendWrapper}>
+            <CustomText style={styles.text}>Kodunuzu almadınız mı? </CustomText>
+            <TouchableOpacity onPress={handleResend} disabled={!resendEnabled}>
+              <CustomText
+                style={[
+                  styles.resendText,
+                  resendEnabled && styles.resendTextActive,
+                ]}
+              >
+                {resendEnabled
+                  ? "Yeniden gönder"
+                  : `Yeniden gönder ( ${timer} )`}
+              </CustomText>
+            </TouchableOpacity>
           </View>
-        </TouchableWithoutFeedback>
-      )}
-    </Formik>
+        </View>
+        <Button variant="primary" onPress={() =>submitFormHandler()}>Devam Et</Button>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -195,7 +144,8 @@ const styles = StyleSheet.create({
     borderBottomColor: "#EFEFF0",
   },
   input: {
-    flex: 1,
+    width: 50,
+    height: 56,
     padding: 16,
     borderRadius: 12,
     justifyContent: "center",
@@ -230,6 +180,9 @@ const styles = StyleSheet.create({
   },
   resendTextActive: {
     color: "#4BA30D",
+  },
+  underlineStyleHighLighted: {
+    borderColor: "black",
   },
 });
 

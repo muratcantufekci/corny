@@ -75,7 +75,7 @@ const NavigationScreen = () => {
           style={styles.textArea}
         />
       </View>
-      <Button variant="black" onPress={handleButtonPress}>İzin Ver</Button>
+      <Button variant="primary" onPress={handleButtonPress}>İzin Ver</Button>
       <Modal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
@@ -83,7 +83,7 @@ const NavigationScreen = () => {
         title="Bağlanılamıyor"
         desc="Corny'yi kullanırken size etrafta kimlerin olduğunu gösterebilmemiz için konum paylaşımını etkinleştirmeniz gerekir."
         btnText="Ayarları Aç"
-        btnVariant="black"
+        btnVariant="primary"
         btnClickFunc={modalBtnClickHandler}
       />
     </View>

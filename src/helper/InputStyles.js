@@ -16,10 +16,6 @@ const InputStyles = StyleSheet.create({
     borderColor: '#D1D1D6',
     color: 'black'
   },
-  secondary: {
-    backgroundColor: 'green',
-    borderColor: 'green',
-  },
   error: {
     borderColor: '#FF524F',
     borderWidth: 2,

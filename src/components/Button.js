@@ -6,11 +6,6 @@ import CustomText from './CustomText';
 const Button = ({ type = 'button', variant = 'primary', children, style, ...props }) => {
   const variantStyles = {
     primary: styles.primary,
-    secondary: styles.secondary,
-    green: styles.green,
-    white: styles.white,
-    black: styles.black,
-    dark: styles.dark,
   };
 
   const containerStyle = [styles.button, variantStyles[variant], style];
@@ -25,7 +20,7 @@ const Button = ({ type = 'button', variant = 'primary', children, style, ...prop
 
 Button.propTypes = {
   type: PropTypes.oneOf(['submit', 'button', 'reset']),
-  variant: PropTypes.oneOf(['primary', 'secondary', 'green', 'white', 'black', 'dark']),
+  variant: PropTypes.oneOf(['primary']),
   children: PropTypes.node.isRequired,
   style: PropTypes.object,
 };

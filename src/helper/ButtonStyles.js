@@ -16,30 +16,9 @@ const ButtonStyles = StyleSheet.create({
     fontWeight: '500'
   },
   primary: {
-    backgroundColor: 'blue',
-    borderColor: 'blue',
-  },
-  secondary: {
-    backgroundColor: 'green',
-    borderColor: 'green',
-  },
-  green: {
-    backgroundColor: 'green',
-    borderColor: 'green',
-  },
-  white: {
-    backgroundColor: 'white',
-    borderColor: 'black',
-    color: 'black'
-  },
-  black: {
     backgroundColor: 'black',
     borderColor: 'black',
     color: 'white',
-  },
-  dark: {
-    backgroundColor: 'gray',
-    borderColor: 'gray',
   },
 });
 

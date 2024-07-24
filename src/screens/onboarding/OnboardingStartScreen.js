@@ -19,7 +19,7 @@ const OnboardingStartScreen = () => {
         </CustomText>
       </View>
       <Button
-        variant="black"
+        variant="primary"
         style={styles.button}
         onPress={continuePressHandler}
       >

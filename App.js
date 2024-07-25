@@ -17,6 +17,7 @@ import NavigationScreen from "./src/screens/onboarding/NavigationScreen";
 import NameScreen from "./src/screens/onboarding/NameScreen";
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import './src/lang/i18n';
+import PhotoScreen from "./src/screens/onboarding/PhotoScreen";
 
 const Stack = createStackNavigator();
 // const Tab = createBottomTabNavigator();
@@ -58,6 +59,7 @@ const AuthStack = () => (
     <Stack.Screen name="PhoneCode" component={PhoneCodeScreen}/>
     <Stack.Screen name="Navigation" component={NavigationScreen}/>
     <Stack.Screen name="Name" component={NameScreen}/>
+    <Stack.Screen name="Photo" component={PhotoScreen}/>
   </Stack.Navigator>
 );
 

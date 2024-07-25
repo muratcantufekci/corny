@@ -20,6 +20,11 @@ const ButtonStyles = StyleSheet.create({
     borderColor: 'black',
     color: 'white',
   },
+  disable: {
+    backgroundColor: '#D1D1D6',
+    borderColor: '#D1D1D6',
+    color: '#93939F',
+  }
 });
 
 export default ButtonStyles;

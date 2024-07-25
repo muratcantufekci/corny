@@ -1,62 +1,72 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
-import * as ImagePicker from "expo-image-picker"; // expo-image-picker yerine expo kullanılır
+import React from "react";
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Image,
+  Dimensions,
+} from "react-native";
+import User from "../assets/svg/user.svg";
+import Plus from "../assets/svg/plus.svg";
+import Check from "../assets/svg/check.svg";
 
-const SelectionBox = ({ isMovie, selectMovie }) => {
-  const [selectedImage, setSelectedImage] = useState(null);
-
-  const selectImage = async () => {
-    const permissionResult =
-      await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (permissionResult.granted === false) {
-      alert("Permission to access camera roll is required!");
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri);
-    }
-  };
-
+const SelectionBox = ({ isMovie, img, selectFunc }) => {
   return (
     <TouchableOpacity
-      style={[styles.container, selectedImage ? styles.noDashedBorder : ""]}
-      onPress={isMovie ? selectMovie : selectImage}
+      style={[styles.container, img ? styles.noDashedBorder : ""]}
+      onPress={selectFunc}
     >
-      {selectedImage ? (
-        <Image source={{ uri: selectedImage }} style={styles.image} />
+      <View style={styles.imageContainer}>
+        {img ? (
+          <Image source={{ uri: img }} style={styles.image} />
+        ) : isMovie ? null : (
+          <User />
+        )}
+      </View>
+      {img ? (
+        <Check style={styles.checkIcon} />
       ) : (
-        <Text style={styles.icon}>+</Text>
+        <Plus style={styles.plusIcon} />
       )}
     </TouchableOpacity>
   );
 };
 
+const boxWidth = (Dimensions.get("window").width - 64) / 3;
+
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    height: 120,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 2,
-    borderRadius: 8,
-    borderColor: "black",
+    height: 150,
+    width: boxWidth,
+    borderWidth: 1,
+    borderRadius: 12,
+    borderColor: "#D1D1D6",
     borderStyle: "dashed",
-    overflow: "hidden",
+    marginBottom: 14,
   },
   noDashedBorder: {
     borderStyle: "solid",
+    borderColor: "#FF524F",
+    borderWidth: 1.5,
   },
-  icon: {
-    fontSize: 24,
-    fontWeight: "600",
+  plusIcon: {
+    position: "absolute",
+    bottom: -12,
+    right: -5,
+    backgroundColor: "white",
+  },
+  checkIcon: {
+    position: "absolute",
+    bottom: -13,
+    right: 0,
+  },
+  imageContainer: {
+    width: "100%",
+    height: "100%",
+    overflow: "hidden",
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
   },
   image: {
     width: "100%",

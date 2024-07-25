@@ -11,6 +11,8 @@ import { t } from "i18next";
 const NavigationScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [appState, setAppState] = useState(AppState.currentState);
+  const [location, setLocation] = useState(null);
+  const [city, setCity] = useState(null);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -32,11 +34,29 @@ const NavigationScreen = () => {
     return () => subscription.remove();
   }, [appState])
 
+  useEffect(() => {
+    if (location) {
+      (async () => {
+        let reverseGeocode = await Location.reverseGeocodeAsync({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        });
+        if (reverseGeocode.length > 0) {
+          // console.log('city',reverseGeocode); // istek atılacağı zaman bakıcam
+          setCity(reverseGeocode[0].city);
+        }
+      })();
+    }
+  }, [location]);
+
   
 
   const handleButtonPress = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status === 'granted') {
+    let response = await Location.requestForegroundPermissionsAsync();
+    
+    if (response.status === 'granted') {
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
       navigation.navigate("Name");
     } else {
       Alert.alert(

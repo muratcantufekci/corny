@@ -29,6 +29,8 @@
     "NAME_SCREEN_DESC": "Profilinizde görüntülenecektir. İhtiyacınız olursa profilinizde değiştirebilirsiniz.",
     "WRITE_YOUR_NAME": "İsminizi yazınız",
     "NEXT": "Sonraki",
-    "NAME_REQUIRED": "İsim alanı zorunludur!"
+    "NAME_REQUIRED": "İsim alanı zorunludur!",
+    "PHOTO_SCREEN_TITLE": "Profilinize en fazla 6 resim ekleyin",
+    "PHOTO_SCREEN_DESC": "2 veya daha fazla fotoğrafa sahip bir profilin beğeni alma olasılığı daha yüksektir!"
   }
 }

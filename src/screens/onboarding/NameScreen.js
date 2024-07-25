@@ -13,16 +13,18 @@ import * as Yup from "yup";
 import { Formik } from "formik";
 import ErrorText from "../../components/ErrorText";
 import { useTranslation } from "react-i18next";
+import { useNavigation } from "@react-navigation/native";
 
 
 
 const NameScreen = () => {
   const { t } = useTranslation();
+  const navigation = useNavigation();
 
   const validation = Yup.object().shape({
     name: Yup.string().required(t("NAME_REQUIRED")),
   });
-  
+
   return (
     <Formik
       initialValues={{
@@ -30,7 +32,7 @@ const NameScreen = () => {
       }}
       validationSchema={validation}
       onSubmit={(values) => {
-        console.log(values);
+        navigation.navigate("Photo");
       }}
     >
       {({ handleChange, handleBlur, handleSubmit, errors, touched }) => (

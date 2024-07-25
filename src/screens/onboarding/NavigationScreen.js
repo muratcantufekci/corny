@@ -6,6 +6,7 @@ import Button from "../../components/Button";
 import ProggressBar from "../../components/ProggressBar";
 import Modal from "../../components/Modal";
 import { useNavigation } from "@react-navigation/native";
+import { t } from "i18next";
 
 const NavigationScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -70,19 +71,19 @@ const NavigationScreen = () => {
           style={styles.img}
         />
         <OnboardingHeading
-          title="Mükemmel eşleşme hemen yanınızda olabilir."
-          desc="Konuma dayalı öneriler almak için lokasyon bilginize erişim izni verin"
+          title={t("NAVIGATION_SCREEN_TITLE")}
+          desc={t("NAVIGATION_SCREEN_DESC")}
           style={styles.textArea}
         />
       </View>
-      <Button variant="primary" onPress={handleButtonPress}>İzin Ver</Button>
+      <Button variant="primary" onPress={handleButtonPress}>{t("ALLOW_PERMISSION")}</Button>
       <Modal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         img={require("../../assets/images/navigation.png")}
-        title="Bağlanılamıyor"
-        desc="Corny'yi kullanırken size etrafta kimlerin olduğunu gösterebilmemiz için konum paylaşımını etkinleştirmeniz gerekir."
-        btnText="Ayarları Aç"
+        title={t("UNABLE_TO_CONNECT")}
+        desc={t("UNABLE_TO_CONNECT_DESC")}
+        btnText={t("OPEN_SETTINGS")}
         btnVariant="primary"
         btnClickFunc={modalBtnClickHandler}
       />

@@ -14,6 +14,7 @@ import { postVerifyCode } from "../../services/verify-code";
 import { useNavigation } from "@react-navigation/native";
 import CustomText from "../../components/CustomText";
 import OTPInputView from "@twotalltotems/react-native-otp-input";
+import { t } from "i18next";
 
 const PhoneCodeScreen = () => {
   const onboardingStore = useOnboardingStore();
@@ -27,8 +28,8 @@ const PhoneCodeScreen = () => {
   useEffect(() => {
     const verifyPhone = async () => {
       try {
-        const res = await postPhoneVerification(data);
-        onboardingStore.setIdentifierCode(res.identifierCode);
+        // const res = await postPhoneVerification(data);
+        // onboardingStore.setIdentifierCode(res.identifierCode);
       } catch (error) {
         console.error(error);
       }
@@ -64,14 +65,14 @@ const PhoneCodeScreen = () => {
       verificationCode: code,
       identifierCode: onboardingStore.identifierCode,
     };
-    if(code && code.length === 6) {
+    if (code && code.length === 6) {
       setIsCodeValid(true);
       const response = await postVerifyCode(data);
       if (response.isSuccess) {
         navigation.navigate("Navigation");
       } else {
         setIsCodeValid(false);
-        // navigation.navigate("Navigation"); // test amaçlı sonradan kaldırılacak
+        navigation.navigate("Navigation"); // test amaçlı sonradan kaldırılacak
       }
     } else {
       setIsCodeValid(false);
@@ -83,8 +84,8 @@ const PhoneCodeScreen = () => {
       <View style={styles.wrapper}>
         <View>
           <OnboardingHeading
-            title="OTP'yi girin"
-            desc="Corny, numaranızı doğrulamak için size SMS yoluyla tek kullanımlık bir şifre gönderecek"
+            title={t("OTP_SCREEN_TITLE")}
+            desc={t("OTP_SCREEN_DESC")}
           />
           <CustomText style={styles.phone}>{onboardingStore.phone}</CustomText>
           <OTPInputView
@@ -102,7 +103,9 @@ const PhoneCodeScreen = () => {
             }}
           />
           <View style={styles.resendWrapper}>
-            <CustomText style={styles.text}>Kodunuzu almadınız mı? </CustomText>
+            <CustomText style={styles.text}>
+              {t("DONT_RECEIVE_CODE") + " "}
+            </CustomText>
             <TouchableOpacity onPress={handleResend} disabled={!resendEnabled}>
               <CustomText
                 style={[
@@ -111,13 +114,15 @@ const PhoneCodeScreen = () => {
                 ]}
               >
                 {resendEnabled
-                  ? "Yeniden gönder"
-                  : `Yeniden gönder ( ${timer} )`}
+                  ? t("SEND_AGAIN")
+                  : `${t("SEND_AGAIN")} ( ${timer} )`}
               </CustomText>
             </TouchableOpacity>
           </View>
         </View>
-        <Button variant="primary" onPress={() =>submitFormHandler()}>Devam Et</Button>
+        <Button variant="primary" onPress={() => submitFormHandler()}>
+          {t("CONTİNUE")}
+        </Button>
       </View>
     </TouchableWithoutFeedback>
   );

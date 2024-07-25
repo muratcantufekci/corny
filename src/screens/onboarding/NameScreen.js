@@ -12,12 +12,17 @@ import Button from "../../components/Button";
 import * as Yup from "yup";
 import { Formik } from "formik";
 import ErrorText from "../../components/ErrorText";
+import { useTranslation } from "react-i18next";
 
-const validation = Yup.object().shape({
-  name: Yup.string().required("İsim alanı zorunludur!"),
-});
+
 
 const NameScreen = () => {
+  const { t } = useTranslation();
+
+  const validation = Yup.object().shape({
+    name: Yup.string().required(t("NAME_REQUIRED")),
+  });
+  
   return (
     <Formik
       initialValues={{
@@ -34,12 +39,12 @@ const NameScreen = () => {
             <View>
               <ProggressBar step={2} />
               <OnboardingHeading
-                title="Adınız ne?"
-                desc="Profilinizde görüntülenecektir. İhtiyacınız olursa profilinizde değiştirebilirsiniz."
+                title={t("NAME_SCREEN_TITLE")}
+                desc={t("NAME_SCREEN_DESC")}
                 style={styles.textArea}
               />
               <Input
-                placeholder="İsminizi yazınız"
+                placeholder={t("WRITE_YOUR_NAME")}
                 onChangeText={handleChange("name")}
                 onBlur={handleBlur("name")}
                 variant={
@@ -52,7 +57,7 @@ const NameScreen = () => {
               )}
             </View>
             <Button variant="primary" onPress={handleSubmit}>
-              Sonraki
+              {t("NEXT")}
             </Button>
           </View>
         </TouchableWithoutFeedback>

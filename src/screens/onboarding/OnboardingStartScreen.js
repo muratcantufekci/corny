@@ -3,9 +3,11 @@ import { View, Text, StyleSheet, Image } from "react-native";
 import CustomText from "../../components/CustomText";
 import Button from "../../components/Button";
 import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 
 const OnboardingStartScreen = () => {
   const navigation = useNavigation();
+  const { t } = useTranslation();
 
   const continuePressHandler = () => {
     navigation.navigate("NumberEnter");
@@ -13,17 +15,18 @@ const OnboardingStartScreen = () => {
   return (
     <View style={styles.container}>
       <View>
-        <Image source={require("../../assets/images/corns.png")} style={styles.img} />
-        <CustomText style={styles.text}>
-          Sizin gibi düşünen insanlarla eşleşin!
-        </CustomText>
+        <Image
+          source={require("../../assets/images/corns.png")}
+          style={styles.img}
+        />
+        <CustomText style={styles.text}>{t("START_SCREEN_TEXT")}</CustomText>
       </View>
       <Button
         variant="primary"
         style={styles.button}
         onPress={continuePressHandler}
       >
-        Telefonla Devam Et
+        {t("CONTİNUE_W_PHONE")}
       </Button>
     </View>
   );

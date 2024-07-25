@@ -16,6 +16,7 @@ import PhoneCodeScreen from "./src/screens/onboarding/PhoneCodeScreen";
 import NavigationScreen from "./src/screens/onboarding/NavigationScreen";
 import NameScreen from "./src/screens/onboarding/NameScreen";
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import './src/lang/i18n';
 
 const Stack = createStackNavigator();
 // const Tab = createBottomTabNavigator();

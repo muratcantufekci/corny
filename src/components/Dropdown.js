@@ -16,53 +16,66 @@ import { useState } from "react";
 import Input from "./Input";
 import useOnboardingStore from "../store/useOnboardingStore";
 import CustomText from "./CustomText";
+import { useTranslation } from "react-i18next";
 
 const COUNTRIES_DATA = [
   {
     id: 1,
     flag: <Turkiye />,
-    text: "Turkiye",
-    code: "+90"
+    phoneCode: "+90",
+    code: "TR",
   },
   {
     id: 2,
     flag: <Italy />,
-    text: "Italy",
-    code: "+39"
+    phoneCode: "+39",
+    code: "IT",
   },
   {
     id: 3,
     flag: <UK />,
-    text: "United Kingdom",
-    code: "+44"
+    phoneCode: "+44",
+    code: "UK",
   },
   {
     id: 4,
     flag: <USA />,
-    text: "United States",
-    code: "+1"
+    phoneCode: "+1",
+    code: "USA",
   },
   {
     id: 5,
     flag: <Russia />,
-    text: "Russia",
-    code: "+7"
+    phoneCode: "+7",
+    code: "RU",
   },
 ];
 
-const Dropdown = ({isOpen, setIsOpen}) => {
+const Dropdown = ({ isOpen, setIsOpen }) => {
+  const { t } = useTranslation();
   const [flagIcon, setFlagIcon] = useState(<Turkiye />);
-  const [country, setCountry] = useState("Turkiye (+90)");
-  const [countries, setCountries] = useState(COUNTRIES_DATA);
-  const onboardingStore = useOnboardingStore()
+  const [countries, setCountries] = useState(
+    COUNTRIES_DATA.map((country) => ({
+      ...country,
+      text: t(`${country.code}`),
+    }))
+  );
+  const countriesCopy = COUNTRIES_DATA.map((country) => ({
+    ...country,
+    text: t(`${country.code}`),
+  }))
+  const [country, setCountry] = useState(`${t("TR")} (+90)`);
+  const onboardingStore = useOnboardingStore();
 
   const searchInputChangeHandler = (text) => {
-    setCountries(() => COUNTRIES_DATA.filter(item => item.text.includes(text)))
-  }
-  
+    setCountries(() =>
+      countriesCopy.filter((item) => item.text.includes(text))
+    );
+  };
+
   return (
     <TouchableWithoutFeedback onPress={() => setIsOpen(false)}>
-      < >
+      <>
         <TouchableOpacity
           style={styles.container}
           onPress={() => setIsOpen(!isOpen)}
@@ -75,7 +88,10 @@ const Dropdown = ({isOpen, setIsOpen}) => {
         </TouchableOpacity>
         {isOpen && (
           <View style={styles.wrapper}>
-            <Input placeholder="Ara..." onChangeText={(text) => searchInputChangeHandler(text)}/>
+            <Input
+              placeholder={t("SEARCH") + "..."}
+              onChangeText={(text) => searchInputChangeHandler(text)}
+            />
             <ScrollView style={styles.scrollView}>
               {countries.map((item, index) => (
                 <TouchableOpacity
@@ -86,13 +102,15 @@ const Dropdown = ({isOpen, setIsOpen}) => {
                   ]}
                   onPress={() => {
                     setFlagIcon(item.flag);
-                    setCountry(`${item.text} (${item.code})`);
+                    setCountry(`${item.text} (${item.phoneCode})`);
                     setIsOpen(false);
-                    onboardingStore.setCode(item.code)
+                    onboardingStore.setCode(item.phoneCode);
                   }}
                 >
                   {item.flag}
-                  <CustomText style={styles.text}>{item.text} ({item.code})</CustomText>
+                  <CustomText style={styles.text}>
+                    {item.text} ({item.phoneCode})
+                  </CustomText>
                 </TouchableOpacity>
               ))}
             </ScrollView>

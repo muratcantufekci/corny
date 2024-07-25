@@ -14,18 +14,20 @@ import useOnboardingStore from "../../store/useOnboardingStore";
 import { useNavigation } from "@react-navigation/native";
 import OnboardingHeading from "../../components/OnboardingHeading";
 import { useState } from "react";
-
-const validation = Yup.object().shape({
-  phone: Yup.string()
-    .max(10, "Telefon numaranız 10 karakterden fazla olamaz")
-    .min(10, "Telefon numaranız 10 karakterden az olamaz")
-    .required("Telefon alanı zorunludur!"),
-});
+import { useTranslation } from "react-i18next";
 
 const NumberScreen = () => {
   const [isOpen, setIsOpen] = useState(false);
   const onboardingStore = useOnboardingStore();
   const navigation = useNavigation();
+  const { t } = useTranslation();
+
+  const validation = Yup.object().shape({
+    phone: Yup.string()
+      .max(10, t("PHONE_MAX_LENGTH"))
+      .min(10, t("PHONE_MIN_LENGTH"))
+      .required(t("PHONE_REQUIRED")),
+  });
 
   const phoneInputChangeHandler = (text, handleChangeFunc) => {
     handleChangeFunc(text);
@@ -55,14 +57,13 @@ const NumberScreen = () => {
           <View style={styles.container}>
             <View>
               <OnboardingHeading
-                title="Numaranızı Giriniz"
-                desc="Corny, numaranızı doğrulamak için size SMS yoluyla tek kullanımlık
-                bir şifre gönderecek"
+                title={t('NUMBER_SCREEN_TITLE')}
+                desc={t('NUMBER_SCREEN_DESC')}
               />
               <View style={styles.content}>
                 <Dropdown isOpen={isOpen} setIsOpen={setIsOpen}/>
                 <Input
-                  placeholder="Telefon numaranız"
+                  placeholder={t('PHONE_NUMBER')}
                   onChangeText={(text) =>
                     phoneInputChangeHandler(text, handleChange("phone"))
                   }
@@ -80,7 +81,7 @@ const NumberScreen = () => {
               </View>
             </View>
             <Button variant="primary" onPress={handleSubmit}>
-              Devam Et
+              {t('CONTİNUE')}
             </Button>
           </View>
         </TouchableWithoutFeedback>

@@ -132,7 +132,6 @@ const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
     justifyContent: "space-between",
-    paddingBottom: 50,
   },
   phone: {
     fontWeight: "400",

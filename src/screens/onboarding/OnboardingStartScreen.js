@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
 import CustomText from "../../components/CustomText";
 import Button from "../../components/Button";
 import { useNavigation } from "@react-navigation/native";
@@ -32,18 +32,20 @@ const OnboardingStartScreen = () => {
   );
 };
 
+const imgMargin = (Dimensions.get("window").height) / 20;
+const imgHeight = (Dimensions.get("window").height) / 1.9;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
     backgroundColor: "#fff",
     justifyContent: "space-between",
-    paddingBottom: 50,
   },
   img: {
-    marginTop: 60,
+    marginTop: imgMargin,
     width: 360,
-    height: 450,
+    height: imgHeight,
   },
   text: {
     fontSize: 26,

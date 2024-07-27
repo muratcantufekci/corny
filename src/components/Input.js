@@ -1,6 +1,5 @@
 import PropTypes from "prop-types";
-import { TextInput } from "react-native";
-import styles from "../helper/InputStyles";
+import { StyleSheet, TextInput, View } from "react-native";
 
 const Input = ({
   variant = "primary",
@@ -8,38 +7,68 @@ const Input = ({
   value,
   onChangeText,
   style,
-  inputMode= "text",
+  inputMode = "text",
+  beforeIcon,
+  afterIcon,
   ...props
 }) => {
   const variantStyles = {
     primary: styles.primary,
     secondary: styles.secondary,
     error: styles.error,
-    success: styles.success
+    success: styles.success,
   };
 
   const textStyle = [styles.container, variantStyles[variant], style];
 
   return (
-    <TextInput
-      style={textStyle}
-      placeholder={placeholder}
-      value={value}
-      onChangeText={onChangeText}
-      inputMode={inputMode}
-      type
-      {...props}
-    />
+    <View style={textStyle}>
+      {beforeIcon && beforeIcon}
+      <TextInput
+        style={styles.input}
+        placeholder={placeholder}
+        value={value}
+        onChangeText={onChangeText}
+        inputMode={inputMode}
+        type
+        {...props}
+      />
+      {afterIcon && afterIcon}
+    </View>
   );
 };
 
+const styles = StyleSheet.create({
+  container: {
+    padding: 16,
+    borderRadius: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    borderWidth: 1,
+  },
+  input: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: "400",
+  },
+  primary: {
+    backgroundColor: "white",
+    borderColor: "#D1D1D6",
+    color: "black",
+  },
+  error: {
+    borderColor: "#FF524F",
+    borderWidth: 2,
+  },
+  success: {
+    borderColor: "#4CA30D",
+    borderWidth: 2,
+  },
+});
+
 Input.propTypes = {
-  variant: PropTypes.oneOf([
-    "primary",
-    "secondary",
-    "error",
-    "success"
-  ]),
+  variant: PropTypes.oneOf(["primary", "secondary", "error", "success"]),
   placeholder: PropTypes.string,
   value: PropTypes.string,
   onChangeText: PropTypes.func,

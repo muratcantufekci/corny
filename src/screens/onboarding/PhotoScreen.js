@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import CustomText from "../../components/CustomText";
 import { StyleSheet, View } from "react-native";
 import ProggressBar from "../../components/ProggressBar";
 import OnboardingHeading from "../../components/OnboardingHeading";
@@ -7,11 +6,13 @@ import { t } from "i18next";
 import Button from "../../components/Button";
 import SelectionBox from "../../components/SelectionBox";
 import * as ImagePicker from "expo-image-picker";
+import { useNavigation } from "@react-navigation/native";
 
 const PhotoScreen = () => {
   const [isBtnDisabled, setIsBtnDisaled] = useState(true);
   const [btnVariant, setBtnVariant] = useState("disable");
   const [selectedImages, setSelectedImages] = useState([]);
+  const navigation = useNavigation();
 
   const selectImage = async () => {
     const permissionResult =
@@ -35,6 +36,10 @@ const PhotoScreen = () => {
     }
   };
 
+  const nextBtnClickHandler = () => {
+    navigation.navigate("Movie");
+  }
+
   return (
     <View style={styles.container}>
       <View>
@@ -46,11 +51,11 @@ const PhotoScreen = () => {
         />
         <View style={styles.boxes}>
           {Array.from({ length: 6 }).map((_, index) => (
-            <SelectionBox key={index} selectFunc={selectImage} img={selectedImages.length >= index + 1 ? selectedImages[index] : null}/>
+            <SelectionBox key={index} selectFunc={selectImage} img={selectedImages.length >= index + 1 ? selectedImages[index] : null} selected={selectedImages.length >= index + 1 ? true : false}/>
           ))}
         </View>
       </View>
-      <Button variant={btnVariant} disabled={isBtnDisabled}>
+      <Button variant={btnVariant} disabled={isBtnDisabled} onPress={nextBtnClickHandler}>
         {t("NEXT")}
       </Button>
     </View>
@@ -61,7 +66,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "space-between",
-    paddingBottom: 50,
   },
   boxes: {
     flexDirection: "row",

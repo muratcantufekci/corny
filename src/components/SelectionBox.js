@@ -10,33 +10,38 @@ import User from "../assets/svg/user.svg";
 import Plus from "../assets/svg/plus.svg";
 import Check from "../assets/svg/check.svg";
 
-const SelectionBox = ({ isMovie, img, selectFunc }) => {
+const SelectionBox = ({ isMovie, img, selected, selectFunc }) => {
   return (
     <TouchableOpacity
-      style={[styles.container, img ? styles.noDashedBorder : ""]}
+      style={[styles.container, selected ? styles.noDashedBorder : ""]}
       onPress={selectFunc}
     >
       <View style={styles.imageContainer}>
         {img ? (
           <Image source={{ uri: img }} style={styles.image} />
-        ) : isMovie ? null : (
+        ) : isMovie ? (
+          null
+        ) : (
           <User />
         )}
       </View>
-      {img ? (
+      {selected ? (
         <Check style={styles.checkIcon} />
       ) : (
-        <Plus style={styles.plusIcon} />
+        <View style={styles.plusIcon}>
+          <Plus />
+        </View>
       )}
     </TouchableOpacity>
   );
 };
 
 const boxWidth = (Dimensions.get("window").width - 64) / 3;
+const boxHeight = (Dimensions.get("window").height) / 5.5;
 
 const styles = StyleSheet.create({
   container: {
-    height: 150,
+    height: boxHeight,
     width: boxWidth,
     borderWidth: 1,
     borderRadius: 12,
@@ -54,6 +59,7 @@ const styles = StyleSheet.create({
     bottom: -12,
     right: -5,
     backgroundColor: "white",
+    borderRadius: 50
   },
   checkIcon: {
     position: "absolute",

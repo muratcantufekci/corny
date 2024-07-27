@@ -14,8 +14,8 @@ import { Formik } from "formik";
 import ErrorText from "../../components/ErrorText";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-
-
+import WrongIcon from "../../assets/svg/close-circle-wrong.svg";
+import CorrectIcon from "../../assets/svg/minus-tick-correct.svg";
 
 const NameScreen = () => {
   const { t } = useTranslation();
@@ -53,6 +53,10 @@ const NameScreen = () => {
                   (touched.name && errors.name && "error") ||
                   (touched.name && !errors.name && "success")
                 }
+                afterIcon={
+                  (touched.name && errors.name && <WrongIcon />) ||
+                  (touched.name && !errors.name && <CorrectIcon />)
+                }
               />
               {touched.name && errors.name && (
                 <ErrorText message={errors.name} />
@@ -72,7 +76,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "space-between",
-    paddingBottom: 50,
   },
   textArea: {
     marginBottom: 24,

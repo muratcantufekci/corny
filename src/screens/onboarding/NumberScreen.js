@@ -15,6 +15,8 @@ import { useNavigation } from "@react-navigation/native";
 import OnboardingHeading from "../../components/OnboardingHeading";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import WrongIcon from "../../assets/svg/close-circle-wrong.svg";
+import CorrectIcon from "../../assets/svg/minus-tick-correct.svg";
 
 const NumberScreen = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,9 +37,9 @@ const NumberScreen = () => {
   };
 
   const pageWrapperPressHandler = () => {
-    Keyboard.dismiss()
-    setIsOpen(false)
-  }
+    Keyboard.dismiss();
+    setIsOpen(false);
+  };
 
   return (
     <Formik
@@ -57,13 +59,13 @@ const NumberScreen = () => {
           <View style={styles.container}>
             <View>
               <OnboardingHeading
-                title={t('NUMBER_SCREEN_TITLE')}
-                desc={t('NUMBER_SCREEN_DESC')}
+                title={t("NUMBER_SCREEN_TITLE")}
+                desc={t("NUMBER_SCREEN_DESC")}
               />
               <View style={styles.content}>
-                <Dropdown isOpen={isOpen} setIsOpen={setIsOpen}/>
+                <Dropdown isOpen={isOpen} setIsOpen={setIsOpen} />
                 <Input
-                  placeholder={t('PHONE_NUMBER')}
+                  placeholder={t("PHONE_NUMBER")}
                   onChangeText={(text) =>
                     phoneInputChangeHandler(text, handleChange("phone"))
                   }
@@ -73,15 +75,19 @@ const NumberScreen = () => {
                     (touched.phone && errors.phone && "error") ||
                     (touched.phone && !errors.phone && "success")
                   }
+                  afterIcon={
+                    (touched.phone && errors.phone && <WrongIcon />) ||
+                    (touched.phone && !errors.phone && <CorrectIcon />)
+                  }
                   inputMode="numeric"
                 />
-                {touched.phone && errors.phone && (
-                  <ErrorText message={errors.phone} />
-                )}
               </View>
+              {touched.phone && errors.phone && (
+                <ErrorText message={errors.phone} />
+              )}
             </View>
             <Button variant="primary" onPress={handleSubmit}>
-              {t('CONTİNUE')}
+              {t("CONTİNUE")}
             </Button>
           </View>
         </TouchableWithoutFeedback>
@@ -95,7 +101,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 20,
     justifyContent: "space-between",
-    paddingBottom: 50,
   },
   content: {
     marginTop: 32,

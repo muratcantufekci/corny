@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Image, StyleSheet, View, Alert, Platform, Linking, AppState } from "react-native";
+import { Image, StyleSheet, View, Alert, Platform, Linking, AppState, Dimensions } from "react-native";
 import * as Location from "expo-location";
 import OnboardingHeading from "../../components/OnboardingHeading";
 import Button from "../../components/Button";
@@ -111,15 +111,16 @@ const NavigationScreen = () => {
   );
 };
 
+const imgHeight = (Dimensions.get("window").height) / 2.7;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "space-between",
-    paddingBottom: 50,
   },
   img: {
     width: "100%",
-    height: 312,
+    height: imgHeight,
     objectFit: "contain",
     marginBottom: 40,
   },

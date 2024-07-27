@@ -1,10 +1,8 @@
 import "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
-import { Image, StyleSheet, Text, View } from "react-native";
-import WelcomeScreen from "./src/screens/WelcomeScreen";
+import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import MailSignUpScreen from "./src/screens/MailSignUpScreen";
 import ProfileSelectionScreen from "./src/screens/ProfileSelectionScreen";
 import { useEffect, useState } from "react";
 import Logo from './src/assets/svg/logo.svg'
@@ -18,6 +16,7 @@ import NameScreen from "./src/screens/onboarding/NameScreen";
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import './src/lang/i18n';
 import PhotoScreen from "./src/screens/onboarding/PhotoScreen";
+import MovieScreen from "./src/screens/onboarding/MovieScreen";
 
 const Stack = createStackNavigator();
 // const Tab = createBottomTabNavigator();
@@ -60,6 +59,7 @@ const AuthStack = () => (
     <Stack.Screen name="Navigation" component={NavigationScreen}/>
     <Stack.Screen name="Name" component={NameScreen}/>
     <Stack.Screen name="Photo" component={PhotoScreen}/>
+    <Stack.Screen name="Movie" component={MovieScreen}/>
   </Stack.Navigator>
 );
 
@@ -120,6 +120,8 @@ export default function App() {
   );
 }
 
+const paddingBottom = (Dimensions.get("window").height) / 20;
+
 const styles = StyleSheet.create({
   splashContainer: {
     flex: 1,
@@ -133,5 +135,6 @@ const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
     padding: 16,
+    paddingBottom: paddingBottom,
   },
 });

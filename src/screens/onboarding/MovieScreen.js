@@ -18,6 +18,7 @@ import { getTvShowsByPopularity } from "../../services/get-tv-shows-by-popularit
 import Search from "../../assets/svg/search.svg";
 import CustomText from "../../components/CustomText";
 import { searchTvShowsByText } from "../../services/search-tv-shows";
+import { useNavigation } from "@react-navigation/native";
 
 const MovieScreen = () => {
   const reqiredChoiceCount = 5;
@@ -29,7 +30,8 @@ const MovieScreen = () => {
   const [choiceCount, setChoiceCount] = useState(5);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [searchInputValue, setSearchInputValue] = useState("")
+  const [searchInputValue, setSearchInputValue] = useState("");
+  const navigation = useNavigation();
 
   useEffect(() => {
     const getTvShows = async () => {
@@ -37,10 +39,7 @@ const MovieScreen = () => {
         setLoading(true);
         const res = await getTvShowsByPopularity(page);
         setTvShows((prevTvShows) => [...prevTvShows, ...res.tvShows]);
-        setTvShowsCopy((prevTvShows) => [
-          ...prevTvShows,
-          ...res.tvShows,
-        ]);
+        setTvShowsCopy((prevTvShows) => [...prevTvShows, ...res.tvShows]);
         setLoading(false);
       } catch (error) {
         console.error(error);
@@ -78,7 +77,7 @@ const MovieScreen = () => {
   };
 
   const searchTvShows = async (text) => {
-    setSearchInputValue(text)
+    setSearchInputValue(text);
     if (text.length >= 3) {
       try {
         setLoading(true);
@@ -93,9 +92,13 @@ const MovieScreen = () => {
   };
 
   const clearBtnHandler = () => {
-    setSearchInputValue("")
-    setTvShows(tvShowsCopy)
-  }
+    setSearchInputValue("");
+    setTvShows(tvShowsCopy);
+  };
+
+  const nextBtnHandler = () => {
+    navigation.navigate("Gender");
+  };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -116,7 +119,12 @@ const MovieScreen = () => {
               value={searchInputValue}
             />
             {searchInputValue.length > 0 && (
-              <CustomText style={styles.searchActionText} onPress={clearBtnHandler}>{t("CLEAR")}</CustomText>
+              <CustomText
+                style={styles.searchActionText}
+                onPress={clearBtnHandler}
+              >
+                {t("CLEAR")}
+              </CustomText>
             )}
           </View>
           <View style={styles.boxes}>
@@ -147,6 +155,7 @@ const MovieScreen = () => {
           variant={btnVariant}
           disabled={isBtnDisabled}
           style={styles.btn}
+          onPress={nextBtnHandler}
         >
           {choiceCount <= 0
             ? t("NEXT")

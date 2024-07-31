@@ -17,6 +17,7 @@ import NameScreen from "./src/screens/onboarding/NameScreen";
 import './src/lang/i18n';
 import PhotoScreen from "./src/screens/onboarding/PhotoScreen";
 import MovieScreen from "./src/screens/onboarding/MovieScreen";
+import GenderScreen from "./src/screens/onboarding/GenderScreen";
 
 const Stack = createStackNavigator();
 // const Tab = createBottomTabNavigator();
@@ -60,6 +61,7 @@ const AuthStack = () => (
     <Stack.Screen name="Name" component={NameScreen}/>
     <Stack.Screen name="Photo" component={PhotoScreen}/>
     <Stack.Screen name="Movie" component={MovieScreen}/>
+    <Stack.Screen name="Gender" component={GenderScreen}/>
   </Stack.Navigator>
 );
 

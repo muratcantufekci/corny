@@ -36,6 +36,11 @@
     "MOVIE_SCREEN_DESC": "Choose your favorite tv series and movies for more personalized recomendations!",
     "SEARCH_MOVIE": "Search tv series and movies",
     "MAKE_CHOICE": "Make your choice",
-    "CLEAR": "Clear"
+    "CLEAR": "Clear",
+    "GENDER_SCREEN_TITLE": "What’s your gender identity?",
+    "GENDER_SCREEN_DESC": "It will be displayed in your profile. If you need you can change it in your profile.",
+    "MAN_GENDER": "Man",
+    "WOMAN_GENDER": "Woman",
+    "NON_BINARY_GENDER": "Non-Binary"
   }
 }

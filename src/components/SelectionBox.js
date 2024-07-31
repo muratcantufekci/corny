@@ -65,6 +65,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: -13,
     right: 0,
+    color: "black"
   },
   imageContainer: {
     width: "100%",

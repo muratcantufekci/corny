@@ -36,6 +36,11 @@
     "MOVIE_SCREEN_DESC": "Daha kişiselleştirilmiş öneriler için favori dizilerinizi ve filmlerinizi seçin!",
     "SEARCH_MOVIE": "Dizi ve film arayın",
     "MAKE_CHOICE": "Seçim yapın",
-    "CLEAR": "Temizle"
+    "CLEAR": "Temizle",
+    "GENDER_SCREEN_TITLE": "Cinsiyetiniz Nedir?",
+    "GENDER_SCREEN_DESC": "Profilinizde görüntülenecektir. İhtiyacınız olursa profilinizde değiştirebilirsiniz.",
+    "MAN_GENDER": "Erkek",
+    "WOMAN_GENDER": "Kadın",
+    "NON_BINARY_GENDER": "Non-Binary"
   }
 }

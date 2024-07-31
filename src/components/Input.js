@@ -40,7 +40,7 @@ const Input = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    paddingHorizontal: 16,
     borderRadius: 12,
     flexDirection: "row",
     alignItems: "center",
@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   input: {
+    paddingVertical: 16,
     flex: 1,
     fontSize: 16,
     fontWeight: "400",

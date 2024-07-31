@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Image, StyleSheet, View, Alert, Platform, Linking, AppState, Dimensions } from "react-native";
+import {
+  Image,
+  StyleSheet,
+  View,
+  Alert,
+  Platform,
+  Linking,
+  AppState,
+  Dimensions,
+  ActivityIndicator,
+} from "react-native";
 import * as Location from "expo-location";
 import OnboardingHeading from "../../components/OnboardingHeading";
 import Button from "../../components/Button";
@@ -7,32 +17,36 @@ import ProggressBar from "../../components/ProggressBar";
 import Modal from "../../components/Modal";
 import { useNavigation } from "@react-navigation/native";
 import { t } from "i18next";
+import { postUserLocation } from "../../services/send-location";
 
 const NavigationScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [appState, setAppState] = useState(AppState.currentState);
   const [location, setLocation] = useState(null);
-  const [city, setCity] = useState(null);
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
 
   useEffect(() => {
     (async () => {
       let response = await Location.hasServicesEnabledAsync();
       setModalVisible(!response);
-    })(); 
+    })();
   }, []);
 
   useEffect(() => {
     const handleAppStateChange = async (nextAppState) => {
-      if (appState.match(/inactive|background/) && nextAppState === 'active') {
+      if (appState.match(/inactive|background/) && nextAppState === "active") {
         let response = await Location.hasServicesEnabledAsync();
         setModalVisible(!response);
-      } 
+      }
       setAppState(nextAppState);
     };
-    const subscription = AppState.addEventListener('change', handleAppStateChange);
+    const subscription = AppState.addEventListener(
+      "change",
+      handleAppStateChange
+    );
     return () => subscription.remove();
-  }, [appState])
+  }, [appState]);
 
   useEffect(() => {
     if (location) {
@@ -41,38 +55,45 @@ const NavigationScreen = () => {
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
         });
-        if (reverseGeocode.length > 0) {
-          // console.log('city',reverseGeocode); // istek atılacağı zaman bakıcam
-          setCity(reverseGeocode[0].city);
-        }
+        // if (reverseGeocode.length > 0) {
+        //   const data = {
+        //     latitude: location.coords.latitude,
+        //     longitude: location.coords.longitude,
+        //     city: reverseGeocode[0].city,
+        //     isoCountryCode: reverseGeocode[0].isoCountryCode
+        //   }
+        //   try {
+        //     const res = await postUserLocation(data)
+        //     console.log('res', res);
+        //   } catch (error) {
+        //     console.error(error);
+        //   }
+        // }
+        setLoading(false);
       })();
     }
   }, [location]);
 
-  
-
   const handleButtonPress = async () => {
+    setLoading(true);
     let response = await Location.requestForegroundPermissionsAsync();
-    
-    if (response.status === 'granted') {
+
+    if (response.status === "granted") {
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
       navigation.navigate("Name");
     } else {
-      Alert.alert(
-        "İzin verilmedi",
-        "Konum izni gerekli",
-        [
-          { text: "İptal", style: "cancel" },
-          { text: "Ayarlar", onPress: () => openSettings() }
-        ]
-      );
+      Alert.alert("İzin verilmedi", "Konum izni gerekli", [
+        { text: "İptal", style: "cancel" },
+        { text: "Ayarlar", onPress: () => openSettings() },
+      ]);
     }
+    setLoading(false);
   };
 
   const openSettings = () => {
-    if (Platform.OS === 'ios') {
-      Linking.openURL('app-settings:');
+    if (Platform.OS === "ios") {
+      Linking.openURL("app-settings:");
     } else {
       Linking.openSettings();
     }
@@ -80,7 +101,7 @@ const NavigationScreen = () => {
 
   const modalBtnClickHandler = () => {
     Linking.openSettings();
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -96,7 +117,9 @@ const NavigationScreen = () => {
           style={styles.textArea}
         />
       </View>
-      <Button variant="primary" onPress={handleButtonPress}>{t("ALLOW_PERMISSION")}</Button>
+      <Button variant={loading ? "disable" : "primary"} disabled={loading} loader={loading && <ActivityIndicator/>} onPress={handleButtonPress}>
+        {t("ALLOW_PERMISSION")}
+      </Button>
       <Modal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
@@ -111,7 +134,7 @@ const NavigationScreen = () => {
   );
 };
 
-const imgHeight = (Dimensions.get("window").height) / 2.7;
+const imgHeight = Dimensions.get("window").height / 2.7;
 
 const styles = StyleSheet.create({
   container: {

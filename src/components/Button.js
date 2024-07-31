@@ -6,6 +6,7 @@ const Button = ({
   type = "button",
   variant = "primary",
   disabled = false,
+  loader,
   children,
   style,
   ...props
@@ -26,6 +27,7 @@ const Button = ({
       {...props}
     >
       <CustomText style={textStyle}>{children}</CustomText>
+      {loader ?? loader}
     </TouchableOpacity>
   );
 };
@@ -35,10 +37,12 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 24,
     borderRadius: 12,
+    flexDirection: "row",
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
     width: '100%',
+    gap: 12
   },
   text: {
     color: 'white',

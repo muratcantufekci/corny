@@ -41,6 +41,14 @@
     "GENDER_SCREEN_DESC": "Profilinizde görüntülenecektir. İhtiyacınız olursa profilinizde değiştirebilirsiniz.",
     "MAN_GENDER": "Erkek",
     "WOMAN_GENDER": "Kadın",
-    "NON_BINARY_GENDER": "Non-Binary"
+    "NON_BINARY_GENDER": "Non-Binary",
+    "BIRTHDAY_SCREEN_TITLE": "Doğum tarihin nedir?",
+    "MAIL_SCREEN_TITLE": "E-posta adresiniz nedir?",
+    "MAIL": "E-posta",
+    "MAIL_REQUIRED": "E-posta alanı zorunludur!",
+    "MAIL_FORMAT": "Geçerli bir e-posta giriniz!",
+    "END_SCREEN_TITLE": "Başardın!",
+    "END_SCREEN_DESC": "Sizinle aynı filmleri ve dizileri izleyen ve seven insanları bulun.",
+    "DISCOVER": "Keşfet"
   }
 }

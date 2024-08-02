@@ -5,6 +5,7 @@ import ProggressBar from "../../components/ProggressBar";
 import { t } from "i18next";
 import Button from "../../components/Button";
 import RadioButton from "../../components/RadioButton";
+import { useNavigation } from "@react-navigation/native";
 
 const genders = [
   {
@@ -23,6 +24,12 @@ const genders = [
 
 const GenderScreen = () => {
   const [seledtedItemId, setSelectedItemId] = useState(null);
+  const navigation = useNavigation();
+
+  const nextBtnPressHandler = () => {
+    navigation.navigate("Birthday");
+  }
+
   return (
     <View style={styles.container}>
       <View>
@@ -44,7 +51,7 @@ const GenderScreen = () => {
           ))}
         </View>
       </View>
-      <Button variant="primary">{t("NEXT")}</Button>
+      <Button variant="primary" onPress={nextBtnPressHandler}>{t("NEXT")}</Button>
     </View>
   );
 };

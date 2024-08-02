@@ -41,6 +41,14 @@
     "GENDER_SCREEN_DESC": "It will be displayed in your profile. If you need you can change it in your profile.",
     "MAN_GENDER": "Man",
     "WOMAN_GENDER": "Woman",
-    "NON_BINARY_GENDER": "Non-Binary"
+    "NON_BINARY_GENDER": "Non-Binary",
+    "BIRTHDAY_SCREEN_TITLE": "What’s your day of birth?",
+    "MAIL_SCREEN_TITLE": "What’s your Email?",
+    "MAIL": "Email",
+    "MAIL_REQUIRED": "Email field is required!",
+    "MAIL_FORMAT": "Please enter a valid email!",
+    "END_SCREEN_TITLE": "You did it!",
+    "END_SCREEN_DESC": "Find people who watch and love the same movies and tv series you do.",
+    "DISCOVER": "Discover"
   }
 }

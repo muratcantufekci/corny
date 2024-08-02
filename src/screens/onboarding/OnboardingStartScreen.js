@@ -55,9 +55,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     paddingHorizontal: 30,
   },
-  button: {
-    alignSelf: "flex-end",
-  },
 });
 
 export default OnboardingStartScreen;

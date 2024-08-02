@@ -11,6 +11,7 @@ const useOnboardingStore = create((set) => ({
   birthday: "",
   email: "",
   identifierCode: "",
+  phoneLang: "",
   setPhone: (phone) => set({ phone }),
   setCode: (code) => set({ code }),
   setCity: (city) => set({ city }),
@@ -20,6 +21,7 @@ const useOnboardingStore = create((set) => ({
   setBirthday: (birthday) => set({ birthday }),
   setEmail: (email) => set({ email }),
   setIdentifierCode: (identifierCode) => set({ identifierCode }),
+  setPhoneLang: (phoneLang) => set({ phoneLang }),
 }));
 
 export default useOnboardingStore;

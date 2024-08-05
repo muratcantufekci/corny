@@ -55,20 +55,22 @@ const NavigationScreen = () => {
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
         });
-        // if (reverseGeocode.length > 0) {
-        //   const data = {
-        //     latitude: location.coords.latitude,
-        //     longitude: location.coords.longitude,
-        //     city: reverseGeocode[0].city,
-        //     isoCountryCode: reverseGeocode[0].isoCountryCode
-        //   }
-        //   try {
-        //     const res = await postUserLocation(data)
-        //     console.log('res', res);
-        //   } catch (error) {
-        //     console.error(error);
-        //   }
-        // }
+        if (reverseGeocode.length > 0) {
+          const data = {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            city: reverseGeocode[0].city,
+            isoCountryCode: reverseGeocode[0].isoCountryCode
+          }
+          try {
+            const res = await postUserLocation(data)
+            if(res.isSuccess) {
+              navigation.navigate("Name");
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        }
         setLoading(false);
       })();
     }
@@ -81,7 +83,6 @@ const NavigationScreen = () => {
     if (response.status === "granted") {
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
-      navigation.navigate("Name");
     } else {
       Alert.alert("İzin verilmedi", "Konum izni gerekli", [
         { text: "İptal", style: "cancel" },

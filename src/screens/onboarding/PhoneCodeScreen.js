@@ -15,9 +15,13 @@ import { useNavigation } from "@react-navigation/native";
 import CustomText from "../../components/CustomText";
 import OTPInputView from "@twotalltotems/react-native-otp-input";
 import { t } from "i18next";
+import { authenticate } from "../../services/authenticate";
+import useUserStore from "../../store/useUserStore";
+import * as SecureStore from 'expo-secure-store';
 
 const PhoneCodeScreen = () => {
   const onboardingStore = useOnboardingStore();
+  const userStore = useUserStore();
   const [timer, setTimer] = useState(20);
   const [resendEnabled, setResendEnabled] = useState(false);
   const [isCodeValid, setIsCodeValid] = useState(true);
@@ -28,8 +32,8 @@ const PhoneCodeScreen = () => {
   useEffect(() => {
     const verifyPhone = async () => {
       try {
-        // const res = await postPhoneVerification(data);
-        // onboardingStore.setIdentifierCode(res.identifierCode);
+        const res = await postPhoneVerification(data);
+        onboardingStore.setIdentifierCode(res.identifierCode);
       } catch (error) {
         console.error(error);
       }
@@ -69,6 +73,10 @@ const PhoneCodeScreen = () => {
       setIsCodeValid(true);
       const response = await postVerifyCode(data);
       if (response.isSuccess) {
+        const res = await authenticate(data);
+        userStore.setToken(res.token)
+        await SecureStore.setItemAsync('refresh_token', res.refreshToken);
+
         navigation.navigate("Navigation");
       } else {
         setIsCodeValid(false);

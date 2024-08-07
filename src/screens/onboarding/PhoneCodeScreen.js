@@ -80,7 +80,6 @@ const PhoneCodeScreen = () => {
         navigation.navigate("Navigation");
       } else {
         setIsCodeValid(false);
-        navigation.navigate("Navigation"); // test amaçlı sonradan kaldırılacak
       }
     } else {
       setIsCodeValid(false);

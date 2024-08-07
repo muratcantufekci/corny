@@ -16,12 +16,18 @@ class Request {
     });
   }
 
-  get = async (dest, params = {}, config = {}) => {
-    const { data } = await this.instance.get(dest, {
-      ...config,
-      // headers: getBaseHeaders(config.headers),
-      params,
-    });
+  get = async (dest, config = {}) => {
+    if (config.withAuth) {
+      const token = useUserStore.getState().token;
+      if (token) {
+        config.headers = {
+          ...config.headers,
+          Authorization: `Bearer ${token}`,
+        };
+      }
+    }
+
+    const { data } = await this.instance.get(dest, config);
     return data;
   };
 

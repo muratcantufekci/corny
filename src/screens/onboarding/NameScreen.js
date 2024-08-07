@@ -16,6 +16,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import WrongIcon from "../../assets/svg/close-circle-wrong.svg";
 import CorrectIcon from "../../assets/svg/minus-tick-correct.svg";
+import { postUsername } from "../../services/send-name";
 
 const NameScreen = () => {
   const { t } = useTranslation();
@@ -25,6 +26,13 @@ const NameScreen = () => {
     name: Yup.string().required(t("NAME_REQUIRED")),
   });
 
+  const submitHandler = async (name) => {
+    const response = await postUsername(name)
+    if(response.isSuccess) {
+      navigation.navigate("Photo");
+    }
+  }
+
   return (
     <Formik
       initialValues={{
@@ -32,7 +40,7 @@ const NameScreen = () => {
       }}
       validationSchema={validation}
       onSubmit={(values) => {
-        navigation.navigate("Photo");
+        submitHandler(values.name)
       }}
     >
       {({ handleChange, handleBlur, handleSubmit, errors, touched }) => (

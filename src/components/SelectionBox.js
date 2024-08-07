@@ -9,8 +9,9 @@ import {
 import User from "../assets/svg/user.svg";
 import Plus from "../assets/svg/plus.svg";
 import Check from "../assets/svg/check.svg";
+import Close from "../assets/svg/close-circle-wrong.svg";
 
-const SelectionBox = ({ isMovie, img, selected, selectFunc }) => {
+const SelectionBox = ({ isMovie, img, selected, selectFunc, deleteFunc }) => {
   return (
     <TouchableOpacity
       style={[styles.container, selected ? styles.noDashedBorder : ""]}
@@ -31,6 +32,11 @@ const SelectionBox = ({ isMovie, img, selected, selectFunc }) => {
         <View style={styles.plusIcon}>
           <Plus />
         </View>
+      )}
+      {selected && !isMovie && (
+        <TouchableOpacity style={styles.closeIcon} onPress={deleteFunc}>
+          <Close width={30} height={30}/>
+        </TouchableOpacity>
       )}
     </TouchableOpacity>
   );
@@ -66,6 +72,13 @@ const styles = StyleSheet.create({
     bottom: -13,
     right: 0,
     color: "black"
+  },
+  closeIcon: {
+    position: "absolute",
+    top: -10,
+    right: -10,
+    backgroundColor: "white",
+    borderRadius: 50
   },
   imageContainer: {
     width: "100%",

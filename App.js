@@ -21,6 +21,7 @@ import GenderScreen from "./src/screens/onboarding/GenderScreen";
 import BirthdayScreen from "./src/screens/onboarding/BirthdayScreen";
 import MailScreen from "./src/screens/onboarding/MailScreen";
 import OnboardingEndScreen from "./src/screens/onboarding/OnboardingEndScreen";
+import Back from "./src/assets/svg/arrow-left.svg"
 
 const Stack = createStackNavigator();
 // const Tab = createBottomTabNavigator();
@@ -42,13 +43,11 @@ const AuthStack = () => (
           },
         },
       },
-      headerBackTitle: "Geri",
+      headerBackTitleVisible: false,
+      headerBackImage: () => (
+        <Back width={30} height={30}/>
+      ),
       headerTitle: "",
-      headerBackTitleStyle: {
-        color: "#045bb3",
-        fontSize: 16,
-        fontWeight: "700",
-      },
       headerTintColor: "#045bb3",
       // animationEnabled: false
     }}

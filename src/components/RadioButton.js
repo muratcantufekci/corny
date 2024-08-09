@@ -1,18 +1,22 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import CustomText from "./CustomText";
-import Check from "../assets/svg/check.svg"
+import Check from "../assets/svg/check.svg";
 
-const RadioButton = ({ id, text, icon, selected, selectedItemIdSetter }) => {
+const RadioButton = ({ text, code, icon, selected, selectedItemIdSetter }) => {
   const radioPressHandler = () => {
-    selectedItemIdSetter(id)
+    selectedItemIdSetter(code);
   };
   return (
     <TouchableOpacity
       style={[styles.container, selected && styles.containerSelected]}
       onPress={radioPressHandler}
     >
-      {selected ? <Check width={20} height={20} style={styles.check} /> : <View style={styles.radio}></View>}
+      {selected ? (
+        <Check width={20} height={20} style={styles.check} />
+      ) : (
+        <View style={styles.radio}></View>
+      )}
       <CustomText style={styles.text}>{text}</CustomText>
     </TouchableOpacity>
   );
@@ -41,7 +45,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F5F5F5",
   },
   check: {
-    color: "#FFFFFF"
+    color: "#FFFFFF",
   },
   text: {
     fontWeight: "400",

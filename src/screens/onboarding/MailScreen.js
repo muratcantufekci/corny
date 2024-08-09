@@ -1,5 +1,10 @@
 import React from "react";
-import { Keyboard, StyleSheet, TouchableWithoutFeedback, View } from "react-native";
+import {
+  Keyboard,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 import ProggressBar from "../../components/ProggressBar";
 import OnboardingHeading from "../../components/OnboardingHeading";
 import { t } from "i18next";
@@ -11,18 +16,34 @@ import WrongIcon from "../../assets/svg/close-circle-wrong.svg";
 import CorrectIcon from "../../assets/svg/minus-tick-correct.svg";
 import ErrorText from "../../components/ErrorText";
 import { useNavigation } from "@react-navigation/native";
+import { postEmail } from "../../services/send-email";
 
 const validation = Yup.object().shape({
-  mail: Yup.string().email(t("MAIL_FORMAT")).required(t("MAIL_REQUIRED")),
+  mail: Yup.string().matches(
+    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+    t("MAIL_FORMAT")
+  )
+  .required(t("MAIL_REQUIRED"))
 });
 
 const MailScreen = () => {
-    const navigation = useNavigation();
+  const navigation = useNavigation();
+
+  const formSubmitHandler = async (mail) => {
+    const response = await postEmail(mail);
+    console.log('resp',response);
+    
+    if(response.isSuccess) {
+      navigation.navigate("OnboardingEnd")
+    }
+  };
   return (
     <Formik
       initialValues={{ mail: "" }}
       validationSchema={validation}
-      onSubmit={() => navigation.navigate("OnboardingEnd")}
+      onSubmit={(values) => {
+        formSubmitHandler(values.mail);
+      }}
     >
       {({
         handleChange,
@@ -58,7 +79,9 @@ const MailScreen = () => {
                 <ErrorText message={errors.mail} />
               )}
             </View>
-            <Button variant="primary" onPress={handleSubmit}>{t("NEXT")}</Button>
+            <Button variant="primary" onPress={handleSubmit}>
+              {t("NEXT")}
+            </Button>
           </View>
         </TouchableWithoutFeedback>
       )}

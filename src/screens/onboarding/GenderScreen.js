@@ -6,29 +6,37 @@ import { t } from "i18next";
 import Button from "../../components/Button";
 import RadioButton from "../../components/RadioButton";
 import { useNavigation } from "@react-navigation/native";
+import { postGender } from "../../services/send-gender";
 
 const genders = [
   {
     id: 1,
     gender: t("MAN_GENDER"),
+    code: "male",
   },
   {
     id: 2,
     gender: t("WOMAN_GENDER"),
+    code: "female",
   },
   {
     id: 3,
     gender: t("NON_BINARY_GENDER"),
+    code: "nonbinary",
   },
 ];
 
 const GenderScreen = () => {
-  const [seledtedItemId, setSelectedItemId] = useState(null);
+  const [seledtedItem, setSelectedItem] = useState(null);
   const navigation = useNavigation();
 
-  const nextBtnPressHandler = () => {
-    navigation.navigate("Birthday");
-  }
+  const nextBtnPressHandler = async () => {
+    const response = await postGender(seledtedItem);
+
+    if (response.isSuccess) {
+      navigation.navigate("Birthday");
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -43,15 +51,17 @@ const GenderScreen = () => {
           {genders.map((item) => (
             <RadioButton
               key={item.id}
-              id={item.id}
+              code={item.code}
               text={item.gender}
-              selectedItemIdSetter={setSelectedItemId}
-              selected={item.id === seledtedItemId ? true : false}
+              selectedItemIdSetter={setSelectedItem}
+              selected={item.code === seledtedItem ? true : false}
             />
           ))}
         </View>
       </View>
-      <Button variant="primary" onPress={nextBtnPressHandler}>{t("NEXT")}</Button>
+      <Button variant="primary" onPress={nextBtnPressHandler}>
+        {t("NEXT")}
+      </Button>
     </View>
   );
 };

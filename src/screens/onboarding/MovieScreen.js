@@ -19,6 +19,7 @@ import Search from "../../assets/svg/search.svg";
 import CustomText from "../../components/CustomText";
 import { searchTvShowsByText } from "../../services/search-tv-shows";
 import { useNavigation } from "@react-navigation/native";
+import { postUserMovies } from "../../services/send-movie";
 
 const MovieScreen = () => {
   const reqiredChoiceCount = 5;
@@ -88,6 +89,8 @@ const MovieScreen = () => {
         console.error(error);
         setLoading(false);
       }
+    } else {
+      setTvShows(tvShowsCopy);
     }
   };
 
@@ -96,8 +99,16 @@ const MovieScreen = () => {
     setTvShows(tvShowsCopy);
   };
 
-  const nextBtnHandler = () => {
-    navigation.navigate("Gender");
+  const nextBtnHandler = async () => {
+    const data = {
+      tvShowIds: selectedTvShows.map(item => item.id)
+    } 
+    const response = await postUserMovies(data)
+    
+
+    if(response.isSuccess) {
+      navigation.navigate("Gender");
+    }
   };
 
   return (

@@ -16,7 +16,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 2,
     paddingHorizontal: 40,
-    marginBottom: 32
+    marginBottom: 32,
+    marginTop: 16
   },
   step: {
     flex: 1,

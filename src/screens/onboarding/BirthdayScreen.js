@@ -7,6 +7,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import * as Localization from "expo-localization";
 import Button from "../../components/Button";
 import { useNavigation } from "@react-navigation/native";
+import { postBirthday } from "../../services/send-birthday";
 
 const BirthdayScreen = () => {
   const [date, setDate] = useState(new Date());
@@ -14,18 +15,31 @@ const BirthdayScreen = () => {
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
+
     setDate(currentDate);
   };
 
-  const nextBtnPressHandler = () => {
-    navigation.navigate("Mail");
-  }
+  const nextBtnPressHandler = async () => {
+    const day = date.getUTCDate();
+    const month = date.getUTCMonth() + 1;
+    const year = date.getUTCFullYear();
+
+    const response = await postBirthday(day, month, year)
+    
+    if(response.isSuccess) {
+      navigation.navigate("Mail");
+    }
+
+  };
 
   return (
     <View style={styles.container}>
       <View>
         <ProggressBar step={6} />
-        <OnboardingHeading title={t("BIRTHDAY_SCREEN_TITLE")} style={styles.textArea}/>
+        <OnboardingHeading
+          title={t("BIRTHDAY_SCREEN_TITLE")}
+          style={styles.textArea}
+        />
         <View style={styles.dateWrapper}>
           <DateTimePicker
             value={date}
@@ -33,11 +47,14 @@ const BirthdayScreen = () => {
             onChange={onChange}
             display="spinner"
             locale={Localization.locale}
-            maximumDate={new Date()}
+            maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))}
+            timeZoneName="UTC"
           />
         </View>
       </View>
-        <Button variant="primary" onPress={nextBtnPressHandler}>{t("NEXT")}</Button>
+      <Button variant="primary" onPress={nextBtnPressHandler}>
+        {t("NEXT")}
+      </Button>
     </View>
   );
 };

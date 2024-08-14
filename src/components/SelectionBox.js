@@ -1,49 +1,113 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   StyleSheet,
   View,
   TouchableOpacity,
   Image,
   Dimensions,
+  Animated,
 } from "react-native";
 import User from "../assets/svg/user.svg";
 import Plus from "../assets/svg/plus.svg";
 import Check from "../assets/svg/check.svg";
 import Close from "../assets/svg/close-circle-wrong.svg";
 
-const SelectionBox = ({ isMovie, img, selected, selectFunc, deleteFunc }) => {
+const SelectionBox = ({
+  isMovie,
+  img,
+  selected,
+  selectFunc,
+  deleteFunc,
+  onLongPress,
+  isShaking,
+}) => {
+  const rotation = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if(!isShaking){
+      stopShakeAnimation()
+    }
+  },[isShaking])
+
+  const startShakeAnimation = () => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(rotation, {
+          toValue: 2,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+        Animated.timing(rotation, {
+          toValue: -2,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+        Animated.timing(rotation, {
+          toValue: 2,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+        Animated.timing(rotation, {
+          toValue: 0,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  };
+
+  const stopShakeAnimation = () => {
+    rotation.stopAnimation();
+    rotation.setValue(0);
+  };
+
+  const rotateInterpolate = rotation.interpolate({
+    inputRange: [-2, 0, 2],
+    outputRange: ["-2deg", "0deg", "2deg"],
+  });
+
   return (
-    <TouchableOpacity
-      style={[styles.container, selected ? styles.noDashedBorder : ""]}
-      onPress={selectFunc}
+    <Animated.View
+      style={[
+        styles.container,
+        selected ? styles.noDashedBorder : "",
+        { transform: [{ rotate: rotateInterpolate }] },
+      ]}
     >
-      <View style={styles.imageContainer}>
-        {img ? (
-          <Image source={{ uri: img }} style={styles.image} />
-        ) : isMovie ? (
-          null
-        ) : (
-          <User />
-        )}
-      </View>
-      {selected ? (
-        <Check style={styles.checkIcon} />
-      ) : (
-        <View style={styles.plusIcon}>
-          <Plus />
+      <TouchableOpacity
+        onPress={selectFunc}
+        onLongPress={() => {
+          startShakeAnimation();
+          onLongPress();
+        }}
+        // onPressOut={stopShakeAnimation}
+      >
+        <View style={styles.imageContainer}>
+          {img ? (
+            <Image source={{ uri: img }} style={styles.image} />
+          ) : isMovie ? null : (
+            <User />
+          )}
         </View>
-      )}
-      {selected && !isMovie && (
-        <TouchableOpacity style={styles.closeIcon} onPress={deleteFunc}>
-          <Close width={30} height={30}/>
-        </TouchableOpacity>
-      )}
-    </TouchableOpacity>
+        {selected ? (
+          <Check style={styles.checkIcon} />
+        ) : (
+          <View style={styles.plusIcon}>
+            <Plus />
+          </View>
+        )}
+        {selected && !isMovie && (
+          <TouchableOpacity style={styles.closeIcon} onPress={deleteFunc}>
+            <Close width={30} height={30} />
+          </TouchableOpacity>
+        )}
+      </TouchableOpacity>
+    </Animated.View>
   );
 };
 
 const boxWidth = (Dimensions.get("window").width - 64) / 3;
-const boxHeight = (Dimensions.get("window").height) / 5.5;
+const boxHeight = Dimensions.get("window").height / 5.5;
 
 const styles = StyleSheet.create({
   container: {
@@ -65,20 +129,20 @@ const styles = StyleSheet.create({
     bottom: -12,
     right: -5,
     backgroundColor: "white",
-    borderRadius: 50
+    borderRadius: 50,
   },
   checkIcon: {
     position: "absolute",
     bottom: -13,
     right: 0,
-    color: "black"
+    color: "black",
   },
   closeIcon: {
     position: "absolute",
     top: -10,
     right: -10,
     backgroundColor: "white",
-    borderRadius: 50
+    borderRadius: 50,
   },
   imageContainer: {
     width: "100%",

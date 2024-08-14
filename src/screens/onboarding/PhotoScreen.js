@@ -9,11 +9,14 @@ import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "@react-navigation/native";
 import { postUserPhoto } from "../../services/send-photo";
 import { deleteUserPhoto } from "../../services/delete-photo";
+import { postUserPhotoOrder } from "../../services/send-photos-order";
 
 const PhotoScreen = () => {
   const [isBtnDisabled, setIsBtnDisaled] = useState(true);
   const [btnVariant, setBtnVariant] = useState("disable");
   const [selectedImages, setSelectedImages] = useState([]);
+  const [longPressedIndex, setLongPressesIndex] = useState("");
+  const [isShaking, setIsShaking] = useState(false);
   const navigation = useNavigation();
 
   const selectImage = async () => {
@@ -71,13 +74,34 @@ const PhotoScreen = () => {
   const deleteImage = async (id) => {
     const response = await deleteUserPhoto(id);
 
-    if(response.isSuccess) {
-      setSelectedImages(selectedImages.filter(item => item.id !== id))
+    if (response.isSuccess) {
+      setSelectedImages(selectedImages.filter((item) => item.id !== id));
     }
   };
 
-  const nextBtnClickHandler = () => {
+  const nextBtnClickHandler = async () => {
+    // const data = selectedImages.map((image, index) => ({
+    //   imageId: image.id,
+    //   orderIndex: index,
+    // }));
+    // const response = await postUserPhotoOrder(data)
+    // console.log('resp',response);
+    
+    // if(response.isSuccess) {
+    //   navigation.navigate("Movie");
+    // }
     navigation.navigate("Movie");
+    
+  };
+
+  const orderImages = (index) => {
+    const newImages = [...selectedImages];
+    const temp = newImages[longPressedIndex];
+    newImages[longPressedIndex] = newImages[index];
+    newImages[index] = temp;
+    setSelectedImages(newImages);
+    setLongPressesIndex("");
+    setIsShaking(false);
   };
 
   return (
@@ -93,7 +117,16 @@ const PhotoScreen = () => {
           {Array.from({ length: 6 }).map((_, index) => (
             <SelectionBox
               key={index}
-              selectFunc={selectImage}
+              selectFunc={() => {
+                if (
+                  longPressedIndex !== "" &&
+                  selectedImages.length >= index + 1
+                ) {
+                  orderImages(index);
+                } else {
+                  selectImage();
+                }
+              }}
               deleteFunc={() => deleteImage(selectedImages[index].id)}
               img={
                 selectedImages.length >= index + 1
@@ -101,6 +134,11 @@ const PhotoScreen = () => {
                   : null
               }
               selected={selectedImages.length >= index + 1 ? true : false}
+              onLongPress={() => {
+                setLongPressesIndex(index);
+                setIsShaking(true);
+              }}
+              isShaking={isShaking}
             />
           ))}
         </View>

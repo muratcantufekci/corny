@@ -16,7 +16,7 @@ import NumberScreen from "./src/screens/onboarding/NumberScreen";
 import PhoneCodeScreen from "./src/screens/onboarding/PhoneCodeScreen";
 import NavigationScreen from "./src/screens/onboarding/NavigationScreen";
 import NameScreen from "./src/screens/onboarding/NameScreen";
-// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import "./src/lang/i18n";
 import PhotoScreen from "./src/screens/onboarding/PhotoScreen";
 import MovieScreen from "./src/screens/onboarding/MovieScreen";
@@ -29,9 +29,21 @@ import * as SecureStore from "expo-secure-store";
 import { authenticateWithRefreshToken } from "./src/services/authenticate-with-refresh-token";
 import useUserStore from "./src/store/useUserStore";
 import { checkUserConfiguration } from "./src/services/check-user-configurations";
+import ExploreScreen from "./src/screens/explore/ExploreScreen";
+import LikesScreen from "./src/screens/likes/LikesScreen";
+import ChatsScreen from "./src/screens/chats/ChatsScreen";
+import ProfileScreen from "./src/screens/profile/ProfileScreen";
+import ExplorePassive from "./src/assets/svg/explore-passive.svg";
+import ExploreActive from "./src/assets/svg/explore-active.svg";
+import LikesPassive from "./src/assets/svg/likes-passive.svg";
+import LikesActive from "./src/assets/svg/likes-active.svg";
+import ChatsPassive from "./src/assets/svg/chat-passive.svg";
+import ChatsActive from "./src/assets/svg/chats-active.svg";
+import ProfilePassive from "./src/assets/svg/user.svg";
+import ProfileActive from "./src/assets/svg/user-active.svg";
 
 const Stack = createStackNavigator();
-// const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator();
 
 const AuthStack = () => (
   <Stack.Navigator
@@ -76,12 +88,75 @@ const AuthStack = () => (
   </Stack.Navigator>
 );
 
-// const AppTabs = () => (
-//   <Tab.Navigator>
-//     <Tab.Screen name="Home" component={HomeScreen} />
-//     <Tab.Screen name="Profile" component={ProfileScreen} />
-//   </Tab.Navigator>
-// );
+const AppTabs = () => (
+  <Tab.Navigator
+    screenOptions={{
+      tabBarStyle: {
+        borderTopColor: "#EFEFF1",
+        borderTopWidth: 1,
+        paddingTop: 16,
+        height: 60,
+        marginHorizontal: -16,
+      },
+      tabBarLabelStyle: {
+        marginTop: 8,
+        fontSize: 12,
+        fontWeight: '600'
+      },
+      tabBarActiveTintColor: '#000000',
+      tabBarInactiveTintColor: '#A0A1AB',
+    }}
+  >
+    <Tab.Screen
+      name="Explore"
+      component={ExploreScreen}
+      options={{
+        tabBarIcon: ({ focused }) =>
+          focused ? (
+            <ExploreActive width={24} height={24} />
+          ) : (
+            <ExplorePassive width={24} height={24} />
+          ),
+      }}
+    />
+    <Tab.Screen
+      name="Likes"
+      component={LikesScreen}
+      options={{
+        tabBarIcon: ({ focused }) =>
+          focused ? (
+            <LikesActive width={24} height={24} />
+          ) : (
+            <LikesPassive width={24} height={24} />
+          ),
+      }}
+    />
+    <Tab.Screen
+      name="Chats"
+      component={ChatsScreen}
+      options={{
+        tabBarIcon: ({ focused }) =>
+          focused ? (
+            <ChatsActive width={24} height={24} />
+          ) : (
+            <ChatsPassive width={24} height={24} />
+          ),
+      }}
+    />
+    <Tab.Screen
+      name="Profile"
+      component={ProfileScreen}
+      options={{
+        tabBarIcon: ({ focused }) =>
+          focused ? (
+            <ProfileActive width={24} height={24} />
+          ) : (
+            <ProfilePassive width={24} height={24} style={{color: "#A0A1AB"}}/>
+          ),
+      }}
+    />
+  </Tab.Navigator>
+);
 
 const navigationRef = createNavigationContainerRef();
 
@@ -158,7 +233,7 @@ export default function App() {
           setIsLoading(false);
         } else {
           const congifurResponse = await checkUserConfiguration();
-          
+
           userStore.setIsUserLoggedIn(false);
           setIsLoading(false);
           checkAndRedirect(congifurResponse);
@@ -167,7 +242,7 @@ export default function App() {
         const timer = setTimeout(() => {
           setIsLoading(false);
         }, 2000);
-    
+
         return () => clearTimeout(timer);
       }
     };
@@ -194,7 +269,7 @@ export default function App() {
         ref={navigationRef}
         theme={{ colors: { background: "transparent" } }}
       >
-        {userStore.isUserLoggedIn ? <Text>Hello</Text> : <AuthStack />}
+        {userStore.isUserLoggedIn ? <AppTabs /> : <AuthStack />}
       </NavigationContainer>
       <StatusBar style="dark" />
     </View>

@@ -86,7 +86,7 @@ const SelectionBox = ({
           {img ? (
             <Image source={{ uri: img }} style={styles.image} />
           ) : isMovie ? null : (
-            <User />
+            <User style={{color: "#D1D1D6"}}/>
           )}
         </View>
         {selected ? (

@@ -19,12 +19,20 @@ import { useNavigation } from "@react-navigation/native";
 import { t } from "i18next";
 import { postUserLocation } from "../../services/send-location";
 
-const NavigationScreen = () => {
+const NavigationScreen = ({ route }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [appState, setAppState] = useState(AppState.currentState);
   const [location, setLocation] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    if (route.params?.disableBack) {
+      navigation.setOptions({
+        headerLeft: () => null,
+      });
+    }
+  }, [navigation, route.params?.disableBack]);
 
   useEffect(() => {
     (async () => {
@@ -60,11 +68,11 @@ const NavigationScreen = () => {
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,
             city: reverseGeocode[0].city,
-            isoCountryCode: reverseGeocode[0].isoCountryCode
-          }
+            isoCountryCode: reverseGeocode[0].isoCountryCode,
+          };
           try {
-            const res = await postUserLocation(data)
-            if(res.isSuccess) {
+            const res = await postUserLocation(data);
+            if (res.isSuccess) {
               navigation.navigate("Name");
             }
           } catch (error) {
@@ -118,7 +126,12 @@ const NavigationScreen = () => {
           style={styles.textArea}
         />
       </View>
-      <Button variant={loading ? "disable" : "primary"} disabled={loading} loader={loading && <ActivityIndicator/>} onPress={handleButtonPress}>
+      <Button
+        variant={loading ? "disable" : "primary"}
+        disabled={loading}
+        loader={loading && <ActivityIndicator />}
+        onPress={handleButtonPress}
+      >
         {t("ALLOW_PERMISSION")}
       </Button>
       <Modal

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import ProggressBar from "../../components/ProggressBar";
 import OnboardingHeading from "../../components/OnboardingHeading";
@@ -10,14 +10,43 @@ import { useNavigation } from "@react-navigation/native";
 import { postUserPhoto } from "../../services/send-photo";
 import { deleteUserPhoto } from "../../services/delete-photo";
 import { postUserPhotoOrder } from "../../services/send-photos-order";
+import { getProfileImages } from "../../services/get-profile-images";
 
-const PhotoScreen = () => {
+const PhotoScreen = ({ route }) => {
   const [isBtnDisabled, setIsBtnDisaled] = useState(true);
   const [btnVariant, setBtnVariant] = useState("disable");
   const [selectedImages, setSelectedImages] = useState([]);
   const [longPressedIndex, setLongPressesIndex] = useState("");
   const [isShaking, setIsShaking] = useState(false);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const getProfilePictures = async () => {
+      const response = await getProfileImages();
+      if(response.isSuccess) {
+        setSelectedImages(
+          response.images.map((item) => ({
+            id: item.imageId,
+            uri: item.imageUrl,
+          }))
+        );
+        if(selectedImages.length > 0) {
+          setBtnVariant("primary");
+          setIsBtnDisaled(false)
+        }
+      }
+    };
+
+    getProfilePictures();
+  }, []);
+
+  useEffect(() => {
+    if (route.params?.disableBack) {
+      navigation.setOptions({
+        headerLeft: () => null,
+      });
+    }
+  }, [navigation, route.params?.disableBack]);
 
   const selectImage = async () => {
     const permissionResult =
@@ -80,18 +109,15 @@ const PhotoScreen = () => {
   };
 
   const nextBtnClickHandler = async () => {
-    // const data = selectedImages.map((image, index) => ({
-    //   imageId: image.id,
-    //   orderIndex: index,
-    // }));
-    // const response = await postUserPhotoOrder(data)
-    // console.log('resp',response);
-    
-    // if(response.isSuccess) {
-    //   navigation.navigate("Movie");
-    // }
-    navigation.navigate("Movie");
-    
+    const data = selectedImages.map((image, index) => ({
+      imageId: image.id,
+      orderIndex: index,
+    }));
+    const response = await postUserPhotoOrder(data);
+
+    if (response.isSuccess) {
+      navigation.navigate("Movie");
+    }
   };
 
   const orderImages = (index) => {

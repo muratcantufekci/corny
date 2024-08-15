@@ -21,7 +21,7 @@ import { searchTvShowsByText } from "../../services/search-tv-shows";
 import { useNavigation } from "@react-navigation/native";
 import { postUserMovies } from "../../services/send-movie";
 
-const MovieScreen = () => {
+const MovieScreen = ({ route }) => {
   const reqiredChoiceCount = 5;
   const [isBtnDisabled, setIsBtnDisaled] = useState(true);
   const [btnVariant, setBtnVariant] = useState("disable");
@@ -33,6 +33,14 @@ const MovieScreen = () => {
   const [loading, setLoading] = useState(false);
   const [searchInputValue, setSearchInputValue] = useState("");
   const navigation = useNavigation();
+
+  useEffect(() => {
+    if (route.params?.disableBack) {
+      navigation.setOptions({
+        headerLeft: () => null,
+      });
+    }
+  }, [navigation, route.params?.disableBack]);
 
   useEffect(() => {
     const getTvShows = async () => {

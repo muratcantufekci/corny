@@ -17,7 +17,7 @@ import OTPInputView from "@twotalltotems/react-native-otp-input";
 import { t } from "i18next";
 import { authenticate } from "../../services/authenticate";
 import useUserStore from "../../store/useUserStore";
-import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from "expo-secure-store";
 
 const PhoneCodeScreen = () => {
   const onboardingStore = useOnboardingStore();
@@ -74,10 +74,15 @@ const PhoneCodeScreen = () => {
       const response = await postVerifyCode(data);
       if (response.isSuccess) {
         const res = await authenticate(data);
-        userStore.setToken(res.token)
-        await SecureStore.setItemAsync('refresh_token', res.refreshToken);
-
-        navigation.navigate("Navigation");
+        if (res.isSuccess) {
+          userStore.setToken(res.token);
+          await SecureStore.setItemAsync("refresh_token", res.refreshToken);
+          if(res.isConfigured) {
+            userStore.setIsUserLoggedIn(true)
+          } else {
+            navigation.navigate("Navigation");
+          }
+        }
       } else {
         setIsCodeValid(false);
       }

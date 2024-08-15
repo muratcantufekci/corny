@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import OnboardingHeading from "../../components/OnboardingHeading";
 import ProggressBar from "../../components/ProggressBar";
@@ -9,9 +9,17 @@ import Button from "../../components/Button";
 import { useNavigation } from "@react-navigation/native";
 import { postBirthday } from "../../services/send-birthday";
 
-const BirthdayScreen = () => {
+const BirthdayScreen = ({ route }) => {
   const [date, setDate] = useState(new Date());
   const navigation = useNavigation();
+
+  useEffect(() => {
+    if (route.params?.disableBack) {
+      navigation.setOptions({
+        headerLeft: () => null,
+      });
+    }
+  }, [navigation, route.params?.disableBack]);
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;

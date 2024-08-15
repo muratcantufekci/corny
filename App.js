@@ -1,7 +1,10 @@
 import "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  createNavigationContainerRef,
+  NavigationContainer,
+} from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import ProfileSelectionScreen from "./src/screens/ProfileSelectionScreen";
 import { useEffect, useState } from "react";
@@ -21,7 +24,11 @@ import GenderScreen from "./src/screens/onboarding/GenderScreen";
 import BirthdayScreen from "./src/screens/onboarding/BirthdayScreen";
 import MailScreen from "./src/screens/onboarding/MailScreen";
 import OnboardingEndScreen from "./src/screens/onboarding/OnboardingEndScreen";
-import Back from "./src/assets/svg/arrow-left.svg"
+import Back from "./src/assets/svg/arrow-left.svg";
+import * as SecureStore from "expo-secure-store";
+import { authenticateWithRefreshToken } from "./src/services/authenticate-with-refresh-token";
+import useUserStore from "./src/store/useUserStore";
+import { checkUserConfiguration } from "./src/services/check-user-configurations";
 
 const Stack = createStackNavigator();
 // const Tab = createBottomTabNavigator();
@@ -44,11 +51,10 @@ const AuthStack = () => (
         },
       },
       headerBackTitleVisible: false,
-      headerBackImage: () => (
-        <Back width={30} height={30}/>
-      ),
+      headerBackImage: () => <Back width={30} height={30} />,
       headerTitle: "",
       headerTintColor: "#045bb3",
+      gestureEnabled: false,
       // animationEnabled: false
     }}
   >
@@ -77,8 +83,48 @@ const AuthStack = () => (
 //   </Tab.Navigator>
 // );
 
+const navigationRef = createNavigationContainerRef();
+
+const checkAndRedirect = (response) => {
+  const keys = Object.keys(response);
+
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+
+    if (key.startsWith("has") && response[key] === false) {
+      switch (key) {
+        case "hasLocation":
+          navigationRef.current?.navigate("Navigation", { disableBack: true });
+          break;
+        case "hasName":
+          navigationRef.current?.navigate("Name", { disableBack: true });
+          break;
+        case "hasPictures":
+          navigationRef.current?.navigate("Photo", { disableBack: true });
+          break;
+        case "hasShows":
+          navigationRef.current?.navigate("Movie", { disableBack: true });
+          break;
+        case "hasGender":
+          navigationRef.current?.navigate("Gender", { disableBack: true });
+          break;
+        case "hasBirthday":
+          navigationRef.current?.navigate("Birthday", { disableBack: true });
+          break;
+        case "hasEmail":
+          navigationRef.current?.navigate("Mail", { disableBack: true });
+          break;
+        default:
+          break;
+      }
+      break;
+    }
+  }
+};
+
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
+  const userStore = useUserStore();
 
   const [fontsLoaded, error] = useFonts({
     "RethinkSans-Regular": require("./src/assets/fonts/RethinkSans-Regular.ttf"),
@@ -89,18 +135,45 @@ export default function App() {
   });
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
     if (fontsLoaded || error) {
       SplashScreen.hideAsync();
     }
   }, [fontsLoaded, error]);
+
+  useEffect(() => {
+    const setUserLogin = async () => {
+      // await SecureStore.deleteItemAsync("refresh_token"); // test amaçlı refresh token sıfırlayıcı
+      const refreshToken = await SecureStore.getItemAsync("refresh_token");
+
+      if (refreshToken) {
+        const response = await authenticateWithRefreshToken({
+          refreshToken: refreshToken,
+        });
+
+        userStore.setToken(response.token);
+        await SecureStore.setItemAsync("refresh_token", response.refreshToken);
+
+        if (response.isConfigured) {
+          userStore.setIsUserLoggedIn(true);
+          setIsLoading(false);
+        } else {
+          const congifurResponse = await checkUserConfiguration();
+          
+          userStore.setIsUserLoggedIn(false);
+          setIsLoading(false);
+          checkAndRedirect(congifurResponse);
+        }
+      } else {
+        const timer = setTimeout(() => {
+          setIsLoading(false);
+        }, 2000);
+    
+        return () => clearTimeout(timer);
+      }
+    };
+
+    setUserLogin();
+  }, []);
 
   if (isLoading) {
     return (
@@ -115,12 +188,13 @@ export default function App() {
     return null;
   }
 
-  const isLoggedIn = false;
-
   return (
     <View style={styles.wrapper}>
-      <NavigationContainer theme={{ colors: { background: "transparent" } }}>
-        {isLoggedIn ? <Text>Hello</Text> : <AuthStack />}
+      <NavigationContainer
+        ref={navigationRef}
+        theme={{ colors: { background: "transparent" } }}
+      >
+        {userStore.isUserLoggedIn ? <Text>Hello</Text> : <AuthStack />}
       </NavigationContainer>
       <StatusBar style="dark" />
     </View>

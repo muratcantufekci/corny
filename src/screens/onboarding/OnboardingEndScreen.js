@@ -3,8 +3,14 @@ import { Dimensions, Image, StyleSheet, View } from "react-native";
 import CustomText from "../../components/CustomText";
 import Button from "../../components/Button";
 import { t } from "i18next";
+import useUserStore from "../../store/useUserStore";
 
 const OnboardingEndScreen = () => {
+  const userStore = useUserStore();
+
+  const discoverBtnPressHandler = () => {
+    userStore.setIsUserLoggedIn(true);
+  };
   return (
     <View style={styles.container}>
       <View>
@@ -15,7 +21,9 @@ const OnboardingEndScreen = () => {
         <CustomText style={styles.title}>{t("END_SCREEN_TITLE")}</CustomText>
         <CustomText style={styles.desc}>{t("END_SCREEN_DESC")}</CustomText>
       </View>
-      <Button variant="primary">{t("DISCOVER")}</Button>
+      <Button variant="primary" onPress={discoverBtnPressHandler}>
+        {t("DISCOVER")}
+      </Button>
     </View>
   );
 };
@@ -32,7 +40,7 @@ const styles = StyleSheet.create({
     width: 360,
     height: imgHeight,
     marginBottom: 40,
-    objectFit: "contain"
+    objectFit: "contain",
   },
   title: {
     fontWeight: "500",

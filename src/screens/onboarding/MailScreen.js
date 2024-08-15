@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Keyboard,
   StyleSheet,
@@ -17,24 +17,37 @@ import CorrectIcon from "../../assets/svg/minus-tick-correct.svg";
 import ErrorText from "../../components/ErrorText";
 import { useNavigation } from "@react-navigation/native";
 import { postEmail } from "../../services/send-email";
+import { checkUserConfiguration } from "../../services/check-user-configurations";
 
 const validation = Yup.object().shape({
-  mail: Yup.string().matches(
-    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-    t("MAIL_FORMAT")
-  )
-  .required(t("MAIL_REQUIRED"))
+  mail: Yup.string()
+    .matches(
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+      t("MAIL_FORMAT")
+    )
+    .required(t("MAIL_REQUIRED")),
 });
 
-const MailScreen = () => {
+const MailScreen = ({ route }) => {
   const navigation = useNavigation();
+
+  useEffect(() => {
+    if (route.params?.disableBack) {
+      navigation.setOptions({
+        headerLeft: () => null,
+      });
+    }
+  }, [navigation, route.params?.disableBack]);
 
   const formSubmitHandler = async (mail) => {
     const response = await postEmail(mail);
-    console.log('resp',response);
-    
-    if(response.isSuccess) {
-      navigation.navigate("OnboardingEnd")
+
+    if (response.isSuccess) {
+      const response = await checkUserConfiguration();
+      
+      if (response.configurationCompleted) {
+        navigation.navigate("OnboardingEnd");
+      }
     }
   };
   return (

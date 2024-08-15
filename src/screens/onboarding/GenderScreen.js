@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import OnboardingHeading from "../../components/OnboardingHeading";
 import ProggressBar from "../../components/ProggressBar";
@@ -26,9 +26,17 @@ const genders = [
   },
 ];
 
-const GenderScreen = () => {
+const GenderScreen = ({ route }) => {
   const [seledtedItem, setSelectedItem] = useState(null);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    if (route.params?.disableBack) {
+      navigation.setOptions({
+        headerLeft: () => null,
+      });
+    }
+  }, [navigation, route.params?.disableBack]);
 
   const nextBtnPressHandler = async () => {
     const response = await postGender(seledtedItem);

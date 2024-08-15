@@ -17,10 +17,19 @@ import { useNavigation } from "@react-navigation/native";
 import WrongIcon from "../../assets/svg/close-circle-wrong.svg";
 import CorrectIcon from "../../assets/svg/minus-tick-correct.svg";
 import { postUsername } from "../../services/send-name";
+import { useEffect } from "react";
 
-const NameScreen = () => {
+const NameScreen = ({ route }) => {
   const { t } = useTranslation();
   const navigation = useNavigation();
+
+  useEffect(() => {
+    if (route.params?.disableBack) {
+      navigation.setOptions({
+        headerLeft: () => null,
+      });
+    }
+  }, [navigation, route.params?.disableBack]);
 
   const validation = Yup.object().shape({
     name: Yup.string().required(t("NAME_REQUIRED")),

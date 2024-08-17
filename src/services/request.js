@@ -47,7 +47,7 @@ class Request {
   };
 }
 
-const apiUrl = "https://tvmatching.azurewebsites.net/api";
+const apiUrl = "https://cornyapi.azurewebsites.net/api";
 
 const request = new Request(apiUrl);
 

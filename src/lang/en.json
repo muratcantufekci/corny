@@ -49,6 +49,12 @@
     "MAIL_FORMAT": "Please enter a valid email!",
     "END_SCREEN_TITLE": "You did it!",
     "END_SCREEN_DESC": "Find people who watch and love the same movies and tv series you do.",
-    "DISCOVER": "Discover"
+    "DISCOVER": "Discover",
+    "EXPLORE": "Explore",
+    "LIKES": "Likes",
+    "CHATS": "Chats",
+    "PROFILE": "Profile",
+    "MESSAGES": "Messages",
+    "NOTHING_AROUND": "There is nothing around here yet"
   }
 }

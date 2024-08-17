@@ -1,6 +1,6 @@
 import "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
-import { Dimensions, StyleSheet, Text, View } from "react-native";
+import { Dimensions, SafeAreaView, StyleSheet, View } from "react-native";
 import {
   createNavigationContainerRef,
   NavigationContainer,
@@ -41,6 +41,9 @@ import ChatsPassive from "./src/assets/svg/chat-passive.svg";
 import ChatsActive from "./src/assets/svg/chats-active.svg";
 import ProfilePassive from "./src/assets/svg/user.svg";
 import ProfileActive from "./src/assets/svg/user-active.svg";
+import { t } from "i18next";
+import ChatHubScreen from "./src/screens/chats/ChatHubScreen";
+import useAppUtils from "./src/store/useAppUtils";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -58,7 +61,7 @@ const AuthStack = () => (
         close: {
           animation: "timing",
           config: {
-            duration: 100, // Animasyon süresi (milisaniye cinsinden)
+            duration: 100,
           },
         },
       },
@@ -88,75 +91,130 @@ const AuthStack = () => (
   </Stack.Navigator>
 );
 
-const AppTabs = () => (
-  <Tab.Navigator
-    screenOptions={{
-      tabBarStyle: {
-        borderTopColor: "#EFEFF1",
-        borderTopWidth: 1,
-        paddingTop: 16,
-        height: 60,
-        marginHorizontal: -16,
-      },
-      tabBarLabelStyle: {
-        marginTop: 8,
-        fontSize: 12,
-        fontWeight: '600'
-      },
-      tabBarActiveTintColor: '#000000',
-      tabBarInactiveTintColor: '#A0A1AB',
-    }}
-  >
-    <Tab.Screen
-      name="Explore"
-      component={ExploreScreen}
-      options={{
-        tabBarIcon: ({ focused }) =>
-          focused ? (
-            <ExploreActive width={24} height={24} />
-          ) : (
-            <ExplorePassive width={24} height={24} />
-          ),
+const MessagesStack = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        transitionSpec: {
+          open: {
+            animation: "timing",
+            config: {
+              duration: 100,
+            },
+          },
+          close: {
+            animation: "timing",
+            config: {
+              duration: 100,
+            },
+          },
+        },
+        headerBackTitleVisible: false,
+        headerBackImage: () => <Back width={30} height={30} />,
+        headerTitle: "",
+        headerTintColor: "#045bb3",
       }}
-    />
-    <Tab.Screen
-      name="Likes"
-      component={LikesScreen}
-      options={{
-        tabBarIcon: ({ focused }) =>
-          focused ? (
-            <LikesActive width={24} height={24} />
-          ) : (
-            <LikesPassive width={24} height={24} />
-          ),
+    >
+      <Stack.Screen
+        name="Messages"
+        component={ChatsScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="MessageHub"
+        component={ChatHubScreen}
+        options={{
+          headerTransparent: false,
+          headerStyle: { backgroundColor: '#FEFCF5' },
+          cardStyle: { backgroundColor: "#FEFCF5" },
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+const AppTabs = () => {
+  const appUtils = useAppUtils();
+  return (
+    <Tab.Navigator
+      screenOptions={{
+        tabBarStyle: {
+          borderTopColor: "#EFEFF1",
+          borderTopWidth: 1,
+          paddingTop: 16,
+          height: 60,
+          marginHorizontal: -16,
+          display: appUtils.bottomTabStyle,
+        },
+        tabBarLabelStyle: {
+          marginTop: 8,
+          fontSize: 12,
+          fontWeight: "600",
+        },
+        tabBarActiveTintColor: "#000000",
+        tabBarInactiveTintColor: "#A0A1AB",
+        headerShown: false,
       }}
-    />
-    <Tab.Screen
-      name="Chats"
-      component={ChatsScreen}
-      options={{
-        tabBarIcon: ({ focused }) =>
-          focused ? (
-            <ChatsActive width={24} height={24} />
-          ) : (
-            <ChatsPassive width={24} height={24} />
-          ),
-      }}
-    />
-    <Tab.Screen
-      name="Profile"
-      component={ProfileScreen}
-      options={{
-        tabBarIcon: ({ focused }) =>
-          focused ? (
-            <ProfileActive width={24} height={24} />
-          ) : (
-            <ProfilePassive width={24} height={24} style={{color: "#A0A1AB"}}/>
-          ),
-      }}
-    />
-  </Tab.Navigator>
-);
+    >
+      <Tab.Screen
+        name="Explore"
+        component={ExploreScreen}
+        options={{
+          tabBarIcon: ({ focused }) =>
+            focused ? (
+              <ExploreActive width={24} height={24} />
+            ) : (
+              <ExplorePassive width={24} height={24} />
+            ),
+          tabBarLabel: t("EXPLORE"),
+        }}
+      />
+      <Tab.Screen
+        name="Likes"
+        component={LikesScreen}
+        options={{
+          tabBarIcon: ({ focused }) =>
+            focused ? (
+              <LikesActive width={24} height={24} />
+            ) : (
+              <LikesPassive width={24} height={24} />
+            ),
+          tabBarLabel: t("LIKES"),
+        }}
+      />
+      <Tab.Screen
+        name="Chats"
+        component={MessagesStack}
+        options={{
+          tabBarIcon: ({ focused }) =>
+            focused ? (
+              <ChatsActive width={24} height={24} />
+            ) : (
+              <ChatsPassive width={24} height={24} />
+            ),
+          tabBarLabel: t("CHATS"),
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          tabBarIcon: ({ focused }) =>
+            focused ? (
+              <ProfileActive width={24} height={24} />
+            ) : (
+              <ProfilePassive
+                width={24}
+                height={24}
+                style={{ color: "#A0A1AB" }}
+              />
+            ),
+          tabBarLabel: t("PROFILE"),
+        }}
+      />
+    </Tab.Navigator>
+  );
+};
 
 const navigationRef = createNavigationContainerRef();
 
@@ -200,6 +258,7 @@ const checkAndRedirect = (response) => {
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const userStore = useUserStore();
+  const appUtils = useAppUtils();
 
   const [fontsLoaded, error] = useFonts({
     "RethinkSans-Regular": require("./src/assets/fonts/RethinkSans-Regular.ttf"),
@@ -219,24 +278,30 @@ export default function App() {
     const setUserLogin = async () => {
       // await SecureStore.deleteItemAsync("refresh_token"); // test amaçlı refresh token sıfırlayıcı
       const refreshToken = await SecureStore.getItemAsync("refresh_token");
-
       if (refreshToken) {
-        const response = await authenticateWithRefreshToken({
-          refreshToken: refreshToken,
-        });
+        try {
+          const response = await authenticateWithRefreshToken({
+            refreshToken: refreshToken,
+          });
 
-        userStore.setToken(response.token);
-        await SecureStore.setItemAsync("refresh_token", response.refreshToken);
+          userStore.setToken(response.token);
+          await SecureStore.setItemAsync(
+            "refresh_token",
+            response.refreshToken
+          );
 
-        if (response.isConfigured) {
-          userStore.setIsUserLoggedIn(true);
-          setIsLoading(false);
-        } else {
-          const congifurResponse = await checkUserConfiguration();
+          if (response.isConfigured) {
+            userStore.setIsUserLoggedIn(true);
+            setIsLoading(false);
+          } else {
+            const congifurResponse = await checkUserConfiguration();
 
-          userStore.setIsUserLoggedIn(false);
-          setIsLoading(false);
-          checkAndRedirect(congifurResponse);
+            userStore.setIsUserLoggedIn(false);
+            setIsLoading(false);
+            checkAndRedirect(congifurResponse);
+          }
+        } catch (error) {
+          console.log(error);
         }
       } else {
         const timer = setTimeout(() => {
@@ -264,19 +329,26 @@ export default function App() {
   }
 
   return (
-    <View style={styles.wrapper}>
-      <NavigationContainer
-        ref={navigationRef}
-        theme={{ colors: { background: "transparent" } }}
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: appUtils.backgroundColor }]}
+    >
+      <View
+        style={[
+          styles.wrapper,
+          { paddingHorizontal: appUtils.paddingHorizontal },
+        ]}
       >
-        {userStore.isUserLoggedIn ? <AppTabs /> : <AuthStack />}
-      </NavigationContainer>
-      <StatusBar style="dark" />
-    </View>
+        <NavigationContainer
+          ref={navigationRef}
+          theme={{ colors: { background: "transparent" } }}
+        >
+          {userStore.isUserLoggedIn ? <AppTabs /> : <AuthStack />}
+        </NavigationContainer>
+        <StatusBar style="dark" />
+      </View>
+    </SafeAreaView>
   );
 }
-
-const paddingBottom = Dimensions.get("window").height / 20;
 
 const styles = StyleSheet.create({
   splashContainer: {
@@ -288,9 +360,11 @@ const styles = StyleSheet.create({
   splasgImg: {
     color: "#FF524F",
   },
+  container: {
+    flex: 1,
+  },
   wrapper: {
     flex: 1,
-    padding: 16,
-    paddingBottom: paddingBottom,
+    paddingVertical: 16,
   },
 });

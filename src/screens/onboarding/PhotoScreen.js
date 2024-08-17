@@ -23,6 +23,7 @@ const PhotoScreen = ({ route }) => {
   useEffect(() => {
     const getProfilePictures = async () => {
       const response = await getProfileImages();
+      
       if(response.isSuccess) {
         setSelectedImages(
           response.images.map((item) => ({
@@ -74,7 +75,6 @@ const PhotoScreen = ({ route }) => {
       });
 
       const response = await postUserPhoto(formData);
-
       if (response.isSuccess) {
         setSelectedImages([
           ...selectedImages,

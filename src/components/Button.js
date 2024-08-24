@@ -13,7 +13,8 @@ const Button = ({
 }) => {
   const variantStyles = {
     primary: styles.primary,
-    disable: styles.disable
+    disable: styles.disable,
+    white: styles.white,
   };
 
   const containerStyle = [styles.button, variantStyles[variant], style];
@@ -58,12 +59,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#D1D1D6',
     borderColor: '#D1D1D6',
     color: '#93939F',
+  },
+  white: {
+    backgroundColor: 'white',
+    borderColor: 'white',
+    color: 'black',
   }
 });
 
 Button.propTypes = {
   type: PropTypes.oneOf(["submit", "button", "reset"]),
-  variant: PropTypes.oneOf(["primary", "disable"]),
+  variant: PropTypes.oneOf(["primary", "disable", "white"]),
   children: PropTypes.node.isRequired,
   style: PropTypes.object,
 };

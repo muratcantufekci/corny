@@ -59,6 +59,11 @@
     "WRITE_YOUR_MESSAGE": "Write a message",
     "UNMATCH": "Unmatch",
     "BLOCK": "Block",
-    "REPORT": "Report"
+    "REPORT": "Report",
+    "PHOTOS": "Photos",
+    "GIFS": "Gifs",
+    "SUGGEST_TV_SERIES": "Suggest TV Series/Movies",
+    "INVITE_QUIZ": "Invite to a quiz",
+     "SEND": "Send"
   }
 }

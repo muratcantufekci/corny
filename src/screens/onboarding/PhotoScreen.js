@@ -53,8 +53,8 @@ const PhotoScreen = ({ route }) => {
   }, [navigation, route.params?.disableBack]);
 
   const selectImageHandler = async () => {
-    const formData = await selectImage()
-    const response = await postUserPhoto(formData);
+    const data = await selectImage()
+    const response = await postUserPhoto(data.formData);
     
       if (response.isSuccess) {
         setSelectedImages([

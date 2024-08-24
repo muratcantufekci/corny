@@ -27,12 +27,21 @@ import Plus from "../../assets/svg/plus.svg";
 import ArrowUp from "../../assets/svg/arrow-up-circle.svg";
 import Input from "../../components/Input";
 import Back from "../../assets/svg/arrow-left.svg";
+import Photos from "../../assets/svg/photos.svg";
+import Gifs from "../../assets/svg/gifs.svg";
+import Suggest from "../../assets/svg/suggest.svg";
+import Quiz from "../../assets/svg/quiz.svg";
+import Cross from "../../assets/svg/cross.svg";
 import useChatRoomsStore from "../../store/useChatRoomsStore";
 import { t } from "i18next";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { postChatImage } from "../../services/send-chat-image";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { selectImage } from "../../helper/selectImage";
+import { selectImage, uriToFile } from "../../helper/selectImage";
+import { BlurView } from "expo-blur";
+import Button from "../../components/Button";
+import * as ImagePicker from "expo-image-picker";
+
 
 const Header = ({ navigation, userImage, userName, sheetRef, pt }) => (
   <View style={[styles.headerContainer, { paddingTop: pt }]}>
@@ -151,6 +160,10 @@ const ChatHubScreen = ({ route }) => {
   const sheetRef = useRef(null);
   const snapPoints = useMemo(() => ["27%"], []);
   const insets = useSafeAreaInsets();
+  const [menuModalVisible, setMenuModalVisible] = useState(false);
+  const [photoModalVisible, setPhotoModalVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imageFormData, setImageFormData] = useState(null);
 
   const hubMessages = chatRoomsStore.chatRooms.find(
     (item) => item.chatRoomId === chatRoomId
@@ -203,15 +216,22 @@ const ChatHubScreen = ({ route }) => {
   };
 
   const selectImageHandler = async () => {
-    const formData = await selectImage();
+    const data = await selectImage();
+    setSelectedImage(data.uri);
+    setImageFormData(data.formData);
+    setMenuModalVisible(false);
+    setPhotoModalVisible(true);
+  };
 
+  const sendImageHandler = async (formData) => {
     const response = await postChatImage(
       "chatUser_12",
-      "chatUser_13",
+      otherUserConnectionId,
       formData
     );
 
     if (response.isSuccess) {
+      setPhotoModalVisible(false);
       if (chatRoomsStore.connection) {
         chatRoomsStore.connection
           .send(
@@ -227,6 +247,35 @@ const ChatHubScreen = ({ route }) => {
       } else {
         console.warn("SignalR connection not established.");
       }
+    }
+  };
+
+  const takePhoto = async () => {
+    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+    if (permissionResult.granted === false) {
+      alert("Permission to access camera is required!");
+      return;
+    }
+
+    let result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.5,
+    });
+
+    if (!result.canceled) {
+      const uri = result.assets[0].uri;
+      const file = await uriToFile(uri);
+      const formData = new FormData();
+      formData.append("image", {
+        uri: file.uri,
+        type: file.type,
+        name: file.name,
+      });
+
+      setSelectedImage(uri);
+      setImageFormData(formData);
+      setPhotoModalVisible(true);
     }
   };
 
@@ -253,7 +302,10 @@ const ChatHubScreen = ({ route }) => {
             />
           </View>
           <View style={styles.messageSendContainer}>
-            <TouchableOpacity style={styles.plusIcon}>
+            <TouchableOpacity
+              style={styles.plusIcon}
+              onPress={() => setMenuModalVisible(true)}
+            >
               <Plus />
             </TouchableOpacity>
             <View style={styles.inputWrapper}>
@@ -270,7 +322,7 @@ const ChatHubScreen = ({ route }) => {
               </TouchableOpacity>
             ) : (
               <>
-                <TouchableOpacity onPress={selectImageHandler}>
+                <TouchableOpacity onPress={takePhoto}>
                   <Camera width={24} height={24} />
                 </TouchableOpacity>
                 <TouchableOpacity>
@@ -306,6 +358,65 @@ const ChatHubScreen = ({ route }) => {
           </View>
         </BottomSheetModal>
       </KeyboardAvoidingView>
+      <Modal transparent={true} visible={menuModalVisible} animationType="fade">
+        <TouchableWithoutFeedback onPress={() => setMenuModalVisible(false)}>
+          <BlurView intensity={50} style={StyleSheet.absoluteFill}>
+            <View style={styles.messageMenu}>
+              <TouchableOpacity
+                style={styles.messageMenuItem}
+                onPress={selectImageHandler}
+              >
+                <Photos width={24} height={24} />
+                <CustomText style={styles.messageMenuItemText}>
+                  {t("PHOTOS")}
+                </CustomText>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.messageMenuItem}>
+                <Gifs width={24} height={24} />
+                <CustomText style={styles.messageMenuItemText}>
+                  {t("GIFS")}
+                </CustomText>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.messageMenuItem}>
+                <Suggest width={24} height={24} />
+                <CustomText style={styles.messageMenuItemText}>
+                  {t("SUGGEST_TV_SERIES")}
+                </CustomText>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.messageMenuItem}>
+                <Quiz width={24} height={24} />
+                <CustomText style={styles.messageMenuItemText}>
+                  {t("INVITE_QUIZ")}
+                </CustomText>
+              </TouchableOpacity>
+            </View>
+          </BlurView>
+        </TouchableWithoutFeedback>
+      </Modal>
+      <Modal
+        transparent={true}
+        visible={photoModalVisible}
+        animationType="fade"
+      >
+        <View style={styles.photoModal}>
+          <TouchableOpacity
+            style={styles.photoModalCross}
+            onPress={() => setPhotoModalVisible(false)}
+          >
+            <Cross width={24} height={24} />
+          </TouchableOpacity>
+          <Image
+            source={{ uri: selectedImage }}
+            style={styles.photoModalImage}
+          />
+          <Button
+            variant="white"
+            onPress={() => sendImageHandler(imageFormData)}
+          >
+            {t("SEND")}
+          </Button>
+        </View>
+      </Modal>
     </>
   );
 };
@@ -365,6 +476,25 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
+  },
+  messageMenu: {
+    flex: 1,
+    justifyContent: "flex-end",
+    padding: 16,
+    paddingBottom: 64,
+  },
+  messageMenuItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    paddingVertical: 18,
+    paddingHorizontal: 10,
+  },
+  messageMenuItemText: {
+    fontWeight: "500",
+    fontSize: 18,
+    lineHeight: 24,
+    color: "#000000",
   },
   messageDate: {
     fontWeight: "400",
@@ -490,6 +620,25 @@ const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 24,
     color: "#000000",
+  },
+  photoModal: {
+    flex: 1,
+    backgroundColor: "black",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 64,
+  },
+  photoModalImage: {
+    width: "100%",
+    height: 400,
+    marginBottom: 50,
+  },
+  photoModalCross: {
+    backgroundColor: "white",
+    borderRadius: 999,
+    padding: 4,
+    alignSelf: "flex-start",
+    marginLeft: 8,
   },
 });
 

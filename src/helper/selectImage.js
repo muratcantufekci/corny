@@ -24,11 +24,11 @@ export const selectImage = async () => {
       type: file.type,
       name: file.name,
     });
-    return formData;
+    return { formData, uri };
   }
 };
 
-const uriToFile = async (uri) => {
+export const uriToFile = async (uri) => {
   const response = await fetch(uri);
   const blob = await response.blob();
   const fileName = uri.split("/").pop();

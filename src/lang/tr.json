@@ -59,6 +59,11 @@
     "WRITE_YOUR_MESSAGE": "Bir mesaj yazın",
     "UNMATCH": "Eşleşmeyi Bitir",
     "BLOCK": "Engelle",
-    "REPORT": "Raporla"
+    "REPORT": "Raporla",
+    "PHOTOS": "Fotoğraflar",
+    "GIFS": "Gifler",
+    "SUGGEST_TV_SERIES": "Dizi/Film Öner",
+    "INVITE_QUIZ": "Quize Davet Et",
+    "SEND": "Gönder"
   }
 }

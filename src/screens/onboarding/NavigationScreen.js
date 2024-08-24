@@ -18,6 +18,7 @@ import Modal from "../../components/Modal";
 import { useNavigation } from "@react-navigation/native";
 import { t } from "i18next";
 import { postUserLocation } from "../../services/send-location";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const NavigationScreen = ({ route }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -25,6 +26,7 @@ const NavigationScreen = ({ route }) => {
   const [location, setLocation] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (route.params?.disableBack) {
@@ -113,7 +115,14 @@ const NavigationScreen = ({ route }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          paddingBottom: insets.bottom,
+        },
+      ]}
+    >
       <View>
         <ProggressBar step={1} />
         <Image

@@ -17,12 +17,14 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import WrongIcon from "../../assets/svg/close-circle-wrong.svg";
 import CorrectIcon from "../../assets/svg/minus-tick-correct.svg";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const NumberScreen = () => {
   const [isOpen, setIsOpen] = useState(false);
   const onboardingStore = useOnboardingStore();
   const navigation = useNavigation();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
 
   const validation = Yup.object().shape({
     phone: Yup.string()
@@ -56,7 +58,14 @@ const NumberScreen = () => {
         touched,
       }) => (
         <TouchableWithoutFeedback onPress={pageWrapperPressHandler}>
-          <View style={styles.container}>
+          <View
+            style={[
+              styles.container,
+              {
+                paddingBottom: insets.bottom,
+              },
+            ]}
+          >
             <View>
               <OnboardingHeading
                 title={t("NUMBER_SCREEN_TITLE")}

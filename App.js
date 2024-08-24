@@ -1,12 +1,11 @@
 import "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
-import { Dimensions, SafeAreaView, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import {
   createNavigationContainerRef,
   NavigationContainer,
 } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import ProfileSelectionScreen from "./src/screens/ProfileSelectionScreen";
 import { useEffect, useState } from "react";
 import Logo from "./src/assets/svg/logo.svg";
 import OnboardingStartScreen from "./src/screens/onboarding/OnboardingStartScreen";
@@ -44,6 +43,11 @@ import ProfileActive from "./src/assets/svg/user-active.svg";
 import { t } from "i18next";
 import ChatHubScreen from "./src/screens/chats/ChatHubScreen";
 import useAppUtils from "./src/store/useAppUtils";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import {
+  BottomSheetModalProvider,
+} from "@gorhom/bottom-sheet";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -70,7 +74,6 @@ const AuthStack = () => (
       headerTitle: "",
       headerTintColor: "#045bb3",
       gestureEnabled: false,
-      // animationEnabled: false
     }}
   >
     <Stack.Screen
@@ -110,7 +113,6 @@ const MessagesStack = () => {
           },
         },
         headerBackTitleVisible: false,
-        headerBackImage: () => <Back width={30} height={30} />,
         headerTitle: "",
         headerTintColor: "#045bb3",
       }}
@@ -125,7 +127,7 @@ const MessagesStack = () => {
         component={ChatHubScreen}
         options={{
           headerTransparent: false,
-          headerStyle: { backgroundColor: '#FEFCF5' },
+          headerStyle: { backgroundColor: "#FEFCF5" },
           cardStyle: { backgroundColor: "#FEFCF5" },
         }}
       />
@@ -142,7 +144,6 @@ const AppTabs = () => {
           borderTopColor: "#EFEFF1",
           borderTopWidth: 1,
           paddingTop: 16,
-          height: 60,
           marginHorizontal: -16,
           display: appUtils.bottomTabStyle,
         },
@@ -223,7 +224,7 @@ const checkAndRedirect = (response) => {
 
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
-
+    
     if (key.startsWith("has") && response[key] === false) {
       switch (key) {
         case "hasLocation":
@@ -257,6 +258,7 @@ const checkAndRedirect = (response) => {
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
+  const [congifurResponseData, setConfigureResponseData] = useState(null)
   const userStore = useUserStore();
   const appUtils = useAppUtils();
 
@@ -277,7 +279,9 @@ export default function App() {
   useEffect(() => {
     const setUserLogin = async () => {
       // await SecureStore.deleteItemAsync("refresh_token"); // test amaçlı refresh token sıfırlayıcı
-      const refreshToken = await SecureStore.getItemAsync("refresh_token");
+      // const refreshToken = await SecureStore.getItemAsync("refresh_token");
+      const refreshToken = "5fd59d04-950c-42d3-b854-c78754372457";
+      // const refreshToken = null;
       if (refreshToken) {
         try {
           const response = await authenticateWithRefreshToken({
@@ -295,10 +299,9 @@ export default function App() {
             setIsLoading(false);
           } else {
             const congifurResponse = await checkUserConfiguration();
-
+            setConfigureResponseData(congifurResponse)
             userStore.setIsUserLoggedIn(false);
             setIsLoading(false);
-            checkAndRedirect(congifurResponse);
           }
         } catch (error) {
           console.log(error);
@@ -329,24 +332,32 @@ export default function App() {
   }
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: appUtils.backgroundColor }]}
-    >
-      <View
-        style={[
-          styles.wrapper,
-          { paddingHorizontal: appUtils.paddingHorizontal },
-        ]}
-      >
-        <NavigationContainer
-          ref={navigationRef}
-          theme={{ colors: { background: "transparent" } }}
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <BottomSheetModalProvider>
+        <SafeAreaProvider
+          style={[
+            styles.container,
+            { backgroundColor: appUtils.backgroundColor },
+          ]}
         >
-          {userStore.isUserLoggedIn ? <AppTabs /> : <AuthStack />}
-        </NavigationContainer>
-        <StatusBar style="dark" />
-      </View>
-    </SafeAreaView>
+          <View
+            style={[
+              styles.wrapper,
+              { paddingHorizontal: appUtils.paddingHorizontal },
+            ]}
+          >
+            <NavigationContainer
+              ref={navigationRef}
+              theme={{ colors: { background: "transparent" } }}
+              onReady={() => congifurResponseData && checkAndRedirect(congifurResponseData)}
+            >
+              {userStore.isUserLoggedIn ? <AppTabs /> : <AuthStack />}
+            </NavigationContainer>
+            <StatusBar style="dark" />
+          </View>
+        </SafeAreaProvider>
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   );
 }
 
@@ -365,6 +376,6 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     flex: 1,
-    paddingVertical: 16,
+    paddingVertical: 16
   },
 });

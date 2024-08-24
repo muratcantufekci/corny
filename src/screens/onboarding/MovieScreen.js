@@ -20,6 +20,7 @@ import CustomText from "../../components/CustomText";
 import { searchTvShowsByText } from "../../services/search-tv-shows";
 import { useNavigation } from "@react-navigation/native";
 import { postUserMovies } from "../../services/send-movie";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const MovieScreen = ({ route }) => {
   const reqiredChoiceCount = 5;
@@ -33,6 +34,7 @@ const MovieScreen = ({ route }) => {
   const [loading, setLoading] = useState(false);
   const [searchInputValue, setSearchInputValue] = useState("");
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (route.params?.disableBack) {
@@ -121,7 +123,9 @@ const MovieScreen = ({ route }) => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
+      <View style={[styles.container,{
+          paddingBottom: insets.bottom,
+        },]}>
         <View>
           <ProggressBar step={4} />
           <OnboardingHeading
@@ -218,7 +222,7 @@ const styles = StyleSheet.create({
   },
   btn: {
     position: "absolute",
-    bottom: 0,
+    bottom: 16,
   },
 });
 

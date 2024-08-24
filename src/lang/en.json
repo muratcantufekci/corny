@@ -55,6 +55,10 @@
     "CHATS": "Chats",
     "PROFILE": "Profile",
     "MESSAGES": "Messages",
-    "NOTHING_AROUND": "There is nothing around here yet"
+    "NOTHING_AROUND": "There is nothing around here yet",
+    "WRITE_YOUR_MESSAGE": "Write a message",
+    "UNMATCH": "Unmatch",
+    "BLOCK": "Block",
+    "REPORT": "Report"
   }
 }

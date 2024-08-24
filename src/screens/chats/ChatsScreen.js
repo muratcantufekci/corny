@@ -1,30 +1,20 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import CustomText from "../../components/CustomText";
 import { t } from "i18next";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import useAppUtils from "../../store/useAppUtils";
-
-// const DUMMY_DATA = [];
-const DUMMY_DATA = [
-  {
-    id: 1,
-    name: "Muratcan",
-    message: "Selam, alim mi seni bu app benim ;)",
-    img: "https://media.licdn.com/dms/image/v2/D4D03AQFB0oznJhn_Eg/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1707992142190?e=1729123200&v=beta&t=8WUd5YODbi2dSoWP56kqBzK3Ir47WJQG-xclk_BV0mE",
-  },
-  {
-    id: 2,
-    name: "Karen",
-    message: "How are you today?",
-    img: "https://media.licdn.com/dms/image/v2/D4D03AQFB0oznJhn_Eg/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1707992142190?e=1729123200&v=beta&t=8WUd5YODbi2dSoWP56kqBzK3Ir47WJQG-xclk_BV0mE",
-  },
-];
+import * as SignalR from "@microsoft/signalr";
+import { getChatOverview } from "../../services/get-chat-overview";
+import useChatRoomsStore from "../../store/useChatRoomsStore";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const ChatsScreen = () => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const appUtils = useAppUtils();
+  const chatRoomsStore = useChatRoomsStore();
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (isFocused) {
@@ -34,25 +24,93 @@ const ChatsScreen = () => {
     }
   }, [isFocused]);
 
-  const messageBoxPressHandler = () => {
-    navigation.navigate("MessageHub");
+  useEffect(() => {
+    const getChats = async () => {
+      const response = await getChatOverview();
+      
+      chatRoomsStore.setChatRooms(response.chatRooms);
+    };
+    getChats();
+  }, []);
+
+  useEffect(() => {
+    const newConnection = new SignalR.HubConnectionBuilder()
+      .withUrl(
+        "https://cornyapi.azurewebsites.net/chatHub?username=chatUser_12"
+      )
+      .withAutomaticReconnect()
+      .build();
+
+    chatRoomsStore.setConnection(newConnection);
+
+    return () => {
+      if (chatRoomsStore.connection) {
+        chatRoomsStore.connection.stop();
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (chatRoomsStore.connection) {
+      chatRoomsStore.connection
+        .start()
+        .then(() => {
+          console.log("Connected to SignalR!");
+
+          chatRoomsStore.connection.on("ReceiveMessage", (receivedMessage) => {
+            console.log("receivedMessage", receivedMessage);
+
+            const parsedMessage = JSON.parse(receivedMessage);
+
+            chatRoomsStore.setChatRooms((prevChatRooms) => {
+              const updatedChatRooms = prevChatRooms.map((item) => {
+                if (
+                  item.otherUserConnectionId === parsedMessage.sender ||
+                  item.otherUserConnectionId === parsedMessage.receiver
+                ) {
+                  return {
+                    ...item,
+                    messages: [parsedMessage, ...item.messages],
+                  };
+                }
+                return item;
+              });
+
+              return updatedChatRooms;
+            });
+          });
+        })
+        .catch((error) => console.error("Connection failed: ", error));
+    }
+  }, [chatRoomsStore.connection]);
+
+  const messageBoxPressHandler = (chatRoomId, otherUserConnectionId) => {
+    navigation.navigate("MessageHub", {
+      chatRoomId,
+      otherUserConnectionId,
+    });
     appUtils.setBottomTabStyle("none");
   };
   return (
-    <View style={styles.container}>
+    <View
+      style={{
+        flex: 1,
+        paddingTop: insets.top,
+      }}
+    >
       <View style={styles.tabWrapper}>
         <View style={styles.tab}>
           <CustomText style={styles.tabText}>{t("MESSAGES")}</CustomText>
-          {DUMMY_DATA.length > 0 && (
+          {chatRoomsStore.chatRooms?.length > 0 && (
             <View style={styles.tabNumber}>
               <CustomText style={styles.tabNumberText}>
-                {DUMMY_DATA.length}
+                {chatRoomsStore.chatRooms.length}
               </CustomText>
             </View>
           )}
         </View>
       </View>
-      {DUMMY_DATA.length === 0 ? (
+      {chatRoomsStore.chatRooms?.length === 0 || chatRoomsStore.chatRooms === null ? (
         <View style={styles.emptyImageWrapper}>
           <Image source={require("../../assets/images/dialogs.png")} />
           <CustomText style={styles.emptyText}>
@@ -61,16 +119,30 @@ const ChatsScreen = () => {
         </View>
       ) : (
         <View>
-          {DUMMY_DATA.map((item) => (
+          {chatRoomsStore.chatRooms?.map((item) => (
             <TouchableOpacity
-              key={item.id}
+              key={item.chatRoomId}
               style={styles.messageBox}
-              onPress={messageBoxPressHandler}
+              onPress={() =>
+                messageBoxPressHandler(
+                  item.chatRoomId,
+                  item.otherUserConnectionId
+                )
+              }
             >
-              <Image source={{ uri: item.img }} style={styles.messageImg} />
+              <Image
+                source={{
+                  uri: "https://media.licdn.com/dms/image/v2/D4D03AQFB0oznJhn_Eg/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1707992142190?e=1729123200&v=beta&t=8WUd5YODbi2dSoWP56kqBzK3Ir47WJQG-xclk_BV0mE",
+                }}
+                style={styles.messageImg}
+              />
               <View>
-                <CustomText style={styles.messageName}>{item.name}</CustomText>
-                <CustomText style={styles.message}>{item.message}</CustomText>
+                <CustomText style={styles.messageName}>
+                  {item.otherUserDisplayName}
+                </CustomText>
+                <CustomText style={styles.message}>
+                  {item.messages[0]?.text}
+                </CustomText>
               </View>
             </TouchableOpacity>
           ))}
@@ -81,9 +153,6 @@ const ChatsScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   tabWrapper: {
     width: "100%",
     borderBottomWidth: 1,

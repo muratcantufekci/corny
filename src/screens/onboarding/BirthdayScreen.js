@@ -8,10 +8,12 @@ import * as Localization from "expo-localization";
 import Button from "../../components/Button";
 import { useNavigation } from "@react-navigation/native";
 import { postBirthday } from "../../services/send-birthday";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const BirthdayScreen = ({ route }) => {
   const [date, setDate] = useState(new Date());
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (route.params?.disableBack) {
@@ -32,16 +34,22 @@ const BirthdayScreen = ({ route }) => {
     const month = date.getUTCMonth() + 1;
     const year = date.getUTCFullYear();
 
-    const response = await postBirthday(day, month, year)
-    
-    if(response.isSuccess) {
+    const response = await postBirthday(day, month, year);
+
+    if (response.isSuccess) {
       navigation.navigate("Mail");
     }
-
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          paddingBottom: insets.bottom,
+        },
+      ]}
+    >
       <View>
         <ProggressBar step={6} />
         <OnboardingHeading
@@ -55,7 +63,9 @@ const BirthdayScreen = ({ route }) => {
             onChange={onChange}
             display="spinner"
             locale={Localization.locale}
-            maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))}
+            maximumDate={
+              new Date(new Date().setFullYear(new Date().getFullYear() - 18))
+            }
             timeZoneName="UTC"
           />
         </View>

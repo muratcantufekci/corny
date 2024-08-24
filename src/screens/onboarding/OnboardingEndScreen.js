@@ -4,15 +4,24 @@ import CustomText from "../../components/CustomText";
 import Button from "../../components/Button";
 import { t } from "i18next";
 import useUserStore from "../../store/useUserStore";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const OnboardingEndScreen = () => {
   const userStore = useUserStore();
+  const insets = useSafeAreaInsets();
 
   const discoverBtnPressHandler = () => {
     userStore.setIsUserLoggedIn(true);
   };
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          paddingBottom: insets.bottom,
+        },
+      ]}
+    >
       <View>
         <Image
           source={require("../../assets/images/production-corny.png")}

@@ -4,16 +4,25 @@ import CustomText from "../../components/CustomText";
 import Button from "../../components/Button";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const OnboardingStartScreen = () => {
   const navigation = useNavigation();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
 
   const continuePressHandler = () => {
     navigation.navigate("NumberEnter");
   };
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          paddingBottom: insets.bottom,
+        },
+      ]}
+    >
       <View>
         <Image
           source={require("../../assets/images/corns.png")}
@@ -32,8 +41,8 @@ const OnboardingStartScreen = () => {
   );
 };
 
-const imgMargin = (Dimensions.get("window").height) / 20;
-const imgHeight = (Dimensions.get("window").height) / 1.9;
+const imgMargin = Dimensions.get("window").height / 20;
+const imgHeight = Dimensions.get("window").height / 1.9;
 
 const styles = StyleSheet.create({
   container: {

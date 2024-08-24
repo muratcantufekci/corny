@@ -18,10 +18,12 @@ import WrongIcon from "../../assets/svg/close-circle-wrong.svg";
 import CorrectIcon from "../../assets/svg/minus-tick-correct.svg";
 import { postUsername } from "../../services/send-name";
 import { useEffect } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const NameScreen = ({ route }) => {
   const { t } = useTranslation();
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (route.params?.disableBack) {
@@ -36,11 +38,11 @@ const NameScreen = ({ route }) => {
   });
 
   const submitHandler = async (name) => {
-    const response = await postUsername(name)
-    if(response.isSuccess) {
+    const response = await postUsername(name);
+    if (response.isSuccess) {
       navigation.navigate("Photo");
     }
-  }
+  };
 
   return (
     <Formik
@@ -49,12 +51,19 @@ const NameScreen = ({ route }) => {
       }}
       validationSchema={validation}
       onSubmit={(values) => {
-        submitHandler(values.name)
+        submitHandler(values.name);
       }}
     >
       {({ handleChange, handleBlur, handleSubmit, errors, touched }) => (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={styles.container}>
+          <View
+            style={[
+              styles.container,
+              {
+                paddingBottom: insets.bottom,
+              },
+            ]}
+          >
             <View>
               <ProggressBar step={2} />
               <OnboardingHeading

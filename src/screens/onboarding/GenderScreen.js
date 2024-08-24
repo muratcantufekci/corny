@@ -7,6 +7,7 @@ import Button from "../../components/Button";
 import RadioButton from "../../components/RadioButton";
 import { useNavigation } from "@react-navigation/native";
 import { postGender } from "../../services/send-gender";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const genders = [
   {
@@ -29,6 +30,7 @@ const genders = [
 const GenderScreen = ({ route }) => {
   const [seledtedItem, setSelectedItem] = useState(null);
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (route.params?.disableBack) {
@@ -47,7 +49,14 @@ const GenderScreen = ({ route }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          paddingBottom: insets.bottom,
+        },
+      ]}
+    >
       <View>
         <ProggressBar step={5} />
         <OnboardingHeading

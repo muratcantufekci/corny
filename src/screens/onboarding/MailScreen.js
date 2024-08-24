@@ -18,6 +18,7 @@ import ErrorText from "../../components/ErrorText";
 import { useNavigation } from "@react-navigation/native";
 import { postEmail } from "../../services/send-email";
 import { checkUserConfiguration } from "../../services/check-user-configurations";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const validation = Yup.object().shape({
   mail: Yup.string()
@@ -30,6 +31,7 @@ const validation = Yup.object().shape({
 
 const MailScreen = ({ route }) => {
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (route.params?.disableBack) {
@@ -44,7 +46,7 @@ const MailScreen = ({ route }) => {
 
     if (response.isSuccess) {
       const response = await checkUserConfiguration();
-      
+
       if (response.configurationCompleted) {
         navigation.navigate("OnboardingEnd");
       }
@@ -67,7 +69,14 @@ const MailScreen = ({ route }) => {
         touched,
       }) => (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={styles.container}>
+          <View
+            style={[
+              styles.container,
+              {
+                paddingBottom: insets.bottom,
+              },
+            ]}
+          >
             <View>
               <ProggressBar step={7} />
               <OnboardingHeading

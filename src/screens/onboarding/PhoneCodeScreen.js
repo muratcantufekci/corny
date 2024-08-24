@@ -18,6 +18,7 @@ import { t } from "i18next";
 import { authenticate } from "../../services/authenticate";
 import useUserStore from "../../store/useUserStore";
 import * as SecureStore from "expo-secure-store";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const PhoneCodeScreen = () => {
   const onboardingStore = useOnboardingStore();
@@ -26,6 +27,7 @@ const PhoneCodeScreen = () => {
   const [resendEnabled, setResendEnabled] = useState(false);
   const [isCodeValid, setIsCodeValid] = useState(true);
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
   const data = {
     phoneNumber: onboardingStore.phone,
   };
@@ -77,8 +79,8 @@ const PhoneCodeScreen = () => {
         if (res.isSuccess) {
           userStore.setToken(res.token);
           await SecureStore.setItemAsync("refresh_token", res.refreshToken);
-          if(res.isConfigured) {
-            userStore.setIsUserLoggedIn(true)
+          if (res.isConfigured) {
+            userStore.setIsUserLoggedIn(true);
           } else {
             navigation.navigate("Navigation");
           }
@@ -93,7 +95,14 @@ const PhoneCodeScreen = () => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.wrapper}>
+      <View
+        style={[
+          styles.wrapper,
+          {
+            paddingBottom: insets.bottom,
+          },
+        ]}
+      >
         <View>
           <OnboardingHeading
             title={t("OTP_SCREEN_TITLE")}

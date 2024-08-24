@@ -11,6 +11,8 @@ import { postUserPhoto } from "../../services/send-photo";
 import { deleteUserPhoto } from "../../services/delete-photo";
 import { postUserPhotoOrder } from "../../services/send-photos-order";
 import { getProfileImages } from "../../services/get-profile-images";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { selectImage } from "../../helper/selectImage";
 
 const PhotoScreen = ({ route }) => {
   const [isBtnDisabled, setIsBtnDisaled] = useState(true);
@@ -19,21 +21,22 @@ const PhotoScreen = ({ route }) => {
   const [longPressedIndex, setLongPressesIndex] = useState("");
   const [isShaking, setIsShaking] = useState(false);
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     const getProfilePictures = async () => {
       const response = await getProfileImages();
-      
-      if(response.isSuccess) {
+
+      if (response.isSuccess) {
         setSelectedImages(
           response.images.map((item) => ({
             id: item.imageId,
             uri: item.imageUrl,
           }))
         );
-        if(selectedImages.length > 0) {
+        if (selectedImages.length > 0) {
           setBtnVariant("primary");
-          setIsBtnDisaled(false)
+          setIsBtnDisaled(false);
         }
       }
     };
@@ -49,56 +52,20 @@ const PhotoScreen = ({ route }) => {
     }
   }, [navigation, route.params?.disableBack]);
 
-  const selectImage = async () => {
-    const permissionResult =
-      await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (permissionResult.granted === false) {
-      alert("Permission to access camera roll is required!");
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [16, 9],
-      quality: 0.5,
-    });
-
-    if (!result.canceled) {
-      const uri = result.assets[0].uri;
-      const file = await uriToFile(uri);
-      const formData = new FormData();
-      formData.append("image", {
-        uri: file.uri,
-        type: file.type,
-        name: file.name,
-      });
-
-      const response = await postUserPhoto(formData);
+  const selectImageHandler = async () => {
+    const formData = await selectImage()
+    const response = await postUserPhoto(formData);
+    
       if (response.isSuccess) {
         setSelectedImages([
           ...selectedImages,
-          { id: response.imageId, uri: uri },
+          { id: response.imageId, uri: response.imageUrl },
         ]);
         setBtnVariant("primary");
         setIsBtnDisaled(false);
       }
-    }
   };
 
-  const uriToFile = async (uri) => {
-    const response = await fetch(uri);
-    const blob = await response.blob();
-    const fileName = uri.split("/").pop();
-    const fileType = blob.type;
-    const file = {
-      uri,
-      name: fileName,
-      type: fileType,
-    };
-
-    return file;
-  };
 
   const deleteImage = async (id) => {
     const response = await deleteUserPhoto(id);
@@ -131,7 +98,14 @@ const PhotoScreen = ({ route }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          paddingBottom: insets.bottom,
+        },
+      ]}
+    >
       <View>
         <ProggressBar step={3} />
         <OnboardingHeading
@@ -150,7 +124,7 @@ const PhotoScreen = ({ route }) => {
                 ) {
                   orderImages(index);
                 } else {
-                  selectImage();
+                  selectImageHandler();
                 }
               }}
               deleteFunc={() => deleteImage(selectedImages[index].id)}

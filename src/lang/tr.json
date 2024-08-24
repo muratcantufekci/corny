@@ -55,6 +55,10 @@
     "CHATS": "Mesajlar",
     "PROFILE": "Profil",
     "MESSAGES": "Mesajlar",
-    "NOTHING_AROUND": "Burada henüz hiçbir şey yok"
+    "NOTHING_AROUND": "Burada henüz hiçbir şey yok",
+    "WRITE_YOUR_MESSAGE": "Bir mesaj yazın",
+    "UNMATCH": "Eşleşmeyi Bitir",
+    "BLOCK": "Engelle",
+    "REPORT": "Raporla"
   }
 }

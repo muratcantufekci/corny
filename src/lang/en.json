@@ -64,6 +64,8 @@
     "GIFS": "Gifs",
     "SUGGEST_TV_SERIES": "Suggest TV Series/Movies",
     "INVITE_QUIZ": "Invite to a quiz",
-     "SEND": "Send"
+    "SEND": "Send",
+    "PHOTO": "Photo",
+    "AUDIO": "Voice Message"
   }
 }

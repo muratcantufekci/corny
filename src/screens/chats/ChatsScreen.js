@@ -8,6 +8,7 @@ import * as SignalR from "@microsoft/signalr";
 import { getChatOverview } from "../../services/get-chat-overview";
 import useChatRoomsStore from "../../store/useChatRoomsStore";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import * as SecureStore from "expo-secure-store";
 
 const ChatsScreen = () => {
   const navigation = useNavigation();
@@ -27,7 +28,7 @@ const ChatsScreen = () => {
   useEffect(() => {
     const getChats = async () => {
       const response = await getChatOverview();
-      
+
       chatRoomsStore.setChatRooms(response.chatRooms);
     };
     getChats();
@@ -110,7 +111,8 @@ const ChatsScreen = () => {
           )}
         </View>
       </View>
-      {chatRoomsStore.chatRooms?.length === 0 || chatRoomsStore.chatRooms === null ? (
+      {chatRoomsStore.chatRooms?.length === 0 ||
+      chatRoomsStore.chatRooms === null ? (
         <View style={styles.emptyImageWrapper}>
           <Image source={require("../../assets/images/dialogs.png")} />
           <CustomText style={styles.emptyText}>
@@ -119,33 +121,52 @@ const ChatsScreen = () => {
         </View>
       ) : (
         <View>
-          {chatRoomsStore.chatRooms?.map((item) => (
-            <TouchableOpacity
-              key={item.chatRoomId}
-              style={styles.messageBox}
-              onPress={() =>
-                messageBoxPressHandler(
-                  item.chatRoomId,
-                  item.otherUserConnectionId
-                )
-              }
-            >
-              <Image
-                source={{
-                  uri: "https://media.licdn.com/dms/image/v2/D4D03AQFB0oznJhn_Eg/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1707992142190?e=1729123200&v=beta&t=8WUd5YODbi2dSoWP56kqBzK3Ir47WJQG-xclk_BV0mE",
-                }}
-                style={styles.messageImg}
-              />
-              <View>
-                <CustomText style={styles.messageName}>
-                  {item.otherUserDisplayName}
-                </CustomText>
-                <CustomText style={styles.message}>
-                  {item.messages[0]?.text}
-                </CustomText>
-              </View>
-            </TouchableOpacity>
-          ))}
+          {chatRoomsStore.chatRooms?.map((item) => {
+            const isIncome = item.messages[0]?.sender === item.otherUserConnectionId;
+            const myLastSeen = SecureStore.getItem(item.otherUserConnectionId) || item.myUserLastReadTs;
+            SecureStore.setItem(item.otherUserConnectionId, myLastSeen)
+            return (
+              <TouchableOpacity
+                key={item.chatRoomId}
+                style={styles.messageBox}
+                onPress={() =>
+                  messageBoxPressHandler(
+                    item.chatRoomId,
+                    item.otherUserConnectionId
+                  )
+                }
+              >
+                <View style={styles.messageBoxLeft}>
+                  <Image
+                    source={{
+                      uri: "https://media.licdn.com/dms/image/v2/D4D03AQFB0oznJhn_Eg/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1707992142190?e=1729123200&v=beta&t=8WUd5YODbi2dSoWP56kqBzK3Ir47WJQG-xclk_BV0mE",
+                    }}
+                    style={styles.messageImg}
+                  />
+                  <View>
+                    <CustomText style={styles.messageName}>
+                      {item.otherUserDisplayName}
+                    </CustomText>
+                    <CustomText style={styles.message}>
+                      {item.messages[0]?.messageType === "text" &&
+                        item.messages[0]?.text}
+                      {item.messages[0]?.messageType === "image" &&
+                        (!isIncome
+                          ? "Bir resim gönderdiniz"
+                          : "Bir resim gönderdi")}
+                      {item.messages[0]?.messageType === "audio" &&
+                        (!isIncome
+                          ? "Bir ses kaydı gönderdiniz"
+                          : "Bir ses kaydı gönderdi")}
+                    </CustomText>
+                  </View>
+                </View>
+                {isIncome && (item.messages[0]?.ts > SecureStore.getItem(item.otherUserConnectionId)) && (
+                  <View style={styles.messageDot}></View>
+                )}
+              </TouchableOpacity>
+            );
+          })}
         </View>
       )}
     </View>
@@ -204,10 +225,15 @@ const styles = StyleSheet.create({
   messageBox: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 18,
+    justifyContent: "space-between",
     paddingVertical: 16,
     borderBottomWidth: 1,
     borderBottomColor: "#0000001A",
+  },
+  messageBoxLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 18,
   },
   messageImg: {
     width: 56,
@@ -219,6 +245,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     color: "#000000",
+  },
+  messageDot: {
+    width: 10,
+    height: 10,
+    backgroundColor: "#FF524F",
+    borderRadius: 999,
   },
   message: {
     fontWeight: "400",

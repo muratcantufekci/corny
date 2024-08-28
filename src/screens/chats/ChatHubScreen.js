@@ -7,7 +7,6 @@ import React, {
   useState,
 } from "react";
 import {
-  FlatList,
   Image,
   KeyboardAvoidingView,
   Modal,
@@ -20,13 +19,11 @@ import {
 import CustomText from "../../components/CustomText";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import useAppUtils from "../../store/useAppUtils";
-import Dots from "../../assets/svg/dots-horizontal.svg";
 import Camera from "../../assets/svg/camera.svg";
 import Microphone from "../../assets/svg/microphone.svg";
 import Plus from "../../assets/svg/plus.svg";
 import ArrowUp from "../../assets/svg/arrow-up-circle.svg";
 import Input from "../../components/Input";
-import Back from "../../assets/svg/arrow-left.svg";
 import Photos from "../../assets/svg/photos.svg";
 import Gifs from "../../assets/svg/gifs.svg";
 import Suggest from "../../assets/svg/suggest.svg";
@@ -41,112 +38,11 @@ import { selectImage, uriToFile } from "../../helper/selectImage";
 import { BlurView } from "expo-blur";
 import Button from "../../components/Button";
 import * as ImagePicker from "expo-image-picker";
-
-
-const Header = ({ navigation, userImage, userName, sheetRef, pt }) => (
-  <View style={[styles.headerContainer, { paddingTop: pt }]}>
-    <View style={styles.headerWrapper}>
-      <TouchableOpacity onPress={() => navigation.goBack()}>
-        <Back width={30} height={30} />
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.headerMid}>
-        <Image source={{ uri: userImage }} style={styles.headerImg} />
-        <View style={styles.headerNameWrap}>
-          <CustomText style={styles.headerName}>{userName}</CustomText>
-        </View>
-      </TouchableOpacity>
-    </View>
-    <TouchableOpacity onPress={() => sheetRef.current?.present()}>
-      <Dots width={32} height={32} />
-    </TouchableOpacity>
-  </View>
-);
-
-const EpisodeSection = ({ image }) => (
-  <View style={styles.episode}>
-    <Image
-      source={require("../../assets/images/noise.png")}
-      style={styles.episodeNoise}
-    />
-    <CustomText style={styles.episodeText}>
-      Season 1, Episode 1 - The One who Matt and Lydia matches in Corny!
-    </CustomText>
-    <View style={styles.episodeImgs}>
-      <Image
-        source={{ uri: image }}
-        style={[styles.episodeImg, styles.episodeFirstImg]}
-      />
-      <Image
-        source={{ uri: image }}
-        style={[styles.episodeImg, styles.episodeSecondImg]}
-      />
-      <Image
-        source={require("../../assets/images/beverage.png")}
-        style={styles.episodeBeverage}
-      />
-      <Image
-        source={require("../../assets/images/ticket.png")}
-        style={styles.episodeTicket}
-      />
-    </View>
-  </View>
-);
-
-const MessageList = ({ messages, otherUserConnectionId, image }) => {
-  const locale = navigator.language || "tr-TR";
-  const formatter = new Intl.DateTimeFormat(locale, {
-    day: "numeric",
-    month: "long",
-    weekday: "short",
-  });
-
-  return (
-    <FlatList
-      style={{ flex: 1 }}
-      data={messages}
-      inverted
-      renderItem={({ item, index }) => {
-        const isIncome = item.sender === otherUserConnectionId;
-        const formattedDate = formatter.format(item.ts);
-
-        const nextItem = messages[index + 1];
-        const nextItemDate = nextItem ? formatter.format(nextItem.ts) : null;
-
-        const showDate = formattedDate !== nextItemDate;
-
-        return (
-          <>
-            <View
-              style={[
-                styles.messageBox,
-                isIncome ? styles.messageBoxIncome : styles.messageBoxSend,
-              ]}
-            >
-              {item.messageType === "text" && (
-                <CustomText style={styles.message}>{item.text}</CustomText>
-              )}
-              {item.messageType === "image" && (
-                <Image
-                  style={styles.imgMessage}
-                  source={{ uri: item.imageUrl }}
-                />
-              )}
-            </View>
-            {showDate && (
-              <View>
-                <CustomText style={styles.messageDate}>
-                  {formattedDate}
-                </CustomText>
-              </View>
-            )}
-          </>
-        );
-      }}
-      keyExtractor={(item) => item.messageIdentifier}
-      ListFooterComponent={<EpisodeSection image={image} />}
-    />
-  );
-};
+import { Audio } from "expo-av";
+import { postChatAudio } from "../../services/send-chat-audio";
+import ChatHubHeader from "./components/ChatHubHeader";
+import MessageList from "./components/MessageList";
+import * as SecureStore from "expo-secure-store";
 
 const ChatHubScreen = ({ route }) => {
   const image =
@@ -164,6 +60,9 @@ const ChatHubScreen = ({ route }) => {
   const [photoModalVisible, setPhotoModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageFormData, setImageFormData] = useState(null);
+  const [recording, setRecording] = useState(null);
+  const [previewPhoto, setPreviewPhoto] = useState(false);
+  const [replyMessage, setReplyMessage] = useState(null);
 
   const hubMessages = chatRoomsStore.chatRooms.find(
     (item) => item.chatRoomId === chatRoomId
@@ -185,13 +84,14 @@ const ChatHubScreen = ({ route }) => {
     if (isFocused) {
       appUtils.setBackgroundColor("#FEFCF5");
       appUtils.setPaddingHorizontal(0);
+      SecureStore.setItem(otherUserConnectionId,Date.now().toString())
     }
   }, [isFocused]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <Header
+        <ChatHubHeader
           navigation={navigation}
           userImage={image}
           userName={hubMessages.otherUserDisplayName}
@@ -217,10 +117,11 @@ const ChatHubScreen = ({ route }) => {
 
   const selectImageHandler = async () => {
     const data = await selectImage();
-    setSelectedImage(data.uri);
-    setImageFormData(data.formData);
     setMenuModalVisible(false);
+    setSelectedImage(data.uri);
     setPhotoModalVisible(true);
+    setPreviewPhoto(false);
+    setImageFormData(data.formData);
   };
 
   const sendImageHandler = async (formData) => {
@@ -279,6 +180,87 @@ const ChatHubScreen = ({ route }) => {
     }
   };
 
+  const startRecording = async () => {
+    try {
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      });
+
+      const { status } = await Audio.requestPermissionsAsync();
+      if (status !== "granted") {
+        console.error("Permission to access microphone was denied");
+        return;
+      }
+
+      const { recording } = await Audio.Recording.createAsync(
+        Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
+      );
+      setRecording(recording);
+    } catch (error) {
+      console.error("Failed to start recording", error);
+    }
+  };
+
+  const stopRecording = async () => {
+    try {
+      if (recording) {
+        await recording.stopAndUnloadAsync();
+        const uri = recording.getURI();
+
+        const file = await uriToFile(uri);
+
+        const formData = new FormData();
+        formData.append("audio", file);
+
+        const response = await postChatAudio(
+          "chatUser_12",
+          otherUserConnectionId,
+          formData
+        );
+
+        if (response.isSuccess) {
+          if (chatRoomsStore.connection) {
+            chatRoomsStore.connection
+              .send(
+                "SendAudioMessage",
+                otherUserConnectionId,
+                response.messageIdentifier,
+                " "
+              )
+              .then(() => {
+                setMessage("");
+              })
+              .catch((error) =>
+                console.error("Message sending failed: ", error)
+              );
+          } else {
+            console.warn("SignalR connection not established.");
+          }
+        }
+
+        setRecording(null);
+      }
+    } catch (error) {
+      console.error("Failed to stop recording", error);
+    }
+  };
+
+  const onReply = (item) => {
+    let message;
+    if (item.messageType === "text") {
+      message = item.text;
+    } else if (item.messageType === "image") {
+      message = t("PHOTO");
+    } else {
+      message = t("AUDIO");
+    }
+    setReplyMessage({
+      message,
+      replyColor: otherUserConnectionId === item.sender ? "#FCE89E" : "#E5E3FF",
+    });
+  };
+
   return (
     <>
       <KeyboardAvoidingView
@@ -288,19 +270,38 @@ const ChatHubScreen = ({ route }) => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? 120 : 0}
       >
-        <View
-          style={[
-            styles.container,
-            { paddingBottom: insets.bottom, paddingTop: insets.top },
-          ]}
-        >
+        <View style={[styles.container, { paddingBottom: insets.bottom }]}>
           <View style={styles.messageContainer}>
             <MessageList
               messages={hubMessages.messages}
               otherUserConnectionId={otherUserConnectionId}
               image={image}
+              setPhotoModalVisible={setPhotoModalVisible}
+              setPreviewPhoto={setPreviewPhoto}
+              setSelectedImage={setSelectedImage}
+              onReply={onReply}
             />
           </View>
+          {replyMessage && (
+            <View style={styles.messageReplyContainer}>
+              <View
+                style={[
+                  styles.messageReplyText,
+                  { borderLeftColor: replyMessage?.replyColor },
+                ]}
+              >
+                <CustomText style={styles.messageReplyName}>
+                  {hubMessages.otherUserDisplayName}
+                </CustomText>
+                <CustomText style={styles.messageReplyContent}>
+                  {replyMessage?.message}
+                </CustomText>
+              </View>
+              <TouchableOpacity style={styles.messageReplyIcon} onPress={() => setReplyMessage(null)}>
+                <Cross />
+              </TouchableOpacity>
+            </View>
+          )}
           <View style={styles.messageSendContainer}>
             <TouchableOpacity
               style={styles.plusIcon}
@@ -325,7 +326,10 @@ const ChatHubScreen = ({ route }) => {
                 <TouchableOpacity onPress={takePhoto}>
                   <Camera width={24} height={24} />
                 </TouchableOpacity>
-                <TouchableOpacity>
+                <TouchableOpacity
+                  onPressIn={startRecording}
+                  onPressOut={stopRecording}
+                >
                   <Microphone width={24} height={24} />
                 </TouchableOpacity>
               </>
@@ -409,12 +413,17 @@ const ChatHubScreen = ({ route }) => {
             source={{ uri: selectedImage }}
             style={styles.photoModalImage}
           />
-          <Button
-            variant="white"
-            onPress={() => sendImageHandler(imageFormData)}
-          >
-            {t("SEND")}
-          </Button>
+          {!previewPhoto && (
+            <Button
+              variant="white"
+              onPress={() => {
+                sendImageHandler(imageFormData);
+                setPreviewPhoto(false);
+              }}
+            >
+              {t("SEND")}
+            </Button>
+          )}
         </View>
       </Modal>
     </>
@@ -434,42 +443,37 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
   },
-  headerContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E9E9EC",
-    backgroundColor: "#FEFCF5",
-    paddingHorizontal: 16,
-  },
-  headerWrapper: {
-    flexDirection: "row",
-    gap: 16,
-    alignItems: "center",
-    paddingBottom: 10,
-  },
-  headerMid: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  headerImg: {
-    width: 40,
-    height: 40,
-    borderRadius: 999,
-  },
-  headerNameWrap: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  headerName: {
-    fontWeight: "600",
-    fontSize: 18,
-    lineHeight: 24,
-    color: "#000000",
-  },
   messageContainer: {
     flex: 1,
+  },
+  messageReplyContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 1,
+    borderTopWidth: 1,
+    borderTopColor: "gray",
+    marginHorizontal: -16,
+  },
+  messageReplyText: {
+    paddingLeft: 16,
+    borderLeftWidth: 8,
+    borderLeftColor: "red",
+  },
+  messageReplyName: {
+    fontWeight: "600",
+    fontSize: 16,
+    color: "#000000",
+    paddingTop: 11,
+  },
+  messageReplyContent: {
+    fontWeight: "400",
+    fontSize: 14,
+    color: "#000000",
+    paddingBottom: 12,
+  },
+  messageReplyIcon: {
+    paddingRight: 16,
   },
   messageSendContainer: {
     width: "100%",
@@ -496,39 +500,6 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: "#000000",
   },
-  messageDate: {
-    fontWeight: "400",
-    fontSize: 12,
-    lineHeight: 16,
-    textAlign: "center",
-    color: "#51525C",
-    marginBottom: 20,
-  },
-  messageBox: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 12,
-    maxWidth: "85%",
-    marginBottom: 16,
-  },
-  messageBoxIncome: {
-    backgroundColor: "#FCE89E",
-    alignSelf: "flex-start",
-  },
-  messageBoxSend: {
-    backgroundColor: "#E5E3FF",
-    alignSelf: "flex-end",
-  },
-  message: {
-    fontWeight: "400",
-    fontSize: 16,
-    lineHeight: 24,
-    color: "#000000",
-  },
-  imgMessage: {
-    width: 50,
-    height: 80,
-  },
   plusIcon: {
     width: 24,
     height: 24,
@@ -546,69 +517,6 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: "#000000",
   },
-  episode: {
-    backgroundColor: "#FF524F",
-    borderRadius: 16,
-    paddingHorizontal: 12,
-    paddingVertical: 50,
-    flexDirection: "row",
-    gap: 16,
-    alignItems: "center",
-    marginBottom: 8,
-    overflow: "hidden",
-  },
-  episodeText: {
-    fontWeight: "600",
-    fontSize: 16,
-    lineHeight: 20,
-    color: "#FFFFFF",
-    flex: 1,
-  },
-  episodeImgs: {
-    position: "relative",
-    width: "40%",
-    height: "100%",
-    zIndex: 3,
-  },
-  episodeImg: {
-    width: 65,
-    height: 75,
-    borderWidth: 1.5,
-    borderColor: "#FFFFFF",
-    borderRadius: 6,
-    position: "absolute",
-    top: -10,
-  },
-  episodeFirstImg: {
-    right: 70,
-    transform: [{ rotate: "-13deg" }],
-    zIndex: 3,
-  },
-  episodeSecondImg: {
-    right: 5,
-    transform: [{ rotate: "13deg" }],
-    zIndex: 2,
-  },
-  episodeNoise: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    left: 0,
-    opacity: 0.3,
-    zIndex: 1,
-  },
-  episodeBeverage: {
-    position: "absolute",
-    top: -50,
-    right: 35,
-    zIndex: 2,
-  },
-  episodeTicket: {
-    position: "absolute",
-    top: 28,
-    right: 32,
-    zIndex: 4,
-  },
   bottomSheetItem: {
     alignItems: "center",
     paddingVertical: 16,
@@ -625,7 +533,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "black",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "center",
     paddingVertical: 64,
   },
   photoModalImage: {
@@ -634,11 +542,12 @@ const styles = StyleSheet.create({
     marginBottom: 50,
   },
   photoModalCross: {
+    position: "absolute",
+    top: 50,
+    right: 10,
     backgroundColor: "white",
     borderRadius: 999,
-    padding: 4,
     alignSelf: "flex-start",
-    marginLeft: 8,
   },
 });
 

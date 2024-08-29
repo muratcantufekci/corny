@@ -1,4 +1,4 @@
-import request from "./request";
+import request from "../request";
 
 export const getProfileImages = async () => {
   const res = await request.get(`/User/GetProfileImages`, {

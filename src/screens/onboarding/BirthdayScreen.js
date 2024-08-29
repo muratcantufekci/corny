@@ -7,7 +7,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import * as Localization from "expo-localization";
 import Button from "../../components/Button";
 import { useNavigation } from "@react-navigation/native";
-import { postBirthday } from "../../services/send-birthday";
+import { postBirthday } from "../../services/User/send-birthday";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const BirthdayScreen = ({ route }) => {

@@ -7,10 +7,10 @@ import Button from "../../components/Button";
 import SelectionBox from "../../components/SelectionBox";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "@react-navigation/native";
-import { postUserPhoto } from "../../services/send-photo";
-import { deleteUserPhoto } from "../../services/delete-photo";
-import { postUserPhotoOrder } from "../../services/send-photos-order";
-import { getProfileImages } from "../../services/get-profile-images";
+import { postUserPhoto } from "../../services/User/send-photo";
+import { deleteUserPhoto } from "../../services/User/delete-photo";
+import { postUserPhotoOrder } from "../../services/User/send-photos-order";
+import { getProfileImages } from "../../services/User/get-profile-images";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { selectImage } from "../../helper/selectImage";
 

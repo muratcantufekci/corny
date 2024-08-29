@@ -16,8 +16,8 @@ import WrongIcon from "../../assets/svg/close-circle-wrong.svg";
 import CorrectIcon from "../../assets/svg/minus-tick-correct.svg";
 import ErrorText from "../../components/ErrorText";
 import { useNavigation } from "@react-navigation/native";
-import { postEmail } from "../../services/send-email";
-import { checkUserConfiguration } from "../../services/check-user-configurations";
+import { postEmail } from "../../services/User/send-email";
+import { checkUserConfiguration } from "../../services/User/check-user-configurations";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const validation = Yup.object().shape({

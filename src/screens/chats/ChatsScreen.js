@@ -5,7 +5,7 @@ import { t } from "i18next";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import useAppUtils from "../../store/useAppUtils";
 import * as SignalR from "@microsoft/signalr";
-import { getChatOverview } from "../../services/get-chat-overview";
+import { getChatOverview } from "../../services/Chat/get-chat-overview";
 import useChatRoomsStore from "../../store/useChatRoomsStore";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as SecureStore from "expo-secure-store";

@@ -25,9 +25,8 @@ import MailScreen from "./src/screens/onboarding/MailScreen";
 import OnboardingEndScreen from "./src/screens/onboarding/OnboardingEndScreen";
 import Back from "./src/assets/svg/arrow-left.svg";
 import * as SecureStore from "expo-secure-store";
-import { authenticateWithRefreshToken } from "./src/services/authenticate-with-refresh-token";
 import useUserStore from "./src/store/useUserStore";
-import { checkUserConfiguration } from "./src/services/check-user-configurations";
+import { checkUserConfiguration } from "./src/services/User/check-user-configurations";
 import ExploreScreen from "./src/screens/explore/ExploreScreen";
 import LikesScreen from "./src/screens/likes/LikesScreen";
 import ChatsScreen from "./src/screens/chats/ChatsScreen";
@@ -48,6 +47,7 @@ import {
   BottomSheetModalProvider,
 } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { authenticateWithRefreshToken } from "./src/services/Login/authenticate-with-refresh-token";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();

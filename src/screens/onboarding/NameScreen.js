@@ -16,7 +16,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import WrongIcon from "../../assets/svg/close-circle-wrong.svg";
 import CorrectIcon from "../../assets/svg/minus-tick-correct.svg";
-import { postUsername } from "../../services/send-name";
+import { postUsername } from "../../services/User/send-name";
 import { useEffect } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 

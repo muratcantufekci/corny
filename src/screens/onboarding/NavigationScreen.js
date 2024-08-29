@@ -17,7 +17,7 @@ import ProggressBar from "../../components/ProggressBar";
 import Modal from "../../components/Modal";
 import { useNavigation } from "@react-navigation/native";
 import { t } from "i18next";
-import { postUserLocation } from "../../services/send-location";
+import { postUserLocation } from "../../services/User/send-location";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const NavigationScreen = ({ route }) => {

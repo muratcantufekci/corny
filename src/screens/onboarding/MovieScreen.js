@@ -14,12 +14,12 @@ import SelectionBox from "../../components/SelectionBox";
 import Button from "../../components/Button";
 import { t } from "i18next";
 import Input from "../../components/Input";
-import { getTvShowsByPopularity } from "../../services/get-tv-shows-by-popularity";
+import { getTvShowsByPopularity } from "../../services/TvShow/get-tv-shows-by-popularity";
 import Search from "../../assets/svg/search.svg";
 import CustomText from "../../components/CustomText";
-import { searchTvShowsByText } from "../../services/search-tv-shows";
+import { searchTvShowsByText } from "../../services/TvShow/search-tv-shows";
 import { useNavigation } from "@react-navigation/native";
-import { postUserMovies } from "../../services/send-movie";
+import { postUserMovies } from "../../services/TvShow/send-movie";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const MovieScreen = ({ route }) => {

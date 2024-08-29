@@ -6,7 +6,7 @@ import { t } from "i18next";
 import Button from "../../components/Button";
 import RadioButton from "../../components/RadioButton";
 import { useNavigation } from "@react-navigation/native";
-import { postGender } from "../../services/send-gender";
+import { postGender } from "../../services/User/send-gender";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const genders = [

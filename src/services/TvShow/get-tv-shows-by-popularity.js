@@ -1,4 +1,4 @@
-import request from "./request";
+import request from "../request";
 
 export const getTvShowsByPopularity =  async (page) => {
     const res = await request.get(`/TvShow/GetTvShowsByPopularity?page=${page}&limit=18`)

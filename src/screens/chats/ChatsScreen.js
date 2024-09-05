@@ -11,12 +11,22 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as SecureStore from "expo-secure-store";
 import Tabs from "../../components/Tabs";
 
+
+
 const ChatsScreen = () => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const appUtils = useAppUtils();
   const chatRoomsStore = useChatRoomsStore();
   const insets = useSafeAreaInsets();
+
+  const TABS_DATA = [
+    {
+      index: 0,
+      name: t("MESSAGES"),
+      count: chatRoomsStore.chatRooms?.length
+    },
+  ]
 
   useEffect(() => {
     if (isFocused) {
@@ -120,7 +130,7 @@ const ChatsScreen = () => {
         paddingTop: insets.top,
       }}
     >
-      <Tabs tabText={t("MESSAGES")} tabCount={chatRoomsStore.chatRooms?.length}/>
+      <Tabs tabsData={TABS_DATA}/>
       {chatRoomsStore.chatRooms?.length === 0 ||
       chatRoomsStore.chatRooms === null ? (
         <View style={styles.emptyImageWrapper}>

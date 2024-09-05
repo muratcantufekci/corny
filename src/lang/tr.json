@@ -66,6 +66,9 @@
     "INVITE_QUIZ": "Quize Davet Et",
     "SEND": "Gönder",
     "PHOTO": "Fotoğraf",
-    "AUDIO": "Ses Kaydı"
+    "AUDIO": "Ses Kaydı",
+    "OPENED": "Açıldı",
+    "YOU": "Siz",
+    "SEEN": "Görüldü"
   }
 }

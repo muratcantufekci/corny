@@ -29,6 +29,9 @@ import Gifs from "../../assets/svg/gifs.svg";
 import Suggest from "../../assets/svg/suggest.svg";
 import Quiz from "../../assets/svg/quiz.svg";
 import Cross from "../../assets/svg/cross.svg";
+import Reply from "../../assets/svg/reply.svg";
+import Trash from "../../assets/svg/trash.svg";
+import Copy from "../../assets/svg/copy.svg";
 import useChatRoomsStore from "../../store/useChatRoomsStore";
 import { t } from "i18next";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -43,6 +46,7 @@ import { postChatAudio } from "../../services/Chat/send-chat-audio";
 import ChatHubHeader from "./components/ChatHubHeader";
 import MessageList from "./components/MessageList";
 import * as SecureStore from "expo-secure-store";
+import * as Clipboard from "expo-clipboard";
 
 const ChatHubScreen = ({ route }) => {
   const image =
@@ -63,6 +67,8 @@ const ChatHubScreen = ({ route }) => {
   const [recording, setRecording] = useState(null);
   const [previewPhoto, setPreviewPhoto] = useState(false);
   const [replyMessage, setReplyMessage] = useState(null);
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [selectedMessage, setSelectedMessage] = useState(null);
 
   const hubMessages = chatRoomsStore.chatRooms.find(
     (item) => item.chatRoomId === chatRoomId
@@ -84,9 +90,21 @@ const ChatHubScreen = ({ route }) => {
     if (isFocused) {
       appUtils.setBackgroundColor("#FEFCF5");
       appUtils.setPaddingHorizontal(0);
-      SecureStore.setItem(otherUserConnectionId,Date.now().toString())
     }
   }, [isFocused]);
+
+  useEffect(() => {
+    if (chatRoomsStore.connection) {
+      chatRoomsStore.connection
+        .send("ReadMessage", otherUserConnectionId)
+        .then(() => {
+          SecureStore.setItem(`${chatRoomId}`, Date.now().toString());
+        })
+        .catch((error) => console.error("Message sending failed: ", error));
+    } else {
+      console.warn("SignalR connection not established.");
+    }
+  }, [hubMessages]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -103,11 +121,21 @@ const ChatHubScreen = ({ route }) => {
   }, [navigation]);
 
   const sendMessage = () => {
+    const messageIdentifier = replyMessage
+      ? replyMessage.replyIdentifier
+      : null;
     if (chatRoomsStore.connection) {
       chatRoomsStore.connection
-        .send("SendTextMessage", otherUserConnectionId, message, "111111")
+        .send(
+          "SendTextMessage",
+          otherUserConnectionId,
+          message,
+          messageIdentifier,
+          "111111"
+        )
         .then(() => {
           setMessage("");
+          setReplyMessage(null);
         })
         .catch((error) => console.error("Message sending failed: ", error));
     } else {
@@ -139,6 +167,7 @@ const ChatHubScreen = ({ route }) => {
             "SendImageMessage",
             otherUserConnectionId,
             response.messageIdentifier,
+            null,
             " "
           )
           .then(() => {
@@ -226,6 +255,7 @@ const ChatHubScreen = ({ route }) => {
                 "SendAudioMessage",
                 otherUserConnectionId,
                 response.messageIdentifier,
+                null,
                 " "
               )
               .then(() => {
@@ -258,7 +288,41 @@ const ChatHubScreen = ({ route }) => {
     setReplyMessage({
       message,
       replyColor: otherUserConnectionId === item.sender ? "#FCE89E" : "#E5E3FF",
+      replyName:
+        otherUserConnectionId === item.sender
+          ? hubMessages.otherUserDisplayName
+          : "Siz",
+      replyIdentifier: item.messageIdentifier,
     });
+  };
+
+  const menuReplyPressHandler = () => {
+    setMenuVisible(false)
+    onReply(selectedMessage)
+  }
+
+  const menuDeletePressHandler = () => {
+    if (chatRoomsStore.connection) {
+      chatRoomsStore.connection
+        .send(
+          "DeleteMessage",
+          otherUserConnectionId,
+          selectedMessage.messageIdentifier,
+        )
+        .then(() => {
+          setMenuVisible(false)
+          setSelectedMessage(null)
+        })
+        .catch((error) => console.error("Message sending failed: ", error));
+    } else {
+      console.warn("SignalR connection not established.");
+    }
+  }
+
+  const copyToClipboard = async () => {
+    await Clipboard.setStringAsync(selectedMessage.text);
+    setMenuVisible(false)
+    setSelectedMessage(null)
   };
 
   return (
@@ -280,6 +344,11 @@ const ChatHubScreen = ({ route }) => {
               setPreviewPhoto={setPreviewPhoto}
               setSelectedImage={setSelectedImage}
               onReply={onReply}
+              otherUserLastSeen={SecureStore.getItem(otherUserConnectionId)}
+              otherUserName={hubMessages.otherUserDisplayName}
+              chatRoomId={chatRoomId}
+              setMenuVisible={setMenuVisible}
+              setSelectedMessage={setSelectedMessage}
             />
           </View>
           {replyMessage && (
@@ -291,13 +360,16 @@ const ChatHubScreen = ({ route }) => {
                 ]}
               >
                 <CustomText style={styles.messageReplyName}>
-                  {hubMessages.otherUserDisplayName}
+                  {replyMessage?.replyName}
                 </CustomText>
                 <CustomText style={styles.messageReplyContent}>
                   {replyMessage?.message}
                 </CustomText>
               </View>
-              <TouchableOpacity style={styles.messageReplyIcon} onPress={() => setReplyMessage(null)}>
+              <TouchableOpacity
+                style={styles.messageReplyIcon}
+                onPress={() => setReplyMessage(null)}
+              >
                 <Cross />
               </TouchableOpacity>
             </View>
@@ -395,6 +467,28 @@ const ChatHubScreen = ({ route }) => {
               </TouchableOpacity>
             </View>
           </BlurView>
+        </TouchableWithoutFeedback>
+      </Modal>
+      <Modal transparent={true} visible={menuVisible} animationType="fade">
+        <TouchableWithoutFeedback onPress={() => setMenuVisible(false)}>
+          <View style={styles.menuWrapper}>
+            <View style={styles.menu}>
+              <TouchableOpacity style={styles.menuItem} onPress={menuReplyPressHandler}>
+                <CustomText style={styles.menuItemText}>Yanıtla</CustomText>
+                <Reply width={20} height={20} />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.menuItem} onPress={copyToClipboard}>
+                <CustomText style={styles.menuItemText}>Kopyala</CustomText>
+                <Copy width={20} height={20} />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.menuItem} onPress={menuDeletePressHandler}>
+                <CustomText style={[styles.menuItemText, styles.menuDeleteItemText]}>
+                  Herkesten Sil
+                </CustomText>
+                <Trash width={20} height={20} color="#f5022b"/>
+              </TouchableOpacity>
+            </View>
+          </View>
         </TouchableWithoutFeedback>
       </Modal>
       <Modal
@@ -549,6 +643,36 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     alignSelf: "flex-start",
   },
+  menuWrapper: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    paddingBottom: 80,
+    paddingHorizontal:40
+  },
+  menu: {
+    gap:8,
+    width: "100%",
+  },
+  menuItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    backgroundColor: "white",
+    borderRadius: 16,
+  },
+  menuItemText: {
+    fontWeight: "400",
+    fontSize: 16,
+    lineHeight: 24,
+    color: "#000000",
+    paddingVertical: 8,
+  },
+  menuDeleteItemText: {
+    color: "#f5022b"
+  }
 });
 
 export default ChatHubScreen;

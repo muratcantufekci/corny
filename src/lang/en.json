@@ -66,6 +66,9 @@
     "INVITE_QUIZ": "Invite to a quiz",
     "SEND": "Send",
     "PHOTO": "Photo",
-    "AUDIO": "Voice Message"
+    "AUDIO": "Voice Message",
+    "OPENED": "Opened",
+    "YOU": "You",
+    "SEEN": "Seen"
   }
 }

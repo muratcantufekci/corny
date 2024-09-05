@@ -3771,6 +3771,11 @@ expo-camera@^15.0.15:
   dependencies:
     invariant "^2.2.4"
 
+expo-clipboard@^6.0.3:
+  version "6.0.3"
+  resolved "https://registry.npmjs.org/expo-clipboard/-/expo-clipboard-6.0.3.tgz"
+  integrity sha512-RIKDsuHkYfaspifbFpVC8sBVFKR05L7Pj7mU2/XkbrW9m01OBNvdpGraXEMsTFCx97xMGsZpEw9pPquL4j4xVg==
+
 expo-constants@~16.0.0:
   version "16.0.2"
   resolved "https://registry.npmjs.org/expo-constants/-/expo-constants-16.0.2.tgz"

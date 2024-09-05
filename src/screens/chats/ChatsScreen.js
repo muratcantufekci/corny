@@ -9,6 +9,7 @@ import { getChatOverview } from "../../services/Chat/get-chat-overview";
 import useChatRoomsStore from "../../store/useChatRoomsStore";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as SecureStore from "expo-secure-store";
+import Tabs from "../../components/Tabs";
 
 const ChatsScreen = () => {
   const navigation = useNavigation();
@@ -65,14 +66,34 @@ const ChatsScreen = () => {
 
             chatRoomsStore.setChatRooms((prevChatRooms) => {
               const updatedChatRooms = prevChatRooms.map((item) => {
-                if (
-                  item.otherUserConnectionId === parsedMessage.sender ||
-                  item.otherUserConnectionId === parsedMessage.receiver
-                ) {
-                  return {
-                    ...item,
-                    messages: [parsedMessage, ...item.messages],
-                  };
+                if(parsedMessage.messageType !== "statusUpdate") {
+                  if (
+                    item.otherUserConnectionId === parsedMessage.sender ||
+                    item.otherUserConnectionId === parsedMessage.receiver
+                  ) {
+                    return {
+                      ...item,
+                      messages: [parsedMessage, ...item.messages],
+                    };
+                  }
+                  
+                } else {
+                  if(parsedMessage.topic === "messageRead") {
+                    SecureStore.setItem(item.otherUserConnectionId, Date.now().toString())
+                  }
+                  if(parsedMessage.topic === "imageOpened") {
+                    if (
+                      item.otherUserConnectionId === parsedMessage.sender ||
+                      item.otherUserConnectionId === parsedMessage.receiver
+                    ) {
+                      item.messages.map(message => {
+                        if(message.messageIdentifier === parsedMessage.messageIdentifier) {
+                          message.isOpened = parsedMessage.isOpened
+                        }
+                      })
+                      
+                    }
+                  }
                 }
                 return item;
               });
@@ -99,18 +120,7 @@ const ChatsScreen = () => {
         paddingTop: insets.top,
       }}
     >
-      <View style={styles.tabWrapper}>
-        <View style={styles.tab}>
-          <CustomText style={styles.tabText}>{t("MESSAGES")}</CustomText>
-          {chatRoomsStore.chatRooms?.length > 0 && (
-            <View style={styles.tabNumber}>
-              <CustomText style={styles.tabNumberText}>
-                {chatRoomsStore.chatRooms.length}
-              </CustomText>
-            </View>
-          )}
-        </View>
-      </View>
+      <Tabs tabText={t("MESSAGES")} tabCount={chatRoomsStore.chatRooms?.length}/>
       {chatRoomsStore.chatRooms?.length === 0 ||
       chatRoomsStore.chatRooms === null ? (
         <View style={styles.emptyImageWrapper}>
@@ -123,8 +133,8 @@ const ChatsScreen = () => {
         <View>
           {chatRoomsStore.chatRooms?.map((item) => {
             const isIncome = item.messages[0]?.sender === item.otherUserConnectionId;
-            const myLastSeen = SecureStore.getItem(item.otherUserConnectionId) || item.myUserLastReadTs;
-            SecureStore.setItem(item.otherUserConnectionId, myLastSeen)
+            const myLastSeen = SecureStore.getItem(`${item.chatRoomId}`) || item.myUserLastReadTs;
+            SecureStore.setItem(`${item.chatRoomId}`, myLastSeen)
             return (
               <TouchableOpacity
                 key={item.chatRoomId}
@@ -132,7 +142,7 @@ const ChatsScreen = () => {
                 onPress={() =>
                   messageBoxPressHandler(
                     item.chatRoomId,
-                    item.otherUserConnectionId
+                    item.otherUserConnectionId,
                   )
                 }
               >
@@ -161,7 +171,7 @@ const ChatsScreen = () => {
                     </CustomText>
                   </View>
                 </View>
-                {isIncome && (item.messages[0]?.ts > SecureStore.getItem(item.otherUserConnectionId)) && (
+                {isIncome && (new Date(Number(item.messages[0]?.ts)) > new Date(Number(SecureStore.getItem(`${item.chatRoomId}`)))) && (
                   <View style={styles.messageDot}></View>
                 )}
               </TouchableOpacity>
@@ -174,42 +184,6 @@ const ChatsScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  tabWrapper: {
-    width: "100%",
-    borderBottomWidth: 1,
-    borderBottomColor: "#00000026",
-    marginBottom: 16,
-  },
-  tab: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    paddingBottom: 12,
-    paddingHorizontal: 4,
-    borderBottomWidth: 1,
-    borderBottomColor: "#000000",
-    alignSelf: "flex-start",
-  },
-  tabText: {
-    fontWeight: "500",
-    fontSize: 16,
-    lineHeight: 24,
-    color: "#000000",
-  },
-  tabNumber: {
-    width: 24,
-    height: 24,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 999,
-    backgroundColor: "#FF524F",
-  },
-  tabNumberText: {
-    fontWeight: "500",
-    fontSize: 12,
-    lineHeight: 16,
-    color: "#000000",
-  },
   emptyImageWrapper: {
     flex: 1,
     alignItems: "center",

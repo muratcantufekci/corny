@@ -11,8 +11,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as SecureStore from "expo-secure-store";
 import Tabs from "../../components/Tabs";
 
-
-
 const ChatsScreen = () => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
@@ -24,9 +22,9 @@ const ChatsScreen = () => {
     {
       index: 0,
       name: t("MESSAGES"),
-      count: chatRoomsStore.chatRooms?.length
+      count: chatRoomsStore.chatRooms?.length,
     },
-  ]
+  ];
 
   useEffect(() => {
     if (isFocused) {
@@ -41,26 +39,29 @@ const ChatsScreen = () => {
       const response = await getChatOverview();
 
       chatRoomsStore.setChatRooms(response.chatRooms);
+      chatRoomsStore.setMyChatUserName(response.myChatUser.myConnectionId);
     };
     getChats();
   }, []);
 
   useEffect(() => {
-    const newConnection = new SignalR.HubConnectionBuilder()
-      .withUrl(
-        "https://cornyapi.azurewebsites.net/chatHub?username=chatUser_12"
-      )
-      .withAutomaticReconnect()
-      .build();
+    if (chatRoomsStore.myChatUserName) {
+      const newConnection = new SignalR.HubConnectionBuilder()
+        .withUrl(
+          `https://cornyapi.azurewebsites.net/chatHub?username=${chatRoomsStore.myChatUserName}`
+        )
+        .withAutomaticReconnect()
+        .build();
 
-    chatRoomsStore.setConnection(newConnection);
+      chatRoomsStore.setConnection(newConnection);
 
-    return () => {
-      if (chatRoomsStore.connection) {
-        chatRoomsStore.connection.stop();
-      }
-    };
-  }, []);
+      return () => {
+        if (chatRoomsStore.connection) {
+          chatRoomsStore.connection.stop();
+        }
+      };
+    }
+  }, [chatRoomsStore.myChatUserName]);
 
   useEffect(() => {
     if (chatRoomsStore.connection) {
@@ -76,32 +77,80 @@ const ChatsScreen = () => {
 
             chatRoomsStore.setChatRooms((prevChatRooms) => {
               const updatedChatRooms = prevChatRooms.map((item) => {
-                if(parsedMessage.messageType !== "statusUpdate") {
-                  if (
-                    item.otherUserConnectionId === parsedMessage.sender ||
-                    item.otherUserConnectionId === parsedMessage.receiver
-                  ) {
+                const isInHub =
+                  item.otherUserConnectionId === parsedMessage.sender ||
+                  item.otherUserConnectionId === parsedMessage.receiver;
+
+                if (parsedMessage.messageType !== "statusUpdate") {
+                  if (isInHub) {
                     return {
                       ...item,
                       messages: [parsedMessage, ...item.messages],
                     };
                   }
-                  
                 } else {
-                  if(parsedMessage.topic === "messageRead") {
-                    SecureStore.setItem(item.otherUserConnectionId, Date.now().toString())
+                  if (parsedMessage.topic === "messageRead") {
+                    SecureStore.setItem(
+                      item.otherUserConnectionId,
+                      Date.now().toString()
+                    );
                   }
-                  if(parsedMessage.topic === "imageOpened") {
-                    if (
-                      item.otherUserConnectionId === parsedMessage.sender ||
-                      item.otherUserConnectionId === parsedMessage.receiver
-                    ) {
-                      item.messages.map(message => {
-                        if(message.messageIdentifier === parsedMessage.messageIdentifier) {
-                          message.isOpened = parsedMessage.isOpened
+                  if (parsedMessage.topic === "imageOpened") {
+                    if (isInHub) {
+                      item.messages.map((message) => {
+                        if (
+                          message.messageIdentifier ===
+                          parsedMessage.messageIdentifier
+                        ) {
+                          message.isOpened = parsedMessage.isOpened;
                         }
-                      })
-                      
+                      });
+                    }
+                  }
+                  if (parsedMessage.topic === "messageLiked") {
+                    if (isInHub) {
+                      const updatedMessages = item.messages.map((message) => {
+                        if (
+                          message.messageIdentifier ===
+                          parsedMessage.messageIdentifier
+                        ) {
+                          return {
+                            ...message,
+                            messageLikes: [
+                              ...message.messageLikes,
+                              parsedMessage.sender,
+                            ],
+                          };
+                        }
+                        return message;
+                      });
+                      return {
+                        ...item,
+                        messages: updatedMessages,
+                      };
+                    }
+                  }
+
+                  if (parsedMessage.topic === "messageLikeRemoved") {
+                    if (isInHub) {
+                      const updatedMessages = item.messages.map((message) => {
+                        if (
+                          message.messageIdentifier ===
+                          parsedMessage.messageIdentifier
+                        ) {
+                          return {
+                            ...message,
+                            messageLikes: message.messageLikes.filter(
+                              (like) => like !== parsedMessage.sender
+                            ),
+                          };
+                        }
+                        return message;
+                      });
+                      return {
+                        ...item,
+                        messages: updatedMessages,
+                      };
                     }
                   }
                 }
@@ -130,7 +179,7 @@ const ChatsScreen = () => {
         paddingTop: insets.top,
       }}
     >
-      <Tabs tabsData={TABS_DATA}/>
+      <Tabs tabsData={TABS_DATA} />
       {chatRoomsStore.chatRooms?.length === 0 ||
       chatRoomsStore.chatRooms === null ? (
         <View style={styles.emptyImageWrapper}>
@@ -142,9 +191,12 @@ const ChatsScreen = () => {
       ) : (
         <View>
           {chatRoomsStore.chatRooms?.map((item) => {
-            const isIncome = item.messages[0]?.sender === item.otherUserConnectionId;
-            const myLastSeen = SecureStore.getItem(`${item.chatRoomId}`) || item.myUserLastReadTs;
-            SecureStore.setItem(`${item.chatRoomId}`, myLastSeen)
+            const isIncome =
+              item.messages[0]?.sender === item.otherUserConnectionId;
+            const myLastSeen =
+              SecureStore.getItem(`${item.chatRoomId}`) ||
+              item.myUserLastReadTs;
+            SecureStore.setItem(`${item.chatRoomId}`, myLastSeen);
             return (
               <TouchableOpacity
                 key={item.chatRoomId}
@@ -152,7 +204,7 @@ const ChatsScreen = () => {
                 onPress={() =>
                   messageBoxPressHandler(
                     item.chatRoomId,
-                    item.otherUserConnectionId,
+                    item.otherUserConnectionId
                   )
                 }
               >
@@ -181,9 +233,11 @@ const ChatsScreen = () => {
                     </CustomText>
                   </View>
                 </View>
-                {isIncome && (new Date(Number(item.messages[0]?.ts)) > new Date(Number(SecureStore.getItem(`${item.chatRoomId}`)))) && (
-                  <View style={styles.messageDot}></View>
-                )}
+                {isIncome &&
+                  new Date(Number(item.messages[0]?.ts)) >
+                    new Date(
+                      Number(SecureStore.getItem(`${item.chatRoomId}`))
+                    ) && <View style={styles.messageDot}></View>}
               </TouchableOpacity>
             );
           })}

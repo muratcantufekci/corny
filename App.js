@@ -178,7 +178,7 @@ const AppTabs = () => {
             focused ? (
               <LikesActive width={24} height={24} />
             ) : (
-              <LikesPassive width={24} height={24} />
+              <LikesPassive width={24} height={24} color="#A0A1AB"/>
             ),
           tabBarLabel: t("LIKES"),
         }}

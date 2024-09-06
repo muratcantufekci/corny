@@ -58,6 +58,7 @@ const ChatHubScreen = ({ route }) => {
   const { chatRoomId, otherUserConnectionId } = route.params;
   const [message, setMessage] = useState("");
   const sheetRef = useRef(null);
+  const likeSheetRef = useRef(null);
   const snapPoints = useMemo(() => ["27%"], []);
   const insets = useSafeAreaInsets();
   const [menuModalVisible, setMenuModalVisible] = useState(false);
@@ -154,7 +155,7 @@ const ChatHubScreen = ({ route }) => {
 
   const sendImageHandler = async (formData) => {
     const response = await postChatImage(
-      "chatUser_12",
+      chatRoomsStore.myChatUserName,
       otherUserConnectionId,
       formData
     );
@@ -243,7 +244,7 @@ const ChatHubScreen = ({ route }) => {
         formData.append("audio", file);
 
         const response = await postChatAudio(
-          "chatUser_12",
+          chatRoomsStore.myChatUserName,
           otherUserConnectionId,
           formData
         );
@@ -291,15 +292,32 @@ const ChatHubScreen = ({ route }) => {
       replyName:
         otherUserConnectionId === item.sender
           ? hubMessages.otherUserDisplayName
-          : "Siz",
+          : t("YOU"),
       replyIdentifier: item.messageIdentifier,
     });
   };
 
   const menuReplyPressHandler = () => {
-    setMenuVisible(false)
-    onReply(selectedMessage)
-  }
+    setMenuVisible(false);
+    onReply(selectedMessage);
+  };
+
+  const deleteMessage = (chatRoomId, messageIdentifier) => {
+    const updatedChatRooms = chatRoomsStore.chatRooms.map((chatRoom) => {
+      if (chatRoom.chatRoomId === chatRoomId) {
+        const filteredMessages = chatRoom.messages.filter(
+          (item) => item.messageIdentifier !== messageIdentifier
+        );
+        return {
+          ...chatRoom,
+          messages: filteredMessages,
+        };
+      }
+      return chatRoom;
+    });
+
+    chatRoomsStore.setChatRooms(updatedChatRooms);
+  };
 
   const menuDeletePressHandler = () => {
     if (chatRoomsStore.connection) {
@@ -307,22 +325,28 @@ const ChatHubScreen = ({ route }) => {
         .send(
           "DeleteMessage",
           otherUserConnectionId,
-          selectedMessage.messageIdentifier,
+          selectedMessage.messageIdentifier
         )
         .then(() => {
-          setMenuVisible(false)
-          setSelectedMessage(null)
+          setMenuVisible(false);
+          setSelectedMessage(null);
+          deleteMessage(chatRoomId, selectedMessage.messageIdentifier);
         })
         .catch((error) => console.error("Message sending failed: ", error));
     } else {
       console.warn("SignalR connection not established.");
     }
-  }
+  };
 
   const copyToClipboard = async () => {
     await Clipboard.setStringAsync(selectedMessage.text);
-    setMenuVisible(false)
-    setSelectedMessage(null)
+    setMenuVisible(false);
+    setSelectedMessage(null);
+  };
+
+  const likesPressHandler = (message) => {
+    likeSheetRef.current?.present();
+    setSelectedMessage(message);
   };
 
   return (
@@ -349,6 +373,7 @@ const ChatHubScreen = ({ route }) => {
               chatRoomId={chatRoomId}
               setMenuVisible={setMenuVisible}
               setSelectedMessage={setSelectedMessage}
+              likesPressHandler={likesPressHandler}
             />
           </View>
           {replyMessage && (
@@ -433,6 +458,25 @@ const ChatHubScreen = ({ route }) => {
             </TouchableOpacity>
           </View>
         </BottomSheetModal>
+        <BottomSheetModal
+          ref={likeSheetRef}
+          snapPoints={snapPoints}
+          index={0}
+          backdropComponent={renderBackdrop}
+        >
+          <View style={styles.likeSheet}>
+            <CustomText style={styles.likeSheetTitle}>Beğeniler</CustomText>
+            {selectedMessage?.messageLikes.map((like) => (
+              <View key={like}>
+                <CustomText style={styles.likeSheetItemText}>
+                  {like === otherUserConnectionId
+                    ? hubMessages.otherUserDisplayName
+                    : t("YOU")}
+                </CustomText>
+              </View>
+            ))}
+          </View>
+        </BottomSheetModal>
       </KeyboardAvoidingView>
       <Modal transparent={true} visible={menuModalVisible} animationType="fade">
         <TouchableWithoutFeedback onPress={() => setMenuModalVisible(false)}>
@@ -473,20 +517,35 @@ const ChatHubScreen = ({ route }) => {
         <TouchableWithoutFeedback onPress={() => setMenuVisible(false)}>
           <View style={styles.menuWrapper}>
             <View style={styles.menu}>
-              <TouchableOpacity style={styles.menuItem} onPress={menuReplyPressHandler}>
-                <CustomText style={styles.menuItemText}>Yanıtla</CustomText>
+              <TouchableOpacity
+                style={styles.menuItem}
+                onPress={menuReplyPressHandler}
+              >
+                <CustomText style={styles.menuItemText}>
+                  {t("REPLY")}
+                </CustomText>
                 <Reply width={20} height={20} />
               </TouchableOpacity>
-              <TouchableOpacity style={styles.menuItem} onPress={copyToClipboard}>
-                <CustomText style={styles.menuItemText}>Kopyala</CustomText>
+              <TouchableOpacity
+                style={styles.menuItem}
+                onPress={copyToClipboard}
+              >
+                <CustomText style={styles.menuItemText}>{t("COPY")}</CustomText>
                 <Copy width={20} height={20} />
               </TouchableOpacity>
-              <TouchableOpacity style={styles.menuItem} onPress={menuDeletePressHandler}>
-                <CustomText style={[styles.menuItemText, styles.menuDeleteItemText]}>
-                  Herkesten Sil
-                </CustomText>
-                <Trash width={20} height={20} color="#f5022b"/>
-              </TouchableOpacity>
+              {selectedMessage?.sender !== otherUserConnectionId && (
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={menuDeletePressHandler}
+                >
+                  <CustomText
+                    style={[styles.menuItemText, styles.menuDeleteItemText]}
+                  >
+                    {t("DELETE_FROM_EVERYONE")}
+                  </CustomText>
+                  <Trash width={20} height={20} color="#f5022b" />
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         </TouchableWithoutFeedback>
@@ -645,14 +704,14 @@ const styles = StyleSheet.create({
   },
   menuWrapper: {
     flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    justifyContent: "flex-end",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
     paddingBottom: 80,
-    paddingHorizontal:40
+    paddingHorizontal: 40,
   },
   menu: {
-    gap:8,
+    gap: 8,
     width: "100%",
   },
   menuItem: {
@@ -671,7 +730,25 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   menuDeleteItemText: {
-    color: "#f5022b"
+    color: "#f5022b",
+  },
+  likeSheet: {
+    padding: 16,
+  },
+  likeSheetTitle: {
+    fontWeight: "600",
+    fontSize: 18,
+    lineHeight: 24,
+    color: "#000000",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  likeSheetItemText: {
+    fontWeight: "500",
+    fontSize: 16,
+    lineHeight: 24,
+    color: "#000000",
+    marginBottom: 10,
   }
 });
 

@@ -69,6 +69,9 @@
     "AUDIO": "Voice Message",
     "OPENED": "Opened",
     "YOU": "You",
-    "SEEN": "Seen"
+    "SEEN": "Seen",
+    "REPLY": "Reply",
+    "COPY": "Copy",
+    "DELETE_FROM_EVERYONE": "Delete From Everyone"
   }
 }

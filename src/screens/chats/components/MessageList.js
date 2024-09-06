@@ -15,6 +15,7 @@ import EpisodeSection from "./EpisodeSection";
 import CustomText from "../../../components/CustomText";
 import { Audio } from "expo-av";
 import Play from "../../../assets/svg/play.svg";
+import Like from "../../../assets/svg/likes-passive.svg";
 import ImageOpened from "../../../assets/svg/img-opened.svg";
 import { getChatroomMessages } from "../../../services/Chat/get-chatroom-messages";
 import useChatRoomsStore from "../../../store/useChatRoomsStore";
@@ -37,6 +38,7 @@ const MessageList = ({
   chatRoomId,
   setMenuVisible,
   setSelectedMessage,
+  likesPressHandler
 }) => {
   const locale = navigator.language || "tr-TR";
   const formatter = new Intl.DateTimeFormat(locale, {
@@ -112,11 +114,12 @@ const MessageList = ({
   };
 
   const handleDoubleTap = (item) => {
-    console.log('beğendin',item);
+    const likeMethod =
+      item.messageLikes.length === 0 ? "LikeMessage" : "RemoveLike";
 
     if (chatRoomsStore.connection) {
       chatRoomsStore.connection
-        .send("LikeMessage", otherUserConnectionId, item.messageIdentifier)
+        .send(likeMethod, otherUserConnectionId, item.messageIdentifier)
         .then(() => {})
         .catch((error) => console.error("Message sending failed: ", error));
     }
@@ -230,6 +233,17 @@ const MessageList = ({
                   onLongPress={() => messageLongPressHandler(item)}
                   onPress={() => handlePress(item)}
                 >
+                  {item.messageLikes.length > 0 && (
+                    <TouchableOpacity
+                      style={[
+                        styles.like,
+                        isIncome ? { right: -5 } : { left: -5 },
+                      ]}
+                      onPress={() => likesPressHandler(item)}
+                    >
+                      <Like width={22} height={22} color="#ff0000" />
+                    </TouchableOpacity>
+                  )}
                   {item.hasReply && (
                     <View style={styles.replyContainer}>
                       <CustomText style={{ fontWeight: "700" }}>
@@ -396,6 +410,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
+  },
+  like: {
+    position: "absolute",
+    bottom: -10,
   },
   replyContainer: {
     backgroundColor: "rgba(0, 0, 0, 0.2)",

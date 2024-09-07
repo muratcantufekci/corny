@@ -7,7 +7,9 @@ import React, {
   useState,
 } from "react";
 import {
+  Dimensions,
   Image,
+  Keyboard,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -47,6 +49,7 @@ import ChatHubHeader from "./components/ChatHubHeader";
 import MessageList from "./components/MessageList";
 import * as SecureStore from "expo-secure-store";
 import * as Clipboard from "expo-clipboard";
+import MovieSelect from "../../components/MovieSelect";
 
 const ChatHubScreen = ({ route }) => {
   const image =
@@ -59,7 +62,8 @@ const ChatHubScreen = ({ route }) => {
   const [message, setMessage] = useState("");
   const sheetRef = useRef(null);
   const likeSheetRef = useRef(null);
-  const snapPoints = useMemo(() => ["27%"], []);
+  const movieSheetRef = useRef(null);
+  const snapPoints = useMemo(() => ["30%"], []);
   const insets = useSafeAreaInsets();
   const [menuModalVisible, setMenuModalVisible] = useState(false);
   const [photoModalVisible, setPhotoModalVisible] = useState(false);
@@ -70,6 +74,8 @@ const ChatHubScreen = ({ route }) => {
   const [replyMessage, setReplyMessage] = useState(null);
   const [menuVisible, setMenuVisible] = useState(false);
   const [selectedMessage, setSelectedMessage] = useState(null);
+  const [selectedTvShows, setSelectedTvShows] = useState([]);
+  const [holdScreen, setHoldScreen] = useState(false);
 
   const hubMessages = chatRoomsStore.chatRooms.find(
     (item) => item.chatRoomId === chatRoomId
@@ -106,6 +112,29 @@ const ChatHubScreen = ({ route }) => {
       console.warn("SignalR connection not established.");
     }
   }, [hubMessages]);
+
+  useEffect(() => {
+    if (selectedTvShows.length > 0) {
+      if (chatRoomsStore.connection) {
+        chatRoomsStore.connection
+          .send(
+            "SendShareTvShowMessage",
+            otherUserConnectionId,
+            selectedTvShows[0].id,
+            null,
+            "1111"
+          )
+          .then(() => {
+            movieSheetRef.current?.close();
+            setSelectedTvShows([]);
+            setHoldScreen(false);
+          })
+          .catch((error) => console.error("Message sending failed: ", error));
+      } else {
+        console.warn("SignalR connection not established.");
+      }
+    }
+  }, [selectedTvShows]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -283,8 +312,10 @@ const ChatHubScreen = ({ route }) => {
       message = item.text;
     } else if (item.messageType === "image") {
       message = t("PHOTO");
-    } else {
+    } else if (item.messageType === "audio") {
       message = t("AUDIO");
+    } else {
+      message = t("TV_SERIES");
     }
     setReplyMessage({
       message,
@@ -349,13 +380,19 @@ const ChatHubScreen = ({ route }) => {
     setSelectedMessage(message);
   };
 
+  const suggestTvSeriesPressHandler = () => {
+    setHoldScreen(true);
+    setMenuModalVisible(false);
+    movieSheetRef.current?.present();
+  };
+
   return (
     <>
       <KeyboardAvoidingView
         style={{
           flex: 1,
         }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={!holdScreen && (Platform.OS === "ios" ? "padding" : "height")}
         keyboardVerticalOffset={Platform.OS === "ios" ? 120 : 0}
       >
         <View style={[styles.container, { paddingBottom: insets.bottom }]}>
@@ -477,6 +514,22 @@ const ChatHubScreen = ({ route }) => {
             ))}
           </View>
         </BottomSheetModal>
+        <BottomSheetModal
+          ref={movieSheetRef}
+          snapPoints={["80%"]}
+          index={0}
+          backdropComponent={renderBackdrop}
+        >
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={{ padding: 16 }}>
+              <MovieSelect
+                selectedTvShows={selectedTvShows}
+                setSelectedTvShows={setSelectedTvShows}
+                style={{ height: Dimensions.get("window").height / 1.5 }}
+              />
+            </View>
+          </TouchableWithoutFeedback>
+        </BottomSheetModal>
       </KeyboardAvoidingView>
       <Modal transparent={true} visible={menuModalVisible} animationType="fade">
         <TouchableWithoutFeedback onPress={() => setMenuModalVisible(false)}>
@@ -497,7 +550,10 @@ const ChatHubScreen = ({ route }) => {
                   {t("GIFS")}
                 </CustomText>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.messageMenuItem}>
+              <TouchableOpacity
+                style={styles.messageMenuItem}
+                onPress={suggestTvSeriesPressHandler}
+              >
                 <Suggest width={24} height={24} />
                 <CustomText style={styles.messageMenuItemText}>
                   {t("SUGGEST_TV_SERIES")}
@@ -749,7 +805,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: "#000000",
     marginBottom: 10,
-  }
+  },
 });
 
 export default ChatHubScreen;

@@ -67,11 +67,15 @@
     "SEND": "Send",
     "PHOTO": "Photo",
     "AUDIO": "Voice Message",
+    "TV_SERIES": "Series/Movie",
     "OPENED": "Opened",
     "YOU": "You",
     "SEEN": "Seen",
     "REPLY": "Reply",
     "COPY": "Copy",
-    "DELETE_FROM_EVERYONE": "Delete From Everyone"
+    "DELETE_FROM_EVERYONE": "Delete From Everyone",
+    "LIKED_ME": "Liked Me",
+    "VIEWED": "Viewed",
+    "MY_LIKES": "My Likes"
   }
 }

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -24,10 +24,10 @@ const SelectionBox = ({
   const rotation = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    if(!isShaking){
-      stopShakeAnimation()
+    if (!isShaking) {
+      stopShakeAnimation();
     }
-  },[isShaking])
+  }, [isShaking]);
 
   const startShakeAnimation = () => {
     Animated.loop(
@@ -77,16 +77,17 @@ const SelectionBox = ({
       <TouchableOpacity
         onPress={selectFunc}
         onLongPress={() => {
-          startShakeAnimation();
-          onLongPress();
+          if (!isMovie) {
+            startShakeAnimation();
+            onLongPress();
+          }
         }}
-        // onPressOut={stopShakeAnimation}
       >
         <View style={styles.imageContainer}>
           {img ? (
             <Image source={{ uri: img }} style={styles.image} />
           ) : isMovie ? null : (
-            <User style={{color: "#D1D1D6"}}/>
+            <User style={{ color: "#D1D1D6" }} />
           )}
         </View>
         {selected ? (

@@ -4,22 +4,23 @@ import CustomText from "../../components/CustomText";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Tabs from "../../components/Tabs";
 import Button from "../../components/Button";
+import { t } from "i18next";
 
 const TABS_DATA = [
   {
     index: 0,
-    name: "Liked me",
+    name: t("LIKED_ME"),
     count: 18,
   },
   {
     index: 1,
-    name: "Viewed",
+    name: t("VIEWED"),
     count: 5,
   },
   {
     index: 2,
-    name: "My Likes",
-    count: 0,
+    name: t("MY_LIKES"),
+    count: 2,
   },
 ];
 
@@ -114,7 +115,7 @@ const LikesScreen = () => {
       ) : (
         <View style={styles.emptyWrapper}>
           <Image source={require("../../assets/images/empy-corns.png")} style={styles.emptyImg} />
-          <CustomText style={styles.emptyText}>There is nothing around here yet</CustomText>
+          <CustomText style={styles.emptyText}>{t("NOTHING_AROUND")}</CustomText>
         </View>
       )}
 

@@ -7,7 +7,7 @@ const Tabs = ({ tabsData, setTabIndex }) => {
 
   const tabPressHandler = (index) => {
     setActiveTabNumber(index);
-    setTabIndex(index)
+    setTabIndex && setTabIndex(index)
   };
 
   return (

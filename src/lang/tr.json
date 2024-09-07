@@ -67,11 +67,15 @@
     "SEND": "Gönder",
     "PHOTO": "Fotoğraf",
     "AUDIO": "Ses Kaydı",
+    "TV_SERIES": "Dizi/Film",
     "OPENED": "Açıldı",
     "YOU": "Siz",
     "SEEN": "Görüldü",
     "REPLY": "Yanıtla",
     "COPY": "Kopyala",
-    "DELETE_FROM_EVERYONE": "Herkesten Sil"
+    "DELETE_FROM_EVERYONE": "Herkesten Sil",
+    "LIKED_ME": "Beğeniler",
+    "VIEWED": "Görüntülenme",
+    "MY_LIKES": "Beğendiklerim"
   }
 }

@@ -8,6 +8,7 @@ import {
   Dimensions,
   ActivityIndicator,
   Pressable,
+  Image,
 } from "react-native";
 import { PanGestureHandler, State } from "react-native-gesture-handler";
 import * as Haptics from "expo-haptics";
@@ -16,6 +17,7 @@ import CustomText from "../../../components/CustomText";
 import { Audio } from "expo-av";
 import Play from "../../../assets/svg/play.svg";
 import Like from "../../../assets/svg/likes-passive.svg";
+import Star from "../../../assets/svg/star.svg";
 import ImageOpened from "../../../assets/svg/img-opened.svg";
 import { getChatroomMessages } from "../../../services/Chat/get-chatroom-messages";
 import useChatRoomsStore from "../../../store/useChatRoomsStore";
@@ -38,7 +40,7 @@ const MessageList = ({
   chatRoomId,
   setMenuVisible,
   setSelectedMessage,
-  likesPressHandler
+  likesPressHandler,
 }) => {
   const locale = navigator.language || "tr-TR";
   const formatter = new Intl.DateTimeFormat(locale, {
@@ -271,6 +273,49 @@ const MessageList = ({
                           </CustomText>
                         </View>
                       )}
+                      {item.RepliedMessage.messageType === "tvShowShare" &&
+                        (() => {
+                          if (!item.RepliedMessage.text) {
+                            return null;
+                          }
+
+                          let parsedMessage;
+                          try {
+                            parsedMessage = JSON.parse(
+                              item.RepliedMessage.text
+                            );
+                          } catch (error) {
+                            console.error("JSON parse hatası:", error);
+                            return null;
+                          }
+
+                          return (
+                            <View style={styles.movieMessage}>
+                              <Image
+                                source={{ uri: parsedMessage.poster }}
+                                width={30}
+                                height={50}
+                              />
+                              <View>
+                                <CustomText
+                                  style={{ fontWeight: "600", fontSize: 12 }}
+                                >
+                                  {parsedMessage.name}
+                                </CustomText>
+                                <View style={styles.movieMessagePoint}>
+                                  <Star width={18} height={18} />
+                                  <CustomText
+                                    style={{ fontWeight: "500", fontSize: 12 }}
+                                  >
+                                    {parseFloat(
+                                      parsedMessage.tmdbScore
+                                    ).toFixed(1)}
+                                  </CustomText>
+                                </View>
+                              </View>
+                            </View>
+                          );
+                        })()}
                     </View>
                   )}
                   {item.messageType === "text" && (
@@ -308,6 +353,34 @@ const MessageList = ({
                       </CustomText>
                     </TouchableOpacity>
                   )}
+                  {item.messageType === "tvShowShare" &&
+                    (() => {
+                      const parsedMessage = JSON.parse(item.text);
+                      return (
+                        <View style={styles.movieMessage}>
+                          <Image
+                            source={{ uri: parsedMessage.poster }}
+                            width={50}
+                            height={70}
+                          />
+                          <View>
+                            <CustomText
+                              style={{ fontWeight: "600", fontSize: 14 }}
+                            >
+                              {parsedMessage.name}
+                            </CustomText>
+                            <View style={styles.movieMessagePoint}>
+                              <Star width={18} height={18} />
+                              <CustomText
+                                style={{ fontWeight: "500", fontSize: 14 }}
+                              >
+                                {parseFloat(parsedMessage.tmdbScore).toFixed(1)}
+                              </CustomText>
+                            </View>
+                          </View>
+                        </View>
+                      );
+                    })()}
                 </Pressable>
                 <CustomText
                   style={[
@@ -410,6 +483,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
+  },
+  movieMessage: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  movieMessagePoint: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    marginTop: 8,
   },
   like: {
     position: "absolute",

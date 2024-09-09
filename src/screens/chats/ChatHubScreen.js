@@ -115,18 +115,22 @@ const ChatHubScreen = ({ route }) => {
 
   useEffect(() => {
     if (selectedTvShows.length > 0) {
+      const messageIdentifier = replyMessage
+        ? replyMessage.replyIdentifier
+        : null;
       if (chatRoomsStore.connection) {
         chatRoomsStore.connection
           .send(
             "SendShareTvShowMessage",
             otherUserConnectionId,
             selectedTvShows[0].id,
-            null,
+            messageIdentifier,
             "1111"
           )
           .then(() => {
             movieSheetRef.current?.close();
             setSelectedTvShows([]);
+            setReplyMessage(null);
             setHoldScreen(false);
           })
           .catch((error) => console.error("Message sending failed: ", error));
@@ -191,17 +195,20 @@ const ChatHubScreen = ({ route }) => {
 
     if (response.isSuccess) {
       setPhotoModalVisible(false);
+      const messageIdentifier = replyMessage
+        ? replyMessage.replyIdentifier
+        : null;
       if (chatRoomsStore.connection) {
         chatRoomsStore.connection
           .send(
             "SendImageMessage",
             otherUserConnectionId,
             response.messageIdentifier,
-            null,
+            messageIdentifier,
             " "
           )
           .then(() => {
-            setMessage("");
+            setReplyMessage(null);
           })
           .catch((error) => console.error("Message sending failed: ", error));
       } else {
@@ -279,17 +286,21 @@ const ChatHubScreen = ({ route }) => {
         );
 
         if (response.isSuccess) {
+          const messageIdentifier = replyMessage
+            ? replyMessage.replyIdentifier
+            : null;
+
           if (chatRoomsStore.connection) {
             chatRoomsStore.connection
               .send(
                 "SendAudioMessage",
                 otherUserConnectionId,
                 response.messageIdentifier,
-                null,
+                messageIdentifier,
                 " "
               )
               .then(() => {
-                setMessage("");
+                setReplyMessage(null);
               })
               .catch((error) =>
                 console.error("Message sending failed: ", error)

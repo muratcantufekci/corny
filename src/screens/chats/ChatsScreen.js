@@ -223,13 +223,11 @@ const ChatsScreen = () => {
                       {item.messages[0]?.messageType === "text" &&
                         item.messages[0]?.text}
                       {item.messages[0]?.messageType === "image" &&
-                        (!isIncome
-                          ? "Bir resim gönderdiniz"
-                          : "Bir resim gönderdi")}
+                        (!isIncome ? t("SEND_IMAGE") : t("INCOME_IMAGE"))}
                       {item.messages[0]?.messageType === "audio" &&
-                        (!isIncome
-                          ? "Bir ses kaydı gönderdiniz"
-                          : "Bir ses kaydı gönderdi")}
+                        (!isIncome ? t("SEND_AUDIO") : t("INCOME_AUDIO"))}
+                      {item.messages[0]?.messageType === "tvShowShare" &&
+                        (!isIncome ? t("SEND_MOVIE") : t("INCOME_MOVIE"))}
                     </CustomText>
                   </View>
                 </View>

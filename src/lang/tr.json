@@ -76,6 +76,12 @@
     "DELETE_FROM_EVERYONE": "Herkesten Sil",
     "LIKED_ME": "Beğeniler",
     "VIEWED": "Görüntülenme",
-    "MY_LIKES": "Beğendiklerim"
+    "MY_LIKES": "Beğendiklerim",
+    "SEND_IMAGE": "Bir resim gönderdiniz",
+    "INCOME_IMAGE": "Bir resim gönderdi",
+    "SEND_AUDIO": "Bir ses kaydı gönderdiniz",
+    "INCOME_AUDIO": "Bir ses kaydı gönderdi",
+    "SEND_MOVIE": "Dizi/Film gönderdiniz",
+    "INCOME_MOVIE": "Dizi/Film gönderdi"
   }
 }

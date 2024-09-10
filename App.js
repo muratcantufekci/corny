@@ -43,11 +43,11 @@ import { t } from "i18next";
 import ChatHubScreen from "./src/screens/chats/ChatHubScreen";
 import useAppUtils from "./src/store/useAppUtils";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import {
-  BottomSheetModalProvider,
-} from "@gorhom/bottom-sheet";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { authenticateWithRefreshToken } from "./src/services/Login/authenticate-with-refresh-token";
+import EditProfileScreen from "./src/screens/profile/EditProfileScreen";
+import CustomText from "./src/components/CustomText";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -135,6 +135,55 @@ const MessagesStack = () => {
   );
 };
 
+const ProfileStack = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        transitionSpec: {
+          open: {
+            animation: "timing",
+            config: {
+              duration: 100,
+            },
+          },
+          close: {
+            animation: "timing",
+            config: {
+              duration: 100,
+            },
+          },
+        },
+        headerBackImage: () => <Back width={30} height={30} />,
+        headerBackTitleVisible: false,
+        headerTitle: "",
+        headerTintColor: "#045bb3",
+      }}
+    >
+      <Stack.Screen
+        name="ProfileMain"
+        component={ProfileScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="EditProfile"
+        component={EditProfileScreen}
+        options={{
+          headerTransparent: false,
+          headerStyle: {
+            backgroundColor: "white",
+            shadowOpacity: 0,
+            elevation: 0,
+          },
+          cardStyle: { backgroundColor: "white" },
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>{t("EDIT_PROFILE")}</CustomText>
+          ),
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
+
 const AppTabs = () => {
   const appUtils = useAppUtils();
   return (
@@ -178,7 +227,7 @@ const AppTabs = () => {
             focused ? (
               <LikesActive width={24} height={24} />
             ) : (
-              <LikesPassive width={24} height={24} color="#A0A1AB"/>
+              <LikesPassive width={24} height={24} color="#A0A1AB" />
             ),
           tabBarLabel: t("LIKES"),
         }}
@@ -198,7 +247,7 @@ const AppTabs = () => {
       />
       <Tab.Screen
         name="Profile"
-        component={ProfileScreen}
+        component={ProfileStack}
         options={{
           tabBarIcon: ({ focused }) =>
             focused ? (
@@ -224,7 +273,7 @@ const checkAndRedirect = (response) => {
 
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
-    
+
     if (key.startsWith("has") && response[key] === false) {
       switch (key) {
         case "hasLocation":
@@ -258,7 +307,7 @@ const checkAndRedirect = (response) => {
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
-  const [congifurResponseData, setConfigureResponseData] = useState(null)
+  const [congifurResponseData, setConfigureResponseData] = useState(null);
   const userStore = useUserStore();
   const appUtils = useAppUtils();
 
@@ -278,10 +327,11 @@ export default function App() {
 
   useEffect(() => {
     const setUserLogin = async () => {
-      // await SecureStore.deleteItemAsync("refresh_token"); // test amaçlı refresh token sıfırlayıcı
-      // const refreshToken = await SecureStore.getItemAsync("refresh_token");
-      const refreshToken = "5fd59d04-950c-42d3-b854-c78754372457";
+      // await SecureStore.deleteItemAsync("refresh_token"); // test amaçlı rekfresh token sıfırlayıcı
+      const refreshToken = await SecureStore.getItemAsync("refresh_token");
+      // const refreshToken = "5fd59d04-950c-42d3-b854-c78754372457";
       // const refreshToken = null;
+      
       if (refreshToken) {
         try {
           const response = await authenticateWithRefreshToken({
@@ -299,7 +349,7 @@ export default function App() {
             setIsLoading(false);
           } else {
             const congifurResponse = await checkUserConfiguration();
-            setConfigureResponseData(congifurResponse)
+            setConfigureResponseData(congifurResponse);
             userStore.setIsUserLoggedIn(false);
             setIsLoading(false);
           }
@@ -349,7 +399,9 @@ export default function App() {
             <NavigationContainer
               ref={navigationRef}
               theme={{ colors: { background: "transparent" } }}
-              onReady={() => congifurResponseData && checkAndRedirect(congifurResponseData)}
+              onReady={() =>
+                congifurResponseData && checkAndRedirect(congifurResponseData)
+              }
             >
               {userStore.isUserLoggedIn ? <AppTabs /> : <AuthStack />}
             </NavigationContainer>
@@ -376,6 +428,12 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     flex: 1,
-    paddingVertical: 16
+    paddingVertical: 16,
+  },
+  profileHeaderText: {
+    fontWeight: "400",
+    fontSize: 16,
+    lineHeight: 24,
+    color: "#000000",
   },
 });

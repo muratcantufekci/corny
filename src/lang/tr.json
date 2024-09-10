@@ -82,6 +82,9 @@
     "SEND_AUDIO": "Bir ses kaydı gönderdiniz",
     "INCOME_AUDIO": "Bir ses kaydı gönderdi",
     "SEND_MOVIE": "Dizi/Film gönderdiniz",
-    "INCOME_MOVIE": "Dizi/Film gönderdi"
+    "INCOME_MOVIE": "Dizi/Film gönderdi",
+    "EDIT_PROFILE": "Profili Düzenle",
+    "VERIFY_PROFILE": "Profili Doğrula",
+    "DESCRIPTION": "Açıklama"
   }
 }

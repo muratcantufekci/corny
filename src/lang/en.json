@@ -82,6 +82,9 @@
     "SEND_AUDIO": "You sent a audio",
     "INCOME_AUDIO": "Sent a voice recording",
     "SEND_MOVIE": "You sent a TV Series/Movie",
-    "INCOME_MOVIE": "Sent a TV Series/Movie"
+    "INCOME_MOVIE": "Sent a TV Series/Movie",
+    "EDIT_PROFILE": "Edit Profile",
+    "VERIFY_PROFILE": "Verify Profile",
+    "DESCRIPTION": "Description"
   }
 }

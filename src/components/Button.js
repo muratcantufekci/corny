@@ -9,6 +9,7 @@ const Button = ({
   loader,
   children,
   style,
+  prevIcon,
   ...props
 }) => {
   const variantStyles = {
@@ -27,6 +28,7 @@ const Button = ({
       disabled={disabled}
       {...props}
     >
+      {prevIcon && prevIcon}
       <CustomText style={textStyle}>{children}</CustomText>
       {loader ?? loader}
     </TouchableOpacity>

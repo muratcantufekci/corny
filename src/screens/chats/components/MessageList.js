@@ -22,6 +22,7 @@ import ImageOpened from "../../../assets/svg/img-opened.svg";
 import { getChatroomMessages } from "../../../services/Chat/get-chatroom-messages";
 import useChatRoomsStore from "../../../store/useChatRoomsStore";
 import { t } from "i18next";
+import { goToChatMessage } from "../../../services/Chat/go-to-chat-message";
 
 const SWIPE_THRESHOLD = 70;
 const SCROLL_THRESHOLD = 10;
@@ -53,6 +54,7 @@ const MessageList = ({
   const flatListRef = useRef(null);
   const chatRoomsStore = useChatRoomsStore();
   const [loading, setLoading] = useState(false);
+  const [moreMessages, setMoreMessages] = useState(true);
   const lastTap = useRef(null);
 
   const formatTimestampToTime = (timestamp) => {
@@ -137,6 +139,52 @@ const MessageList = ({
       lastTap.current = now;
     }
   };
+
+  const scrollToMessage = async (messageIdentifier) => {
+    const messageIndex = messages.findIndex(
+      (msg) => msg.messageIdentifier === messageIdentifier
+    );
+  
+    if (messageIndex !== -1) {
+      // Mesaj bulundu, doğrudan kaydır
+      flatListRef.current.scrollToIndex({
+        index: messageIndex,
+        animated: true,
+      });
+    } else {
+      // Mesaj bulunamadı, API'den mesajları al
+      const response = await goToChatMessage(chatRoomId, messageIdentifier);
+  
+      // State'i güncelleyip bekle
+      await chatRoomsStore.setChatRooms((prevChatRooms) =>
+        prevChatRooms.map((chatRoom) => {
+          if (chatRoom.chatRoomId === chatRoomId) {
+            return {
+              ...chatRoom,
+              messages: response.messages,
+            };
+          }
+          return chatRoom;
+        })
+      );
+  
+      // Yeni mesajlar geldiğinde ilgili mesajı bul
+      const messageIndex1 = response.messages.findIndex(
+        (msg) => msg.messageIdentifier === messageIdentifier
+      );
+      setTimeout(() =>{})
+      if (messageIndex1 !== -1) {
+        // Kaydırma işlemini yap
+        setTimeout(() => {
+          flatListRef.current.scrollToIndex({
+            index: messageIndex1,
+            animated: true,
+          });
+        }, 100);
+      }
+    }
+  };
+  
 
   const renderMessage = useCallback(
     ({ item, index }) => {
@@ -247,7 +295,12 @@ const MessageList = ({
                     </TouchableOpacity>
                   )}
                   {item.hasReply && (
-                    <View style={styles.replyContainer}>
+                    <TouchableOpacity
+                      style={styles.replyContainer}
+                      onPress={() =>
+                        scrollToMessage(item.RepliedMessage.messageIdentifier)
+                      }
+                    >
                       <CustomText style={{ fontWeight: "700" }}>
                         {item.RepliedMessage.sender === otherUserConnectionId
                           ? otherUserName
@@ -316,7 +369,7 @@ const MessageList = ({
                             </View>
                           );
                         })()}
-                    </View>
+                    </TouchableOpacity>
                   )}
                   {item.messageType === "text" && (
                     <CustomText style={styles.message}>{item.text}</CustomText>
@@ -401,23 +454,31 @@ const MessageList = ({
   );
 
   const loadMoreMessages = async () => {
-    setLoading(true);
-    const response = await getChatroomMessages(
-      chatRoomId,
-      messages[messages.length - 1].messageIdentifier
-    );
-    if (response.isSuccess) {
-      chatRoomsStore.setChatRooms(
-        chatRoomsStore.chatRooms.map((chatRoom) => {
-          if (chatRoom.chatRoomId === response.chatRoomId) {
-            return {
-              ...chatRoom,
-              messages: [...chatRoom.messages, ...response.messages],
-            };
-          }
-          return chatRoom;
-        })
+    try {
+      setLoading(true);
+      const response = await getChatroomMessages(
+        chatRoomId,
+        messages[messages.length - 1].messageIdentifier
       );
+
+      if (response.isSuccess && response.messages.length > 0) {
+        chatRoomsStore.setChatRooms(
+          chatRoomsStore.chatRooms.map((chatRoom) => {
+            if (chatRoom.chatRoomId === response.chatRoomId) {
+              return {
+                ...chatRoom,
+                messages: [...chatRoom.messages, ...response.messages],
+              };
+            }
+            return chatRoom;
+          })
+        );
+      } else {
+        setMoreMessages(false);
+      }
+    } catch (error) {
+      console.error("Error loading more messages:", error);
+    } finally {
       setLoading(false);
     }
   };
@@ -430,13 +491,18 @@ const MessageList = ({
       inverted
       renderItem={renderMessage}
       keyExtractor={(item) => item.messageIdentifier}
+      initialNumToRender={500}
       ListFooterComponent={
         <View>
           <EpisodeSection image={image} />
           {loading && <ActivityIndicator />}
         </View>
       }
-      onEndReached={loadMoreMessages}
+      onEndReached={() => {
+        if (moreMessages && !loading) {
+          loadMoreMessages();
+        }
+      }}
       onEndReachedThreshold={0.5}
     />
   );

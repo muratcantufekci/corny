@@ -85,6 +85,10 @@
     "INCOME_MOVIE": "Dizi/Film gönderdi",
     "EDIT_PROFILE": "Profili Düzenle",
     "VERIFY_PROFILE": "Profili Doğrula",
-    "DESCRIPTION": "Açıklama"
+    "DESCRIPTION": "Açıklama",
+    "QUESTIONS": "Sorular",
+    "MY_FAVORITE_TV_SHOWS": "Favori Dizi / Filmlerim",
+    "SEE_TV_SHOWS": "Tüm Dizi / Filmleri Görüntüle",
+    "ABOUT_ME": "Hakkımda"
   }
 }

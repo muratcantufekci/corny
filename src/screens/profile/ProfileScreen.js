@@ -1,11 +1,19 @@
-import React from "react";
-import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import CustomText from "../../components/CustomText";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Button from "../../components/Button";
 import Edit from "../../assets/svg/edit.svg";
 import Arrow from "../../assets/svg/arrow-left.svg";
 import { useNavigation } from "@react-navigation/native";
+import { getAccountDetails } from "../../services/User/get-user-account-detail";
+import useUserStore from "../../store/useUserStore";
 
 const menuData = [
   {
@@ -49,17 +57,31 @@ const menuData = [
 const MenuItem = ({ name }) => (
   <TouchableOpacity style={styles.menuItem}>
     <CustomText style={styles.menuItemText}>{name}</CustomText>
-    <Arrow style={styles.icon}/>
+    <Arrow style={styles.icon} />
   </TouchableOpacity>
 );
 
 const ProfileScreen = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
+  const userStore = useUserStore();
+
+  useEffect(() => {
+    const getUserInfo = async () => {
+      const response = await getAccountDetails();
+      userStore.setUserAccountDetails({
+        profilePicture: response.account.profileImage.imageUrl,
+        name: response.account.name,
+        age: response.account.age,
+      });
+    };
+    getUserInfo();
+  }, []);
+
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={{paddingBottom: insets.bottom + 55}}
+      contentContainerStyle={{ paddingBottom: insets.bottom + 55 }}
       style={{
         paddingTop: insets.top,
         flex: 1,
@@ -68,10 +90,13 @@ const ProfileScreen = () => {
       <View>
         <View style={styles.profileHead}>
           <Image
-            source={require("../../assets/images/man1.jpeg")}
+            source={{ uri: userStore.userAccountDetails?.profilePicture }}
             style={styles.profil}
           />
-          <CustomText style={styles.name}>Muratcan, 25</CustomText>
+          <CustomText style={styles.name}>
+            {userStore.userAccountDetails &&
+              `${userStore.userAccountDetails.name}, ${userStore.userAccountDetails.age}`}
+          </CustomText>
           <Button
             variant="primary"
             prevIcon={<Edit />}
@@ -123,11 +148,11 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     fontSize: 16,
     lineHeight: 24,
-    color: "#000000"
+    color: "#000000",
   },
   icon: {
     transform: [{ rotate: "180deg" }],
-  }
+  },
 });
 
 export default ProfileScreen;

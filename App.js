@@ -153,7 +153,7 @@ const ProfileStack = () => {
             },
           },
         },
-        headerBackImage: () => <Back width={30} height={30} />,
+        headerBackImage: () => <Back/>,
         headerBackTitleVisible: false,
         headerTitle: "",
         headerTintColor: "#045bb3",

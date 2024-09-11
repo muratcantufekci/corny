@@ -85,6 +85,10 @@
     "INCOME_MOVIE": "Sent a TV Series/Movie",
     "EDIT_PROFILE": "Edit Profile",
     "VERIFY_PROFILE": "Verify Profile",
-    "DESCRIPTION": "Description"
+    "DESCRIPTION": "Description",
+    "QUESTIONS": "Questions",
+    "MY_FAVORITE_TV_SHOWS": "My Favorite Tv Series / Movies",
+    "SEE_TV_SHOWS": "See All Tv Series / Films",
+    "ABOUT_ME": "About Me"
   }
 }

@@ -12,21 +12,27 @@ import { t } from "i18next";
 import PhotoSelect from "../../components/PhotoSelect";
 import Button from "../../components/Button";
 import { postUserPhotoOrder } from "../../services/User/send-photos-order";
-import Input from "../../components/Input";
 import useUserStore from "../../store/useUserStore";
 import Arrow from "../../assets/svg/arrow-left.svg";
 import { getUserTvShows } from "../../services/TvShow/get-user-tv-shows";
+import { getUserAbouts } from "../../services/User/get-user-abouts";
 
-const MenuItem = () => (
-  <TouchableOpacity style={styles.menuItem}>
-    <CustomText style={styles.menuItemText}>Test</CustomText>
-    <Arrow style={styles.icon} />
-  </TouchableOpacity>
-);
+const MenuItem = ({name, values}) => {
+  return(
+    <TouchableOpacity style={styles.menuItem}>
+      <CustomText style={styles.menuItemText}>{t(`${name.toUpperCase()}`)}</CustomText>
+      <View>
+        <CustomText>{values?.map(value => (value))}</CustomText>
+        <Arrow style={styles.icon} />
+      </View>
+    </TouchableOpacity>
+  )
+};
 
 const EditProfileScreen = () => {
   const [selectedImages, setSelectedImages] = useState([]);
   const [selectedMovies, setSelectedMovies] = useState([]);
+  const [userAbouts, setUserAbouts] = useState([]);
   const userStore = useUserStore();
 
   useEffect(() => {
@@ -34,7 +40,13 @@ const EditProfileScreen = () => {
       const response = await getUserTvShows();
       setSelectedMovies(response.tvShows);
     };
+    const userAbouts = async () => {
+      const response = await getUserAbouts()
+      setUserAbouts(response.userAbouts)
+      
+    }
     userTvShows();
+    userAbouts()
   }, []);
 
   useEffect(() => {
@@ -63,16 +75,8 @@ const EditProfileScreen = () => {
       </View>
       <Button>{t("VERIFY_PROFILE")}</Button>
       <View style={{ marginVertical: 40 }}>
-        <CustomText style={styles.title}>{t("DESCRIPTION")}</CustomText>
-        <Input
-          multiline={true}
-          numberOfLines={10}
-          placeholder="Bize bir mesaj bırakın"
-        />
-      </View>
-      <View style={{ marginBottom: 40 }}>
         <CustomText style={styles.title}>{t("QUESTIONS")}</CustomText>
-        <MenuItem />
+        <MenuItem name="Test"/>
       </View>
       <View style={{ marginBottom: 40 }}>
         <CustomText style={styles.title}>
@@ -94,8 +98,11 @@ const EditProfileScreen = () => {
         </View>
         <Button>{t("SEE_TV_SHOWS")}</Button>
       </View>
-      <View>
+      <View style={{gap: 8, marginBottom: 24}}>
         <CustomText style={styles.title}>{t("ABOUT_ME")}</CustomText>
+        {userAbouts.map((item, index) => (
+          <MenuItem key={index} name={item.title} values={item.values}/>
+        ))}
       </View>
     </ScrollView>
   );

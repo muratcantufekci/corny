@@ -74,7 +74,7 @@ const NumberScreen = () => {
               <View style={styles.content}>
                 <Dropdown isOpen={isOpen} setIsOpen={setIsOpen} />
                 <Input
-                  placeholder={t("PHONE_NUMBER")}
+                  placeholder={t("YOUR_PHONE_NUMBER")}
                   onChangeText={(text) =>
                     phoneInputChangeHandler(text, handleChange("phone"))
                   }

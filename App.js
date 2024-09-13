@@ -48,6 +48,8 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { authenticateWithRefreshToken } from "./src/services/Login/authenticate-with-refresh-token";
 import EditProfileScreen from "./src/screens/profile/EditProfileScreen";
 import CustomText from "./src/components/CustomText";
+import AccountDetailsScreen from "./src/screens/profile/AccountDetailsScreen";
+import EditNameScreen from "./src/screens/profile/EditNameScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -177,6 +179,38 @@ const ProfileStack = () => {
           cardStyle: { backgroundColor: "white" },
           headerTitle: () => (
             <CustomText style={styles.profileHeaderText}>{t("EDIT_PROFILE")}</CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="AccountDetails"
+        component={AccountDetailsScreen}
+        options={{
+          headerTransparent: false,
+          headerStyle: {
+            backgroundColor: "white",
+            shadowOpacity: 0,
+            elevation: 0,
+          },
+          cardStyle: { backgroundColor: "white" },
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>{t("ACCOUNT_DETAILS")}</CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="EditName"
+        component={EditNameScreen}
+        options={{
+          headerTransparent: false,
+          headerStyle: {
+            backgroundColor: "white",
+            shadowOpacity: 0,
+            elevation: 0,
+          },
+          cardStyle: { backgroundColor: "white" },
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>{t("CHANGE_NAME")}</CustomText>
           ),
         }}
       />
@@ -331,6 +365,8 @@ export default function App() {
       const refreshToken = await SecureStore.getItemAsync("refresh_token");
       // const refreshToken = "5fd59d04-950c-42d3-b854-c78754372457";
       // const refreshToken = null;
+      // console.log("tok",userStore.token);
+      
       
       if (refreshToken) {
         try {

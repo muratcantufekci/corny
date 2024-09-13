@@ -16,6 +16,8 @@ const Button = ({
     primary: styles.primary,
     disable: styles.disable,
     white: styles.white,
+    ghost: styles.ghost,
+    danger: styles.danger
   };
 
   const containerStyle = [styles.button, variantStyles[variant], style];
@@ -66,12 +68,22 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderColor: 'white',
     color: 'black',
+  },
+  ghost: {
+    backgroundColor: "#EFEFF1",
+    borderColor: "#EFEFF1",
+    color: "#000000"
+  },
+  danger: {
+    backgroundColor: "#E41F2E",
+    borderColor: "#E41F2E",
+    color: "#FFFFFF"
   }
 });
 
 Button.propTypes = {
   type: PropTypes.oneOf(["submit", "button", "reset"]),
-  variant: PropTypes.oneOf(["primary", "disable", "white"]),
+  variant: PropTypes.oneOf(["primary", "disable", "white", "ghost", "danger"]),
   children: PropTypes.node.isRequired,
   style: PropTypes.object,
 };

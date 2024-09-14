@@ -50,6 +50,8 @@ import EditProfileScreen from "./src/screens/profile/EditProfileScreen";
 import CustomText from "./src/components/CustomText";
 import AccountDetailsScreen from "./src/screens/profile/AccountDetailsScreen";
 import EditNameScreen from "./src/screens/profile/EditNameScreen";
+import { LogLevel, OneSignal } from "react-native-onesignal";
+import Constants from "expo-constants";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -155,7 +157,7 @@ const ProfileStack = () => {
             },
           },
         },
-        headerBackImage: () => <Back/>,
+        headerBackImage: () => <Back />,
         headerBackTitleVisible: false,
         headerTitle: "",
         headerTintColor: "#045bb3",
@@ -178,7 +180,9 @@ const ProfileStack = () => {
           },
           cardStyle: { backgroundColor: "white" },
           headerTitle: () => (
-            <CustomText style={styles.profileHeaderText}>{t("EDIT_PROFILE")}</CustomText>
+            <CustomText style={styles.profileHeaderText}>
+              {t("EDIT_PROFILE")}
+            </CustomText>
           ),
         }}
       />
@@ -194,7 +198,9 @@ const ProfileStack = () => {
           },
           cardStyle: { backgroundColor: "white" },
           headerTitle: () => (
-            <CustomText style={styles.profileHeaderText}>{t("ACCOUNT_DETAILS")}</CustomText>
+            <CustomText style={styles.profileHeaderText}>
+              {t("ACCOUNT_DETAILS")}
+            </CustomText>
           ),
         }}
       />
@@ -210,7 +216,9 @@ const ProfileStack = () => {
           },
           cardStyle: { backgroundColor: "white" },
           headerTitle: () => (
-            <CustomText style={styles.profileHeaderText}>{t("CHANGE_NAME")}</CustomText>
+            <CustomText style={styles.profileHeaderText}>
+              {t("CHANGE_NAME")}
+            </CustomText>
           ),
         }}
       />
@@ -366,8 +374,13 @@ export default function App() {
       // const refreshToken = "5fd59d04-950c-42d3-b854-c78754372457";
       // const refreshToken = null;
       // console.log("tok",userStore.token);
-      
-      
+
+      OneSignal.Debug.setLogLevel(LogLevel.Verbose);
+      OneSignal.initialize(Constants.expoConfig.extra.oneSignalAppId);
+
+      // Also need enable notifications to complete OneSignal setup
+      OneSignal.Notifications.requestPermission(true);
+
       if (refreshToken) {
         try {
           const response = await authenticateWithRefreshToken({

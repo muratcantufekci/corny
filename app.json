@@ -1,4 +1,12 @@
 {
+  "plugins": [
+    [
+      "onesignal-expo-plugin",
+      {
+        "mode": "development"
+      }
+    ]
+  ],
   "expo": {
     "name": "corny",
     "slug": "corny",
@@ -16,7 +24,10 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.corny"
+      "bundleIdentifier": "com.anonymous.corny",
+      "config": {
+        "usesPushNotifications": true
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -26,6 +37,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "680ed85f-fd75-4a3c-8201-0532fb5b82f2"
+      },
+      "oneSignalAppId": "f999841b-285b-492b-bbc5-d9e40ea24c2d"
     }
   }
 }

@@ -50,7 +50,6 @@ import EditProfileScreen from "./src/screens/profile/EditProfileScreen";
 import CustomText from "./src/components/CustomText";
 import AccountDetailsScreen from "./src/screens/profile/AccountDetailsScreen";
 import EditNameScreen from "./src/screens/profile/EditNameScreen";
-import { LogLevel, OneSignal } from "react-native-onesignal";
 import Constants from "expo-constants";
 
 const Stack = createStackNavigator();
@@ -374,12 +373,6 @@ export default function App() {
       // const refreshToken = "5fd59d04-950c-42d3-b854-c78754372457";
       // const refreshToken = null;
       // console.log("tok",userStore.token);
-
-      OneSignal.Debug.setLogLevel(LogLevel.Verbose);
-      OneSignal.initialize(Constants.expoConfig.extra.oneSignalAppId);
-
-      // Also need enable notifications to complete OneSignal setup
-      OneSignal.Notifications.requestPermission(true);
 
       if (refreshToken) {
         try {

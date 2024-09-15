@@ -16,37 +16,41 @@ import useUserStore from "../../store/useUserStore";
 import Arrow from "../../assets/svg/arrow-left.svg";
 import { getUserTvShows } from "../../services/TvShow/get-user-tv-shows";
 import { getUserAbouts } from "../../services/User/get-user-abouts";
+import { useNavigation } from "@react-navigation/native";
 
-const MenuItem = ({name, values}) => {
-  return(
-    <TouchableOpacity style={styles.menuItem}>
-      <CustomText style={styles.menuItemText}>{t(`${name.toUpperCase()}`)}</CustomText>
-      <View>
-        <CustomText>{values?.map(value => (value))}</CustomText>
+const MenuItem = ({ name, values, navigation }) => {
+  return (
+    <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate(`Edit${name}`)}>
+      <CustomText style={styles.menuItemText}>
+        {t(`${name.toUpperCase()}`)}
+      </CustomText>
+      <View style={styles.menuItemValues}>
+        {values?.map((value) => (
+          <CustomText style={styles.menuItemValuesText} key={value}>{value}</CustomText>
+        ))}
         <Arrow style={styles.icon} />
       </View>
     </TouchableOpacity>
-  )
+  );
 };
 
 const EditProfileScreen = () => {
   const [selectedImages, setSelectedImages] = useState([]);
   const [selectedMovies, setSelectedMovies] = useState([]);
-  const [userAbouts, setUserAbouts] = useState([]);
   const userStore = useUserStore();
+  const navigation = useNavigation();
 
   useEffect(() => {
     const userTvShows = async () => {
       const response = await getUserTvShows();
       setSelectedMovies(response.tvShows);
     };
-    const userAbouts = async () => {
-      const response = await getUserAbouts()
-      setUserAbouts(response.userAbouts)
-      
-    }
+    const getUserAboutsHandler = async () => {
+      const response = await getUserAbouts();
+      userStore.setUserAbouts(response.userAbouts);
+    };
     userTvShows();
-    userAbouts()
+    getUserAboutsHandler();
   }, []);
 
   useEffect(() => {
@@ -76,7 +80,7 @@ const EditProfileScreen = () => {
       <Button>{t("VERIFY_PROFILE")}</Button>
       <View style={{ marginVertical: 40 }}>
         <CustomText style={styles.title}>{t("QUESTIONS")}</CustomText>
-        <MenuItem name="Test"/>
+        <MenuItem name="Test" navigation={navigation}/>
       </View>
       <View style={{ marginBottom: 40 }}>
         <CustomText style={styles.title}>
@@ -98,10 +102,10 @@ const EditProfileScreen = () => {
         </View>
         <Button>{t("SEE_TV_SHOWS")}</Button>
       </View>
-      <View style={{gap: 8, marginBottom: 24}}>
+      <View style={{ gap: 8, marginBottom: 24 }}>
         <CustomText style={styles.title}>{t("ABOUT_ME")}</CustomText>
-        {userAbouts.map((item, index) => (
-          <MenuItem key={index} name={item.title} values={item.values}/>
+        {userStore.userAbouts?.map((item, index) => (
+          <MenuItem key={index} name={item.title} values={item.values} navigation={navigation}/>
         ))}
       </View>
     </ScrollView>
@@ -134,9 +138,20 @@ const styles = StyleSheet.create({
   },
   menuItemText: {
     fontWeight: "500",
-    fontSize: 18,
+    fontSize: 16,
     lineHeight: 24,
     color: "#000000",
+  },
+  menuItemValues: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4
+  },
+  menuItemValuesText: {
+    fontWeight: "500",
+    fontSize: 16,
+    lineHeight: 24,
+    color: "#000000"
   },
   icon: {
     transform: [{ rotate: "180deg" }],

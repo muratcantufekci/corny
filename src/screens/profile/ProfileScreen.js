@@ -14,44 +14,45 @@ import { useNavigation } from "@react-navigation/native";
 import { getAccountDetails } from "../../services/User/get-user-account-detail";
 import useUserStore from "../../store/useUserStore";
 import MenuItem from "./components/MenuItem";
+import { t } from "i18next";
 
 const menuData = [
   {
     id: "1",
-    name: "Account Details",
+    name: t("ACCOUNT_DETAILS"),
     screen: "AccountDetails",
   },
   {
     id: "2",
-    name: "Notification Preferences",
+    name: t("NOTIFICATION_PREFERENCES"),
   },
   {
     id: "3",
-    name: "Languages Preferences",
+    name: t("LANGUAGE_PREFERENCES"),
   },
   {
     id: "4",
-    name: "Contact Us",
+    name: t("CONTACT_US"),
   },
   {
     id: "5",
-    name: "Help",
+    name: t("HELP"),
   },
   {
     id: "6",
-    name: "Restore Purchase",
+    name: t("RESTORE_PURCHASE"),
   },
   {
     id: "7",
-    name: "Terms & Conditions",
+    name: t("TERM_AND_CONDITIONS"),
   },
   {
     id: "8",
-    name: "Privacy Policy",
+    name: t("PRIVACY_POLICY"),
   },
   {
     id: "9",
-    name: "Cookie Policy",
+    name: t("COOKIE_POLICY"),
   },
 ];
 
@@ -61,19 +62,19 @@ const ProfileScreen = () => {
   const userStore = useUserStore();
 
   const menuItemPressHandler = (screen) => {
-    navigation.navigate(`${screen}`)
-  }
+    navigation.navigate(`${screen}`);
+  };
 
   useEffect(() => {
     const getUserInfo = async () => {
       const response = await getAccountDetails();
-      
+
       userStore.setUserAccountDetails({
         profilePicture: response.account.profileImage.imageUrl,
         name: response.account.name,
         age: response.account.age,
         email: response.account.email,
-        phoneNumber: response.account.phoneNumber
+        phoneNumber: response.account.phoneNumber,
       });
     };
     getUserInfo();
@@ -101,16 +102,20 @@ const ProfileScreen = () => {
           <Button
             variant="primary"
             prevIcon={<Edit />}
-            style={{ width: "45%", paddingVertical: 8 }}
+            style={{ width: "50%", paddingVertical: 8 }}
             onPress={() => navigation.navigate("EditProfile")}
           >
-            Edit Profile
+            {t("EDIT_PROFILE")}
           </Button>
         </View>
       </View>
       <View style={styles.menu}>
         {menuData.map((item) => (
-          <MenuItem key={item.id} name={item.name} onPress={() => menuItemPressHandler(item.screen)}/>
+          <MenuItem
+            key={item.id}
+            name={item.name}
+            onPress={() => menuItemPressHandler(item.screen)}
+          />
         ))}
       </View>
     </ScrollView>

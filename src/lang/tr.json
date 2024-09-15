@@ -116,12 +116,22 @@
     "DELETE_PERMANENTLY": "Hesabımı Kalıcı Olarak Sil",
     "CANCEL": "Vazgeç",
     "CHANGE_NAME": "İsim Değiştir",
+    "CHANGE_MAIL": "Email Değiştir",
+    "CHANGE_HEIGHT": "Boy Değiştir",
     "SAVE": "Kaydet",
     "SUCCESSFULL": "Başarılı!",
     "UNSUCCESSFULL": "Başarısız!",
     "WARNING": "Uyarı!",
-    "NAME_SUCCESSFULL": "İsmini başarı ile kayıt ettin, ayarlarına geri dönebilirsin.",
-    "NAME_UNSUCCESSFULL": "Lütfen daha sonra tekrar dene.",
-    "NAME_WARNING": "Lütfen farklı bir isim gir."
+    "SUCCESSFULL_DESC": "Başarı ile güncelledin, ayarlarına geri dönebilirsin.",
+    "UNSUCCESSFULL_DESC": "Lütfen daha sonra tekrar dene.",
+    "WARNING_DESC": "Lütfen farklı bir değer gir.",
+    "NOTIFICATION_PREFERENCES": "Bildirim Tercihleri",
+    "LANGUAGE_PREFERENCES": "Dil Tercihleri",
+    "CONTACT_US": "Bize Ulaşın",
+    "HELP": "Yardım",
+    "RESTORE_PURCHASE": "Satın Alma İşlemini Geri Yükle",
+    "TERM_AND_CONDITIONS": "Şartlar & Koşullar",
+    "PRIVACY_POLICY": "Gizlilik Politikası",
+    "COOKIE_POLICY": "Çerez Politikası"
   }
 }

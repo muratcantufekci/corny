@@ -51,6 +51,8 @@ import CustomText from "./src/components/CustomText";
 import AccountDetailsScreen from "./src/screens/profile/AccountDetailsScreen";
 import EditNameScreen from "./src/screens/profile/EditNameScreen";
 import Constants from "expo-constants";
+import EditMailScreen from "./src/screens/profile/EditMailScreen";
+import EditHeightScreen from "./src/screens/profile/about/EditHeightScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -217,6 +219,42 @@ const ProfileStack = () => {
           headerTitle: () => (
             <CustomText style={styles.profileHeaderText}>
               {t("CHANGE_NAME")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="EditMail"
+        component={EditMailScreen}
+        options={{
+          headerTransparent: false,
+          headerStyle: {
+            backgroundColor: "white",
+            shadowOpacity: 0,
+            elevation: 0,
+          },
+          cardStyle: { backgroundColor: "white" },
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("CHANGE_MAIL")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="EditHeight"
+        component={EditHeightScreen}
+        options={{
+          headerTransparent: false,
+          headerStyle: {
+            backgroundColor: "white",
+            shadowOpacity: 0,
+            elevation: 0,
+          },
+          cardStyle: { backgroundColor: "white" },
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("CHANGE_HEIGHT")}
             </CustomText>
           ),
         }}

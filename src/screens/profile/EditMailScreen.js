@@ -15,46 +15,47 @@ import WrongIcon from "../../assets/svg/close-circle-wrong.svg";
 import CorrectIcon from "../../assets/svg/minus-tick-correct.svg";
 import { t } from "i18next";
 import ErrorText from "../../components/ErrorText";
-import { postUsername } from "../../services/User/send-name";
 import AlertSheet from "../../components/AlertSheet";
+import { postEmail } from "../../services/User/send-email";
 
-const EditNameScreen = ({ navigation }) => {
+const validation = Yup.object().shape({
+  email: Yup.string().required(t("MAIL_REQUIRED")),
+});
+
+const EditMailScreen = ({ navigation }) => {
   const userStore = useUserStore();
   const sheetRef = useRef(null);
   const [sheetProps, setSheetProps] = useState(null);
 
-  const validation = Yup.object().shape({
-    name: Yup.string().required(t("NAME_REQUIRED")),
-  });
-
-  const saveBtnPressHandler = async (name) => {
-    if(name !== userStore.userAccountDetails.name) {
-        const response = await postUsername(name);
-        if (response.isSuccess) {
-          userStore.setUserAccountDetails({
-            name: name,
-          });
-          setSheetProps({
-            img: require("../../assets/images/done.png"),
-            title: t("SUCCESSFULL"),
-            desc: t("SUCCESSFULL_DESC"),
-          });
-          sheetRef.current?.present();
-        } else {
-            setSheetProps({
-                img: require("../../assets/images/cancelled.png"),
-                title: t("UNSUCCESSFULL"),
-                desc: t("UNSUCCESSFULL_DESC"),
-              });
-              sheetRef.current?.present();
-        }
-    } else {
+  const saveBtnPressHandler = async (email) => {
+    if (email !== userStore.userAccountDetails.email) {
+      const response = await postEmail(email);
+      
+      if (response.isSuccess) {
+        userStore.setUserAccountDetails({
+          email: email,
+        });
         setSheetProps({
-            img: require("../../assets/images/warning.png"),
-            title: t("WARNING"),
-            desc: t("WARNING_DESC"),
-          });
-          sheetRef.current?.present();
+          img: require("../../assets/images/done.png"),
+          title: t("SUCCESSFULL"),
+          desc: t("SUCCESSFULL_DESC"),
+        });
+        sheetRef.current?.present();
+      } else {
+        setSheetProps({
+          img: require("../../assets/images/cancelled.png"),
+          title: t("UNSUCCESSFULL"),
+          desc: t("UNSUCCESSFULL_DESC"),
+        });
+        sheetRef.current?.present();
+      }
+    } else {
+      setSheetProps({
+        img: require("../../assets/images/warning.png"),
+        title: t("WARNING"),
+        desc: t("WARNING_DESC"),
+      });
+      sheetRef.current?.present();
     }
   };
 
@@ -62,12 +63,12 @@ const EditNameScreen = ({ navigation }) => {
     <>
       <Formik
         initialValues={{
-          name: userStore.userAccountDetails.name,
+          email: userStore.userAccountDetails.email,
         }}
         validationSchema={validation}
         onSubmit={(values) => {
           Keyboard.dismiss();
-          saveBtnPressHandler(values.name);
+          saveBtnPressHandler(values.email);
         }}
       >
         {({
@@ -92,20 +93,20 @@ const EditNameScreen = ({ navigation }) => {
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
               <View style={styles.container}>
                 <Input
-                  value={values.name}
-                  onChangeText={handleChange("name")}
-                  onBlur={handleBlur("name")}
+                  value={values.email}
+                  onChangeText={handleChange("email")}
+                  onBlur={handleBlur("email")}
                   variant={
-                    (touched.name && errors.name && "error") ||
-                    (touched.name && !errors.name && "success")
+                    (touched.email && errors.email && "error") ||
+                    (touched.email && !errors.email && "success")
                   }
                   afterIcon={
-                    (touched.name && errors.name && <WrongIcon />) ||
-                    (touched.name && !errors.name && <CorrectIcon />)
+                    (touched.email && errors.email && <WrongIcon />) ||
+                    (touched.email && !errors.email && <CorrectIcon />)
                   }
                 />
-                {touched.name && errors.name && (
-                  <ErrorText message={errors.name} />
+                {touched.email && errors.email && (
+                  <ErrorText message={errors.email} />
                 )}
               </View>
             </TouchableWithoutFeedback>
@@ -124,4 +125,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditNameScreen;
+export default EditMailScreen;

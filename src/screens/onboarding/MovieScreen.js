@@ -16,11 +16,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MovieSelect from "../../components/MovieSelect";
 
 const MovieScreen = ({ route }) => {
-  const reqiredChoiceCount = 5;
+  const reqiredChoiceCount = 6;
   const [isBtnDisabled, setIsBtnDisaled] = useState(true);
   const [btnVariant, setBtnVariant] = useState("disable");
   const [selectedTvShows, setSelectedTvShows] = useState([]);
-  const [choiceCount, setChoiceCount] = useState(5);
+  const [choiceCount, setChoiceCount] = useState(6);
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
 

@@ -17,6 +17,7 @@ const menuData = [
   {
     id: "2",
     name: t("MAIL"),
+    screen: "EditMail",
     storeKey: "email",
   },
   {

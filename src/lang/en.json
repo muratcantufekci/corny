@@ -116,12 +116,22 @@
     "DELETE_PERMANENTLY": "Permanently Delete My Account",
     "CANCEL": "Cancel",
     "CHANGE_NAME": "Change Name",
+    "CHANGE_MAIL": "Change Email",
+    "CHANGE_HEIGHT": "Change Height",
     "SAVE": "Save",
     "SUCCESSFULL": "Successfull!",
     "UNSUCCESSFULL": "Unsuccesfull!",
     "WARNING": "Warning!",
-    "NAME_SUCCESSFULL": "You have successfully registered our name, you can go back to the settings.",
-    "NAME_UNSUCCESSFULL": "Please try again later.",
-    "NAME_WARNING": "Please enter a different name."
+    "SUCCESSFULL_DESC": "You have successfully updated, you can go back to the settings.",
+    "UNSUCCESSFULL_DESC": "Please try again later.",
+    "WARNING_DESC": "Please enter a different value.",
+    "NOTIFICATION_PREFERENCES": "Notification Preferences",
+    "LANGUAGE_PREFERENCES": "Language Preferences",
+    "CONTACT_US": "Contact Us",
+    "HELP": "Help",
+    "RESTORE_PURCHASE": "Restore Purchase",
+    "TERM_AND_CONDITIONS": "Term & Conditions",
+    "PRIVACY_POLICY": "Privacy Policy",
+    "COOKIE_POLICY": "Cookie Policy"
   }
 }

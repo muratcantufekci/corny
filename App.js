@@ -53,6 +53,7 @@ import EditNameScreen from "./src/screens/profile/EditNameScreen";
 import Constants from "expo-constants";
 import EditMailScreen from "./src/screens/profile/EditMailScreen";
 import EditHeightScreen from "./src/screens/profile/about/EditHeightScreen";
+import EditWorkIndustryScreen from "./src/screens/profile/about/EditWorkIndustryScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -162,6 +163,13 @@ const ProfileStack = () => {
         headerBackTitleVisible: false,
         headerTitle: "",
         headerTintColor: "#045bb3",
+        headerTransparent: false,
+          headerStyle: {
+            backgroundColor: "white",
+            shadowOpacity: 0,
+            elevation: 0,
+          },
+          cardStyle: { backgroundColor: "white" },
       }}
     >
       <Stack.Screen
@@ -173,13 +181,6 @@ const ProfileStack = () => {
         name="EditProfile"
         component={EditProfileScreen}
         options={{
-          headerTransparent: false,
-          headerStyle: {
-            backgroundColor: "white",
-            shadowOpacity: 0,
-            elevation: 0,
-          },
-          cardStyle: { backgroundColor: "white" },
           headerTitle: () => (
             <CustomText style={styles.profileHeaderText}>
               {t("EDIT_PROFILE")}
@@ -191,13 +192,6 @@ const ProfileStack = () => {
         name="AccountDetails"
         component={AccountDetailsScreen}
         options={{
-          headerTransparent: false,
-          headerStyle: {
-            backgroundColor: "white",
-            shadowOpacity: 0,
-            elevation: 0,
-          },
-          cardStyle: { backgroundColor: "white" },
           headerTitle: () => (
             <CustomText style={styles.profileHeaderText}>
               {t("ACCOUNT_DETAILS")}
@@ -209,13 +203,6 @@ const ProfileStack = () => {
         name="EditName"
         component={EditNameScreen}
         options={{
-          headerTransparent: false,
-          headerStyle: {
-            backgroundColor: "white",
-            shadowOpacity: 0,
-            elevation: 0,
-          },
-          cardStyle: { backgroundColor: "white" },
           headerTitle: () => (
             <CustomText style={styles.profileHeaderText}>
               {t("CHANGE_NAME")}
@@ -227,13 +214,6 @@ const ProfileStack = () => {
         name="EditMail"
         component={EditMailScreen}
         options={{
-          headerTransparent: false,
-          headerStyle: {
-            backgroundColor: "white",
-            shadowOpacity: 0,
-            elevation: 0,
-          },
-          cardStyle: { backgroundColor: "white" },
           headerTitle: () => (
             <CustomText style={styles.profileHeaderText}>
               {t("CHANGE_MAIL")}
@@ -245,16 +225,20 @@ const ProfileStack = () => {
         name="EditHeight"
         component={EditHeightScreen}
         options={{
-          headerTransparent: false,
-          headerStyle: {
-            backgroundColor: "white",
-            shadowOpacity: 0,
-            elevation: 0,
-          },
-          cardStyle: { backgroundColor: "white" },
           headerTitle: () => (
             <CustomText style={styles.profileHeaderText}>
               {t("CHANGE_HEIGHT")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="EditWorkIndustry"
+        component={EditWorkIndustryScreen}
+        options={{
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("CHANGE_WORKINDUSTRY")}
             </CustomText>
           ),
         }}

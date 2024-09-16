@@ -19,15 +19,27 @@ import { getUserAbouts } from "../../services/User/get-user-abouts";
 import { useNavigation } from "@react-navigation/native";
 
 const MenuItem = ({ name, values, navigation }) => {
+  let translatedValues = values?.map((value) => t(`${value}`));
+
+  let formattedValues = translatedValues?.join(",");
+
+  if (formattedValues?.length > 20) {
+    formattedValues = formattedValues.substring(0, 17) + "...";
+  }
+
   return (
-    <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate(`Edit${name}`)}>
+    <TouchableOpacity
+      style={styles.menuItem}
+      onPress={() => navigation.navigate(`Edit${name}`)}
+    >
       <CustomText style={styles.menuItemText}>
         {t(`${name.toUpperCase()}`)}
       </CustomText>
       <View style={styles.menuItemValues}>
-        {values?.map((value) => (
-          <CustomText style={styles.menuItemValuesText} key={value}>{value}</CustomText>
-        ))}
+        {/* Eğer values boş değilse göster, değilse boş göster */}
+        <CustomText style={styles.menuItemValuesText}>
+          {formattedValues || ""}
+        </CustomText>
         <Arrow style={styles.icon} />
       </View>
     </TouchableOpacity>
@@ -80,7 +92,7 @@ const EditProfileScreen = () => {
       <Button>{t("VERIFY_PROFILE")}</Button>
       <View style={{ marginVertical: 40 }}>
         <CustomText style={styles.title}>{t("QUESTIONS")}</CustomText>
-        <MenuItem name="Test" navigation={navigation}/>
+        <MenuItem name="Test" navigation={navigation} />
       </View>
       <View style={{ marginBottom: 40 }}>
         <CustomText style={styles.title}>
@@ -105,7 +117,12 @@ const EditProfileScreen = () => {
       <View style={{ gap: 8, marginBottom: 24 }}>
         <CustomText style={styles.title}>{t("ABOUT_ME")}</CustomText>
         {userStore.userAbouts?.map((item, index) => (
-          <MenuItem key={index} name={item.title} values={item.values} navigation={navigation}/>
+          <MenuItem
+            key={index}
+            name={item.title}
+            values={item.values}
+            navigation={navigation}
+          />
         ))}
       </View>
     </ScrollView>
@@ -145,13 +162,13 @@ const styles = StyleSheet.create({
   menuItemValues: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4
+    gap: 4,
   },
   menuItemValuesText: {
     fontWeight: "500",
     fontSize: 16,
     lineHeight: 24,
-    color: "#000000"
+    color: "#000000",
   },
   icon: {
     transform: [{ rotate: "180deg" }],

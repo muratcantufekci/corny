@@ -50,10 +50,21 @@ import EditProfileScreen from "./src/screens/profile/EditProfileScreen";
 import CustomText from "./src/components/CustomText";
 import AccountDetailsScreen from "./src/screens/profile/AccountDetailsScreen";
 import EditNameScreen from "./src/screens/profile/EditNameScreen";
-import Constants from "expo-constants";
 import EditMailScreen from "./src/screens/profile/EditMailScreen";
 import EditHeightScreen from "./src/screens/profile/about/EditHeightScreen";
 import EditWorkIndustryScreen from "./src/screens/profile/about/EditWorkIndustryScreen";
+import EditLookingForScreen from "./src/screens/profile/about/EditLookingForScreen";
+import EditEatingHabitsScreen from "./src/screens/profile/about/EditEatingHabitsScreen";
+import EditReligiousViewScreen from "./src/screens/profile/about/EditReligiousViewScreen";
+import EditEducationScreen from "./src/screens/profile/about/EditEducationScreen";
+import EditSmokerScreen from "./src/screens/profile/about/EditSmokerScreen";
+import EditExerciseHabitScreen from "./src/screens/profile/about/EditExerciseHabitScreen";
+import EditPoliticalViewScreen from "./src/screens/profile/about/EditPoliticalViewScreen";
+import EditZodiacScreen from "./src/screens/profile/about/EditZodiacScreen";
+import EditRelationshipStyleScreen from "./src/screens/profile/about/EditRelationshipStyleScreen";
+import EditInterestScreen from "./src/screens/profile/about/EditInterestScreen";
+import EditDreamVacationScreen from "./src/screens/profile/about/EditDreamVacationScreen";
+import EditGuiltyPleasureScreen from "./src/screens/profile/about/EditGuiltyPleasureScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -243,6 +254,138 @@ const ProfileStack = () => {
           ),
         }}
       />
+      <Stack.Screen
+        name="EditLookingFor"
+        component={EditLookingForScreen}
+        options={{
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("CHANGE_LOOKINGFOR")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="EditEatingHabit"
+        component={EditEatingHabitsScreen}
+        options={{
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("CHANGE_EATINGHABITS")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="EditReligiousView"
+        component={EditReligiousViewScreen}
+        options={{
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("CHANGE_RELIGIOUSVIEW")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="EditEducation"
+        component={EditEducationScreen}
+        options={{
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("CHANGE_EDUCATION")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="EditSmoker"
+        component={EditSmokerScreen}
+        options={{
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("CHANGE_SMOKER")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="EditExerciseHabit"
+        component={EditExerciseHabitScreen}
+        options={{
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("CHANGE_EXERCISEHABIT")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="EditPoliticalView"
+        component={EditPoliticalViewScreen}
+        options={{
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("CHANGE_POLITICALVIEW")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="EditZodiac"
+        component={EditZodiacScreen}
+        options={{
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("CHANGE_ZODIAC")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="EditRelationshipStyle"
+        component={EditRelationshipStyleScreen}
+        options={{
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("CHANGE_RELATIONSHIPSTYLE")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="EditInterest"
+        component={EditInterestScreen}
+        options={{
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("CHANGE_INTEREST")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="EditDreamVacation"
+        component={EditDreamVacationScreen}
+        options={{
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("CHANGE_DREAMVACATION")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="EditGuiltyPleasure"
+        component={EditGuiltyPleasureScreen}
+        options={{
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("CHANGE_GUILTYPLEASURE")}
+            </CustomText>
+          ),
+        }}
+      />
     </Stack.Navigator>
   );
 };
@@ -394,7 +537,7 @@ export default function App() {
       const refreshToken = await SecureStore.getItemAsync("refresh_token");
       // const refreshToken = "5fd59d04-950c-42d3-b854-c78754372457";
       // const refreshToken = null;
-      // console.log("tok",userStore.token);
+      console.log("tok",userStore.token);
 
       if (refreshToken) {
         try {

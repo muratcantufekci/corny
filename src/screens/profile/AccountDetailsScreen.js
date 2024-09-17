@@ -6,6 +6,7 @@ import { Modal, StyleSheet, View } from "react-native";
 import useUserStore from "../../store/useUserStore";
 import Button from "../../components/Button";
 import { useNavigation } from "@react-navigation/native";
+import * as SecureStore from "expo-secure-store";
 
 const menuData = [
   {
@@ -34,6 +35,10 @@ const AccountDetailsScreen = () => {
 
   const menuItemPressHandler = (screen) => {
     navigation.navigate(`${screen}`)
+  }
+
+  const deleteAccount = async () => {
+    await SecureStore.deleteItemAsync("refresh_token")
   }
 
   return (
@@ -65,7 +70,7 @@ const AccountDetailsScreen = () => {
             {t("DELETE_MODAL_DESC")}
             </CustomText>
             <View style={styles.btns}>
-              <Button variant="danger">{t("DELETE_PERMANENTLY")}</Button>
+              <Button variant="danger" onPress={deleteAccount}>{t("DELETE_PERMANENTLY")}</Button>
               <Button variant="ghost" onPress={() => setModalVisible(false)}>{t("CANCEL")}</Button>
             </View>
           </View>

@@ -59,6 +59,8 @@ const EditProfileScreen = () => {
     };
     const getUserAboutsHandler = async () => {
       const response = await getUserAbouts();
+      console.log("11",response);
+      
       userStore.setUserAbouts(response.userAbouts);
     };
     userTvShows();

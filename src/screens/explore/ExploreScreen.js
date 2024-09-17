@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Notifications from "expo-notifications";
 import { allowAllUserNotifications } from "../../services/User/allow-all-notifications";
 import { postExpoPushToken } from "../../services/User/send-expo-push-token";
+import Constants from "expo-constants";
 
 const registerForPushNotificationsAsync = async () => {
   let token;
@@ -29,14 +30,19 @@ const registerForPushNotificationsAsync = async () => {
     alert("Failed to get push token for push notification!");
     return;
   } else {
-    const response = await allowAllUserNotifications()
+    const response = await allowAllUserNotifications();
   }
 
-  token = (await Notifications.getExpoPushTokenAsync()).data;
+  token = (
+    await Notifications.getExpoPushTokenAsync({
+      projectId: Constants.expoConfig.extra.eas.projectId,
+    })
+  ).data;
+
   const resp = await postExpoPushToken({
     expoPushToken: token,
-    deviceId: ""
-  })
+    deviceId: "",
+  });
 
   return token;
 };
@@ -46,9 +52,9 @@ const ExploreScreen = () => {
   const [expoPushToken, setExpoPushToken] = useState("");
 
   useEffect(() => {
-    registerForPushNotificationsAsync().then((token) =>
-      setExpoPushToken(token)
-    );
+    registerForPushNotificationsAsync().then((token) => {
+      setExpoPushToken(token);
+    });
     // const notificationListener = Notifications.addNotificationReceivedListener(notification => {
     //   console.log('Notification received:', notification);
     // });
@@ -58,7 +64,6 @@ const ExploreScreen = () => {
     // });
     // console.log("notificationListener",notificationListener);
     // console.log("responseListener",responseListener);
-    
   }, []);
   return (
     <View
@@ -66,7 +71,7 @@ const ExploreScreen = () => {
         paddingTop: insets.top,
       }}
     >
-      <CustomText>Explore Screen</CustomText>
+      <CustomText>Explore Screen {expoPushToken}</CustomText>
     </View>
   );
 };

@@ -65,6 +65,8 @@ import EditRelationshipStyleScreen from "./src/screens/profile/about/EditRelatio
 import EditInterestScreen from "./src/screens/profile/about/EditInterestScreen";
 import EditDreamVacationScreen from "./src/screens/profile/about/EditDreamVacationScreen";
 import EditGuiltyPleasureScreen from "./src/screens/profile/about/EditGuiltyPleasureScreen";
+import EditCurrentObsessionScreen from "./src/screens/profile/about/EditCurrentObsessionScreen";
+import EditLastWatchedScreen from "./src/screens/profile/about/EditLastWatchedScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -386,6 +388,28 @@ const ProfileStack = () => {
           ),
         }}
       />
+      <Stack.Screen
+        name="EditCurrentObsession"
+        component={EditCurrentObsessionScreen}
+        options={{
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("CHANGE_CURRENTOBSESSION")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="EditLastWatched"
+        component={EditLastWatchedScreen}
+        options={{
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("CHANGE_LASTWATCHED")}
+            </CustomText>
+          ),
+        }}
+      />
     </Stack.Navigator>
   );
 };
@@ -537,7 +561,7 @@ export default function App() {
       const refreshToken = await SecureStore.getItemAsync("refresh_token");
       // const refreshToken = "5fd59d04-950c-42d3-b854-c78754372457";
       // const refreshToken = null;
-      console.log("tok",userStore.token);
+      // console.log("tok",userStore.token);
 
       if (refreshToken) {
         try {

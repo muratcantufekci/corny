@@ -132,6 +132,8 @@
     "CHANGE_INTEREST": "İlgi Alanlarını Değiştir",
     "CHANGE_DREAMVACATION": "Hayalindeki Tatili Değiştir",
     "CHANGE_GUILTYPLEASURE": "Gizli Zevkini Değiştir",
+    "CHANGE_CURRENTOBSESSION": "Şu Anki Takıntını Değiştir",
+    "CHANGE_LASTWATCHED": "Son İzlediğini Değiştir",
     "SAVE": "Kaydet",
     "SUCCESSFULL": "Başarılı!",
     "UNSUCCESSFULL": "Başarısız!",

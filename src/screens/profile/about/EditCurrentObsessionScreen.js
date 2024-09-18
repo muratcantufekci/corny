@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import MovieSelect from "../../../components/MovieSelect";
-import { postUserAbouts } from "../../../services/User/send-user-about";
 import useUserStore from "../../../store/useUserStore";
+import { postUserAbouts } from "../../../services/User/send-user-about";
+import MovieSelect from "../../../components/MovieSelect";
 
-const EditGuiltyPleasureScreen = () => {
+const EditCurrentObsessionScreen = () => {
   const userStore = useUserStore();
   const [selectedTvShow, setSelectedTvShow] = useState([]);
 
   useEffect(() => {
-    const postGuiltyPleasure = async () => {
+    const postCurrentObsession = async () => {
       const data = {
-        title: "GuiltyPleasure",
+        title: "CurrentObsession",
         values: [`${selectedTvShow[0].id}`],
       };
 
@@ -24,7 +24,7 @@ const EditGuiltyPleasureScreen = () => {
       setSelectedTvShow((prevState) => [...prevState.slice(1)]);
     }
     if (selectedTvShow.length > 0) {
-      postGuiltyPleasure();
+      postCurrentObsession();
     }
   }, [selectedTvShow]);
 
@@ -45,4 +45,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditGuiltyPleasureScreen;
+export default EditCurrentObsessionScreen;

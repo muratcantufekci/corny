@@ -17,15 +17,41 @@ import Arrow from "../../assets/svg/arrow-left.svg";
 import { getUserTvShows } from "../../services/TvShow/get-user-tv-shows";
 import { getUserAbouts } from "../../services/User/get-user-abouts";
 import { useNavigation } from "@react-navigation/native";
+import { getTvShowById } from "../../services/TvShow/get-tv-show-by-id";
 
 const MenuItem = ({ name, values, navigation }) => {
-  let translatedValues = values?.map((value) => t(`${value}`));
+  const [translatedValues, setTranslatedValues] = useState("");
 
-  let formattedValues = translatedValues?.join(",");
+  useEffect(() => {
+    const fetchData = async () => {
+      let formattedValues = "";
 
-  if (formattedValues?.length > 20) {
-    formattedValues = formattedValues.substring(0, 17) + "...";
-  }
+      if (
+        name === "GuiltyPleasure" ||
+        name === "CurrentObsession" ||
+        name === "LastWatched"
+      ) {
+        try {
+          const response = await getTvShowById(values[0]);
+          if (response.isSuccess) {
+            formattedValues = response.tvShow.name;
+          }
+        } catch (error) {
+          console.error("Error fetching TV show:", error);
+        }
+      } else {
+        formattedValues = values?.map((value) => t(`${value}`)).join(",");
+      }
+
+      if (formattedValues?.length > 20) {
+        formattedValues = formattedValues.substring(0, 17) + "...";
+      }
+
+      setTranslatedValues(formattedValues);
+    };
+
+    fetchData();
+  }, [name, values]);
 
   return (
     <TouchableOpacity
@@ -36,9 +62,8 @@ const MenuItem = ({ name, values, navigation }) => {
         {t(`${name.toUpperCase()}`)}
       </CustomText>
       <View style={styles.menuItemValues}>
-        {/* Eğer values boş değilse göster, değilse boş göster */}
         <CustomText style={styles.menuItemValuesText}>
-          {formattedValues || ""}
+          {translatedValues || ""}
         </CustomText>
         <Arrow style={styles.icon} />
       </View>
@@ -59,8 +84,6 @@ const EditProfileScreen = () => {
     };
     const getUserAboutsHandler = async () => {
       const response = await getUserAbouts();
-      console.log("11",response);
-      
       userStore.setUserAbouts(response.userAbouts);
     };
     userTvShows();

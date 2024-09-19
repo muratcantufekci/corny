@@ -25,6 +25,7 @@ const menuData = [
   {
     id: "2",
     name: t("NOTIFICATION_PREFERENCES"),
+    screen: "NotificationPreferences"
   },
   {
     id: "3",

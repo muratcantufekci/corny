@@ -67,6 +67,7 @@ import EditDreamVacationScreen from "./src/screens/profile/about/EditDreamVacati
 import EditGuiltyPleasureScreen from "./src/screens/profile/about/EditGuiltyPleasureScreen";
 import EditCurrentObsessionScreen from "./src/screens/profile/about/EditCurrentObsessionScreen";
 import EditLastWatchedScreen from "./src/screens/profile/about/EditLastWatchedScreen";
+import EditNotificationPreferences from "./src/screens/profile/EditNotificationPreferences";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -208,6 +209,17 @@ const ProfileStack = () => {
           headerTitle: () => (
             <CustomText style={styles.profileHeaderText}>
               {t("ACCOUNT_DETAILS")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="NotificationPreferences"
+        component={EditNotificationPreferences}
+        options={{
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("NOTIFICATIONS")}
             </CustomText>
           ),
         }}
@@ -561,7 +573,7 @@ export default function App() {
       const refreshToken = await SecureStore.getItemAsync("refresh_token");
       // const refreshToken = "5fd59d04-950c-42d3-b854-c78754372457";
       // const refreshToken = null;
-      // console.log("tok",userStore.token);
+      console.log("tok",userStore.token);
 
       if (refreshToken) {
         try {

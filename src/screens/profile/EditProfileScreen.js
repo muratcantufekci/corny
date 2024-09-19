@@ -114,11 +114,7 @@ const EditProfileScreen = () => {
           setSelectedImages={setSelectedImages}
         />
       </View>
-      <Button>{t("VERIFY_PROFILE")}</Button>
-      <View style={{ marginVertical: 40 }}>
-        <CustomText style={styles.title}>{t("QUESTIONS")}</CustomText>
-        <MenuItem name="Test" navigation={navigation} />
-      </View>
+      {/* <Button>{t("VERIFY_PROFILE")}</Button> */}
       <View style={{ marginBottom: 40 }}>
         <CustomText style={styles.title}>
           {t("MY_FAVORITE_TV_SHOWS")}

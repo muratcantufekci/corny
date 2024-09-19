@@ -9,6 +9,7 @@ import Constants from "expo-constants";
 
 const registerForPushNotificationsAsync = async () => {
   let token;
+
   if (Platform.OS === "android") {
     await Notifications.setNotificationChannelAsync("default", {
       name: "default",
@@ -19,18 +20,20 @@ const registerForPushNotificationsAsync = async () => {
   }
 
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
-  let finalStatus = existingStatus;
 
   if (existingStatus !== "granted") {
     const { status } = await Notifications.requestPermissionsAsync();
-    finalStatus = status;
-  }
 
-  if (finalStatus !== "granted") {
-    alert("Failed to get push token for push notification!");
-    return;
-  } else {
+    if (status !== "granted") {
+      alert("Failed to get push token for push notification!");
+      return;
+    }
+
     const response = await allowAllUserNotifications();
+    
+    if (!response.isSuccess) {
+      console.error("Failed to allow notifications.");
+    }
   }
 
   token = (

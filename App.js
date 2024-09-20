@@ -68,6 +68,9 @@ import EditGuiltyPleasureScreen from "./src/screens/profile/about/EditGuiltyPlea
 import EditCurrentObsessionScreen from "./src/screens/profile/about/EditCurrentObsessionScreen";
 import EditLastWatchedScreen from "./src/screens/profile/about/EditLastWatchedScreen";
 import EditNotificationPreferences from "./src/screens/profile/EditNotificationPreferences";
+import EditLangugePreferencesScreen from "./src/screens/profile/EditLangugePreferencesScreen";
+import EditWatchingHabitScreen from "./src/screens/profile/about/EditWatchingHabitScreen";
+import EditDrinkingHabitScreen from "./src/screens/profile/about/EditDrinkingHabitScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -220,6 +223,17 @@ const ProfileStack = () => {
           headerTitle: () => (
             <CustomText style={styles.profileHeaderText}>
               {t("NOTIFICATIONS")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="LanguagePreferences"
+        component={EditLangugePreferencesScreen}
+        options={{
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("LANGUAGES")}
             </CustomText>
           ),
         }}
@@ -422,6 +436,28 @@ const ProfileStack = () => {
           ),
         }}
       />
+      <Stack.Screen
+        name="EditWatchingHabit"
+        component={EditWatchingHabitScreen}
+        options={{
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("CHANGE_WATCHINGHABIT")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="EditDrinkingHabit"
+        component={EditDrinkingHabitScreen}
+        options={{
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("CHANGE_DRINKINGHABIT")}
+            </CustomText>
+          ),
+        }}
+      />
     </Stack.Navigator>
   );
 };
@@ -573,7 +609,7 @@ export default function App() {
       const refreshToken = await SecureStore.getItemAsync("refresh_token");
       // const refreshToken = "5fd59d04-950c-42d3-b854-c78754372457";
       // const refreshToken = null;
-      console.log("tok",userStore.token);
+      // console.log("tok",userStore.token);
 
       if (refreshToken) {
         try {

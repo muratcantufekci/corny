@@ -3,26 +3,27 @@ import { Image, StyleSheet, Switch, View } from "react-native";
 import CustomText from "../../components/CustomText";
 import { getUserNotificationPreferences } from "../../services/User/get-user-notification-preferences";
 import { postUserNotificationPreferences } from "../../services/User/send-user-notification-preferences";
+import { t } from "i18next";
 
 const menuItemData = [
   {
     id: "1",
-    name: "Matches",
+    name: t("MATCHES"),
     type: "match",
   },
   {
     id: "2",
-    name: "Messages",
+    name: t("MESSAGES"),
     type: "message",
   },
   {
     id: "3",
-    name: "Likes",
+    name: t("LIKES"),
     type: "like",
   },
   {
     id: "4",
-    name: "Offers & Promotions",
+    name: t("OFFER_AND_PROMOTIONS"),
     type: "offer",
   },
 ];
@@ -74,8 +75,7 @@ const EditNotificationPreferences = () => {
           resizeMode="cover"
         />
         <CustomText style={styles.notificationText}>
-          Manage your notification preferences so you don’t miss out any good
-          news.
+          {t("NOTIFICATION_TITLE")}
         </CustomText>
         <Image source={require("../../assets/images/notification.png")} />
       </View>

@@ -16,51 +16,54 @@ import useUserStore from "../../store/useUserStore";
 import MenuItem from "./components/MenuItem";
 import { t } from "i18next";
 
-const menuData = [
-  {
-    id: "1",
-    name: t("ACCOUNT_DETAILS"),
-    screen: "AccountDetails",
-  },
-  {
-    id: "2",
-    name: t("NOTIFICATION_PREFERENCES"),
-    screen: "NotificationPreferences"
-  },
-  {
-    id: "3",
-    name: t("LANGUAGE_PREFERENCES"),
-  },
-  {
-    id: "4",
-    name: t("CONTACT_US"),
-  },
-  {
-    id: "5",
-    name: t("HELP"),
-  },
-  {
-    id: "6",
-    name: t("RESTORE_PURCHASE"),
-  },
-  {
-    id: "7",
-    name: t("TERM_AND_CONDITIONS"),
-  },
-  {
-    id: "8",
-    name: t("PRIVACY_POLICY"),
-  },
-  {
-    id: "9",
-    name: t("COOKIE_POLICY"),
-  },
-];
+
 
 const ProfileScreen = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const userStore = useUserStore();
+
+  const menuData = [
+    {
+      id: "1",
+      name: t("ACCOUNT_DETAILS"),
+      screen: "AccountDetails",
+    },
+    {
+      id: "2",
+      name: t("NOTIFICATION_PREFERENCES"),
+      screen: "NotificationPreferences"
+    },
+    {
+      id: "3",
+      name: t("LANGUAGE_PREFERENCES"),
+      screen: "LanguagePreferences"
+    },
+    {
+      id: "4",
+      name: t("CONTACT_US"),
+    },
+    {
+      id: "5",
+      name: t("HELP"),
+    },
+    {
+      id: "6",
+      name: t("RESTORE_PURCHASE"),
+    },
+    {
+      id: "7",
+      name: t("TERM_AND_CONDITIONS"),
+    },
+    {
+      id: "8",
+      name: t("PRIVACY_POLICY"),
+    },
+    {
+      id: "9",
+      name: t("COOKIE_POLICY"),
+    },
+  ];
 
   const menuItemPressHandler = (screen) => {
     navigation.navigate(`${screen}`);
@@ -130,8 +133,8 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   profil: {
-    width: 80,
-    height: 80,
+    width: 100,
+    height: 100,
     borderRadius: 999,
   },
   name: {

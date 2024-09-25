@@ -49,6 +49,7 @@
     "NAME": "Name",
     "PHONE_NUMBER": "Phone Number",
     "MAIL_REQUIRED": "Email field is required!",
+    "MESSAGE_REQUIRED": "Message field is required!",
     "MAIL_FORMAT": "Please enter a valid email!",
     "END_SCREEN_TITLE": "You did it!",
     "END_SCREEN_DESC": "Find people who watch and love the same movies and tv series you do.",
@@ -119,7 +120,9 @@
     "DELETE_PERMANENTLY": "Permanently Delete My Account",
     "CANCEL": "Cancel",
     "CHANGE_NAME": "Change Name",
+    "ALL_TVSERIES": "All Tv Series / Movies",
     "CHANGE_MAIL": "Change Email",
+    "CHANGE_PHONE": "Change Phone Number",
     "NOTIFICATIONS": "Notifications",
     "LANGUAGES": "Languages",
     "CHANGE_HEIGHT": "Change Height",
@@ -316,6 +319,11 @@
     "MATCHES": "Matches",
     "OFFER_AND_PROMOTIONS": "Offers & Promotions",
     "TURKISH": "Turkish",
-    "ENGLISH": "English"
+    "ENGLISH": "English",
+    "EDIT_PHONE_TITLE": "Let’s get you verified",
+    "EDIT_PHONE_DESC": "Please enter your cell phone number below, and we’ll send you a verification code",
+    "SEND_VERIFICATION_CODE": "Send verification Code",
+    "CONTACT_US_TITLE": "Contact Form",
+    "CONTACT_US_DESC": "We'd love to hear from you! Fill out the form below and we'll get back to you as soon as we can."
   }
 }

@@ -133,7 +133,7 @@ const EditProfileScreen = () => {
             }
           })}
         </View>
-        <Button>{t("SEE_TV_SHOWS")}</Button>
+        <Button onPress={() => navigation.navigate("EditMovies")}>{t("SEE_TV_SHOWS")}</Button>
       </View>
       <View style={{ gap: 8, marginBottom: 24 }}>
         <CustomText style={styles.title}>{t("ABOUT_ME")}</CustomText>

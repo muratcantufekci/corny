@@ -24,6 +24,7 @@ const menuData = [
   {
     id: "3",
     name: t("PHONE_NUMBER"),
+    screen: "EditPhone",
     storeKey: "phoneNumber",
   },
 ];

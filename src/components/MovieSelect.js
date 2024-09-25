@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Dimensions, FlatList, View } from "react-native";
+import { ActivityIndicator, FlatList, View } from "react-native";
 import SelectionBox from "./SelectionBox";
 import { getTvShowsByPopularity } from "../services/TvShow/get-tv-shows-by-popularity";
 import { searchTvShowsByText } from "../services/TvShow/search-tv-shows";
@@ -12,6 +12,7 @@ const MovieSelect = ({
   selectedTvShows,
   setSelectedTvShows,
   setChoiceCount,
+  priorSelect = false,
   style,
 }) => {
   const [loading, setLoading] = useState(false);
@@ -24,9 +25,23 @@ const MovieSelect = ({
     const getTvShows = async () => {
       try {
         setLoading(true);
-        const res = await getTvShowsByPopularity(page);
+        const res = await getTvShowsByPopularity(page, priorSelect);
         setTvShows((prevTvShows) => [...prevTvShows, ...res.tvShows]);
         setTvShowsCopy((prevTvShows) => [...prevTvShows, ...res.tvShows]);
+        const newSelectedTvShows = res.tvShows
+          .filter((item) => item.isSelected) // Yalnızca seçili öğeleri filtreleme
+          .map((item) => ({
+            // Filtrelenen öğeleri nesne olarak döndürme
+            id: item.id,
+            name: item.name,
+            poster: item.poster,
+          }));
+
+        // Önceki seçilen öğelerle yeni seçilenleri birleştirme
+        setSelectedTvShows((prevSelected) => [
+          ...prevSelected,
+          ...newSelectedTvShows,
+        ]);
         setLoading(false);
       } catch (error) {
         console.error(error);
@@ -39,7 +54,7 @@ const MovieSelect = ({
 
   const searchTvShows = async (text) => {
     setSearchInputValue(text);
-    if (text.length >= 3) {
+    if (text.length > 0) {
       try {
         setLoading(true);
         const res = await searchTvShowsByText(text);

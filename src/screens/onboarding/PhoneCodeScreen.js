@@ -28,6 +28,7 @@ const PhoneCodeScreen = () => {
   const [isCodeValid, setIsCodeValid] = useState(true);
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
+  const uuid = SecureStore.getItem("DEVICE_UUID_KEY");
   const data = {
     phoneNumber: onboardingStore.phone,
   };
@@ -75,7 +76,12 @@ const PhoneCodeScreen = () => {
       setIsCodeValid(true);
       const response = await postVerifyCode(data);
       if (response.isSuccess) {
-        const res = await authenticate(data);
+        const authData = {
+          verificationCode: code,
+          identifierCode: onboardingStore.identifierCode,
+          deviceUuid: uuid
+        };
+        const res = await authenticate(authData);
         if (res.isSuccess) {
           userStore.setToken(res.token);
           await SecureStore.setItemAsync("refresh_token", res.refreshToken);

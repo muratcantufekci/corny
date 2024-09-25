@@ -71,6 +71,9 @@ import EditNotificationPreferences from "./src/screens/profile/EditNotificationP
 import EditLangugePreferencesScreen from "./src/screens/profile/EditLangugePreferencesScreen";
 import EditWatchingHabitScreen from "./src/screens/profile/about/EditWatchingHabitScreen";
 import EditDrinkingHabitScreen from "./src/screens/profile/about/EditDrinkingHabitScreen";
+import EditMoviesScreen from "./src/screens/profile/EditMoviesScreen";
+import EditPhoneScreen from "./src/screens/profile/EditPhoneScreen";
+import ContactUsScreen from "./src/screens/profile/ContactUsScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -176,17 +179,21 @@ const ProfileStack = () => {
             },
           },
         },
-        headerBackImage: () => <Back />,
+        headerBackImage: () => (
+          <View style={{ padding: 10, paddingLeft: 0 }}>
+            <Back />
+          </View>
+        ),
         headerBackTitleVisible: false,
         headerTitle: "",
         headerTintColor: "#045bb3",
         headerTransparent: false,
-          headerStyle: {
-            backgroundColor: "white",
-            shadowOpacity: 0,
-            elevation: 0,
-          },
-          cardStyle: { backgroundColor: "white" },
+        headerStyle: {
+          backgroundColor: "white",
+          shadowOpacity: 0,
+          elevation: 0,
+        },
+        cardStyle: { backgroundColor: "white" },
       }}
     >
       <Stack.Screen
@@ -239,6 +246,28 @@ const ProfileStack = () => {
         }}
       />
       <Stack.Screen
+        name="ContactUs"
+        component={ContactUsScreen}
+        options={{
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("CONTACT_US")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="EditMovies"
+        component={EditMoviesScreen}
+        options={{
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("ALL_TVSERIES")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
         name="EditName"
         component={EditNameScreen}
         options={{
@@ -256,6 +285,17 @@ const ProfileStack = () => {
           headerTitle: () => (
             <CustomText style={styles.profileHeaderText}>
               {t("CHANGE_MAIL")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="EditPhone"
+        component={EditPhoneScreen}
+        options={{
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("CHANGE_PHONE")}
             </CustomText>
           ),
         }}
@@ -607,14 +647,38 @@ export default function App() {
     const setUserLogin = async () => {
       // await SecureStore.deleteItemAsync("refresh_token"); // test amaçlı rekfresh token sıfırlayıcı
       const refreshToken = await SecureStore.getItemAsync("refresh_token");
+      let uuid = await SecureStore.getItemAsync("DEVICE_UUID_KEY");
       // const refreshToken = "5fd59d04-950c-42d3-b854-c78754372457";
       // const refreshToken = null;
       // console.log("tok",userStore.token);
+
+      function generateUUID() {
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+          /[xy]/g,
+          function (c) {
+            var r = (Math.random() * 16) | 0,
+              v = c === "x" ? r : (r & 0x3) | 0x8;
+            return v.toString(16);
+          }
+        );
+      }
+
+      try {
+        if (!uuid) {
+          // UUID doesn't exist, generate a new one
+          uuid = generateUUID();
+
+          await SecureStore.setItemAsync("DEVICE_UUID_KEY", uuid);
+        }
+      } catch (error) {
+        console.error("Error fetching device UUID:", error);
+      }
 
       if (refreshToken) {
         try {
           const response = await authenticateWithRefreshToken({
             refreshToken: refreshToken,
+            deviceUuid: uuid,
           });
 
           userStore.setToken(response.token);

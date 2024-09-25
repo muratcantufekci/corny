@@ -10,6 +10,7 @@ const Input = ({
   inputMode = "text",
   beforeIcon,
   afterIcon,
+  isTextArea,
   ...props
 }) => {
   const variantStyles = {
@@ -25,7 +26,7 @@ const Input = ({
     <View style={textStyle}>
       {beforeIcon && beforeIcon}
       <TextInput
-        style={styles.input}
+        style={[styles.input, isTextArea && {height: "100%"}]}
         placeholder={placeholder}
         value={value}
         onChangeText={onChangeText}

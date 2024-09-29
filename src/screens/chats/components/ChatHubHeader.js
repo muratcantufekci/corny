@@ -8,7 +8,7 @@ const ChatHubHeader = ({ navigation, userImage, userName, sheetRef, pt }) => {
   return (
     <View style={[styles.headerContainer, { paddingTop: pt }]}>
       <View style={styles.headerWrapper}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{ padding: 10, paddingLeft: 0 }}>
           <Back width={30} height={30} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.headerMid}>

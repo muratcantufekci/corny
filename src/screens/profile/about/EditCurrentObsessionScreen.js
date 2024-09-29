@@ -33,6 +33,7 @@ const EditCurrentObsessionScreen = () => {
       <MovieSelect
         selectedTvShows={selectedTvShow}
         setSelectedTvShows={setSelectedTvShow}
+        fromAbout
       />
     </View>
   );

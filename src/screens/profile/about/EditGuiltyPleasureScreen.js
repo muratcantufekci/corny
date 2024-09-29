@@ -33,6 +33,7 @@ const EditGuiltyPleasureScreen = () => {
       <MovieSelect
         selectedTvShows={selectedTvShow}
         setSelectedTvShows={setSelectedTvShow}
+        fromAbout
       />
     </View>
   );

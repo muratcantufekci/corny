@@ -33,6 +33,7 @@ const EditLastWatchedScreen = () => {
       <MovieSelect
         selectedTvShows={selectedTvShow}
         setSelectedTvShows={setSelectedTvShow}
+        fromAbout
       />
     </View>
   );

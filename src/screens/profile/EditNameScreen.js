@@ -1,5 +1,6 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
 import {
+  ActivityIndicator,
   Keyboard,
   Pressable,
   StyleSheet,
@@ -22,40 +23,43 @@ const EditNameScreen = ({ navigation }) => {
   const userStore = useUserStore();
   const sheetRef = useRef(null);
   const [sheetProps, setSheetProps] = useState(null);
+  const [waiting, setWaiting] = useState(false);
 
   const validation = Yup.object().shape({
     name: Yup.string().required(t("NAME_REQUIRED")),
   });
 
   const saveBtnPressHandler = async (name) => {
-    if(name !== userStore.userAccountDetails.name) {
-        const response = await postUsername(name);
-        if (response.isSuccess) {
-          userStore.setUserAccountDetails({
-            name: name,
-          });
-          setSheetProps({
-            img: require("../../assets/images/done.png"),
-            title: t("SUCCESSFULL"),
-            desc: t("SUCCESSFULL_DESC"),
-          });
-          sheetRef.current?.present();
-        } else {
-            setSheetProps({
-                img: require("../../assets/images/cancelled.png"),
-                title: t("UNSUCCESSFULL"),
-                desc: t("UNSUCCESSFULL_DESC"),
-              });
-              sheetRef.current?.present();
-        }
-    } else {
+    setWaiting(true);
+    if (name !== userStore.userAccountDetails.name) {
+      const response = await postUsername(name);
+      if (response.isSuccess) {
+        userStore.setUserAccountDetails({
+          name: name,
+        });
         setSheetProps({
-            img: require("../../assets/images/warning.png"),
-            title: t("WARNING"),
-            desc: t("WARNING_DESC"),
-          });
-          sheetRef.current?.present();
+          img: require("../../assets/images/done.png"),
+          title: t("SUCCESSFULL"),
+          desc: t("SUCCESSFULL_DESC"),
+        });
+        sheetRef.current?.present();
+      } else {
+        setSheetProps({
+          img: require("../../assets/images/cancelled.png"),
+          title: t("UNSUCCESSFULL"),
+          desc: t("UNSUCCESSFULL_DESC"),
+        });
+        sheetRef.current?.present();
+      }
+    } else {
+      setSheetProps({
+        img: require("../../assets/images/warning.png"),
+        title: t("WARNING"),
+        desc: t("WARNING_DESC"),
+      });
+      sheetRef.current?.present();
     }
+    setWaiting(false);
   };
 
   return (
@@ -80,13 +84,16 @@ const EditNameScreen = ({ navigation }) => {
         }) => {
           useLayoutEffect(() => {
             navigation.setOptions({
-              headerRight: () => (
-                <Pressable onPress={submitForm}>
-                  <CustomText>{t("SAVE")}</CustomText>
-                </Pressable>
-              ),
+              headerRight: () =>
+                waiting ? (
+                  <ActivityIndicator />
+                ) : (
+                  <Pressable onPress={submitForm}>
+                    <CustomText>{t("SAVE")}</CustomText>
+                  </Pressable>
+                ),
             });
-          }, [navigation, submitForm]);
+          }, [navigation, submitForm, waiting]);
 
           return (
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

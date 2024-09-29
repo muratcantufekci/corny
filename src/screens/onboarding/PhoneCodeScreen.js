@@ -79,7 +79,7 @@ const PhoneCodeScreen = () => {
         const authData = {
           verificationCode: code,
           identifierCode: onboardingStore.identifierCode,
-          deviceUuid: uuid
+          deviceUuid: "242141-12432141-213432142"
         };
         const res = await authenticate(authData);
         if (res.isSuccess) {

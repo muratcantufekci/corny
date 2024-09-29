@@ -1,6 +1,6 @@
 import { Picker } from "@react-native-picker/picker";
 import React, { useLayoutEffect, useRef, useState, useEffect } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
 import CustomText from "../../../components/CustomText";
 import { t } from "i18next";
 import { postUserAbouts } from "../../../services/User/send-user-about";
@@ -11,6 +11,7 @@ const EditHeightScreen = ({ navigation }) => {
   const userStore = useUserStore();
   const sheetRef = useRef(null);
   const [sheetProps, setSheetProps] = useState(null);
+  const [waiting, setWaiting] = useState(false);
   const [selectedHeight, setSelectedHeight] = useState(
     userStore.userAbouts.find((item) => item.title === "Height")?.values
   );
@@ -20,13 +21,16 @@ const EditHeightScreen = ({ navigation }) => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => (
-        <Pressable onPress={saveBtnPressHandler}>
-          <CustomText>{t("SAVE")}</CustomText>
-        </Pressable>
-      ),
+      headerRight: () =>
+        waiting ? (
+          <ActivityIndicator />
+        ) : (
+          <Pressable onPress={saveBtnPressHandler}>
+            <CustomText>{t("SAVE")}</CustomText>
+          </Pressable>
+        ),
     });
-  }, [navigation, selectedHeight]);
+  }, [navigation, selectedHeight, waiting]);
 
   useEffect(() => {
     if (sheetProps) {
@@ -35,6 +39,7 @@ const EditHeightScreen = ({ navigation }) => {
   }, [sheetProps]);
 
   const saveBtnPressHandler = async () => {
+    setWaiting(true);
     if (initialHeight !== selectedHeight) {
       const data = {
         title: "Height",
@@ -64,6 +69,7 @@ const EditHeightScreen = ({ navigation }) => {
         desc: t("WARNING_DESC"),
       });
     }
+    setWaiting(false);
   };
 
   return (

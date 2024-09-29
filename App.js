@@ -96,7 +96,11 @@ const AuthStack = () => (
         },
       },
       headerBackTitleVisible: false,
-      headerBackImage: () => <Back width={30} height={30} />,
+      headerBackImage: () => (
+        <View style={{ padding: 10, paddingLeft: 0 }}>
+          <Back width={30} height={30} />
+        </View>
+      ),
       headerTitle: "",
       headerTintColor: "#045bb3",
       gestureEnabled: false,
@@ -665,9 +669,7 @@ export default function App() {
 
       try {
         if (!uuid) {
-          // UUID doesn't exist, generate a new one
           uuid = generateUUID();
-
           await SecureStore.setItemAsync("DEVICE_UUID_KEY", uuid);
         }
       } catch (error) {
@@ -678,23 +680,31 @@ export default function App() {
         try {
           const response = await authenticateWithRefreshToken({
             refreshToken: refreshToken,
-            deviceUuid: uuid,
+            deviceUuid: "242141-12432141-213432142",
           });
+          console.log("response",response);
+          
 
-          userStore.setToken(response.token);
-          await SecureStore.setItemAsync(
-            "refresh_token",
-            response.refreshToken
-          );
-
-          if (response.isConfigured) {
-            userStore.setIsUserLoggedIn(true);
-            setIsLoading(false);
-          } else {
-            const congifurResponse = await checkUserConfiguration();
-            setConfigureResponseData(congifurResponse);
+          if (response.status_en === "expired") {
+            await SecureStore.deleteItemAsync("refresh_token");
             userStore.setIsUserLoggedIn(false);
             setIsLoading(false);
+          } else if (response.status_en === "OK") {
+            userStore.setToken(response.token);
+            await SecureStore.setItemAsync(
+              "refresh_token",
+              response.refreshToken
+            );
+
+            if (response.isConfigured) {
+              userStore.setIsUserLoggedIn(true);
+              setIsLoading(false);
+            } else {
+              const congifurResponse = await checkUserConfiguration();
+              setConfigureResponseData(congifurResponse);
+              userStore.setIsUserLoggedIn(false);
+              setIsLoading(false);
+            }
           }
         } catch (error) {
           console.log(error);

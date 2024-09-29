@@ -19,6 +19,7 @@ import ErrorText from "../../components/ErrorText";
 import OnboardingHeading from "../../components/OnboardingHeading";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { postContactForm } from "../../services/User/send-contact-form";
+import Button from "../../components/Button";
 
 const ContactUsScreen = ({ navigation }) => {
   const sheetRef = useRef(null);
@@ -65,7 +66,7 @@ const ContactUsScreen = ({ navigation }) => {
       });
       sheetRef.current?.present();
     }
-    setWaiting(false)
+    setWaiting(false);
   };
 
   return (
@@ -84,37 +85,26 @@ const ContactUsScreen = ({ navigation }) => {
           message: "",
         }}
         validationSchema={validation}
-        onSubmit={(values) => {
+        onSubmit={(values, { resetForm }) => {
           Keyboard.dismiss();
           saveBtnPressHandler(
             values.name,
             values.email,
             values.phone,
             values.message
-          );
+          ).then(() => {
+            resetForm();
+          });
         }}
       >
         {({
           handleChange,
           handleBlur,
+          handleSubmit,
           values,
           errors,
           touched,
-          submitForm,
         }) => {
-          useLayoutEffect(() => {
-            navigation.setOptions({
-              headerRight: () =>
-                waiting ? (
-                  <ActivityIndicator />
-                ) : (
-                  <Pressable onPress={submitForm}>
-                    <CustomText>{t("SAVE")}</CustomText>
-                  </Pressable>
-                ),
-            });
-          }, [navigation, submitForm, waiting]);
-
           return (
             <View style={styles.container}>
               <OnboardingHeading
@@ -127,6 +117,7 @@ const ContactUsScreen = ({ navigation }) => {
                     placeholder={t("NAME")}
                     onChangeText={handleChange("name")}
                     onBlur={handleBlur("name")}
+                    value={values.name}
                     variant={
                       (touched.name && errors.name && "error") ||
                       (touched.name && !errors.name && "success")
@@ -145,6 +136,7 @@ const ContactUsScreen = ({ navigation }) => {
                     placeholder={t("MAIL")}
                     onChangeText={handleChange("email")}
                     onBlur={handleBlur("email")}
+                    value={values.email}
                     variant={
                       (touched.email && errors.email && "error") ||
                       (touched.email && !errors.email && "success")
@@ -163,6 +155,7 @@ const ContactUsScreen = ({ navigation }) => {
                     placeholder={t("YOUR_PHONE_NUMBER")}
                     onChangeText={handleChange("phone")}
                     onBlur={handleBlur("phone")}
+                    value={values.phone}
                     inputMode="numeric"
                     variant={
                       (touched.phone && errors.phone && "error") ||
@@ -183,6 +176,7 @@ const ContactUsScreen = ({ navigation }) => {
                     onChangeText={handleChange("message")}
                     onEndEditing={handleBlur("message")}
                     onBlur={() => setInputScrollEnabled(false)}
+                    value={values.message}
                     onFocus={() => {
                       setTimeout(() => {
                         setInputScrollEnabled(true);
@@ -206,6 +200,13 @@ const ContactUsScreen = ({ navigation }) => {
                     <ErrorText message={errors.message} />
                   )}
                 </View>
+                <Button
+                  variant="primary"
+                  onPress={handleSubmit}
+                  disabled={waiting}
+                >
+                  {waiting ? <ActivityIndicator /> : t("SAVE")}
+                </Button>
               </View>
             </View>
           );
@@ -224,6 +225,7 @@ const styles = StyleSheet.create({
   fields: {
     marginTop: 32,
     gap: 16,
+    paddingBottom: 32,
   },
 });
 

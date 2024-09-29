@@ -1,5 +1,12 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
-import { Keyboard, Pressable, StyleSheet, TouchableWithoutFeedback, View } from "react-native";
+import {
+  ActivityIndicator,
+  Keyboard,
+  Pressable,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 import useUserStore from "../../../store/useUserStore";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -16,6 +23,7 @@ const EditDreamVacationScreen = ({ navigation }) => {
   const userStore = useUserStore();
   const sheetRef = useRef(null);
   const [sheetProps, setSheetProps] = useState(null);
+  const [waiting, setWaiting] = useState(false);
   const initialDreamVacation = userStore.userAbouts.find(
     (item) => item.title === "DreamVacation"
   )?.values[0];
@@ -25,6 +33,7 @@ const EditDreamVacationScreen = ({ navigation }) => {
   });
 
   const saveBtnPressHandler = async (text) => {
+    setWaiting(true);
     if (text !== initialDreamVacation) {
       const data = {
         title: "DreamVacation",
@@ -56,6 +65,7 @@ const EditDreamVacationScreen = ({ navigation }) => {
       });
       sheetRef.current?.present();
     }
+    setWaiting(false);
   };
 
   return (
@@ -80,13 +90,16 @@ const EditDreamVacationScreen = ({ navigation }) => {
         }) => {
           useLayoutEffect(() => {
             navigation.setOptions({
-              headerRight: () => (
-                <Pressable onPress={submitForm}>
-                  <CustomText>{t("SAVE")}</CustomText>
-                </Pressable>
-              ),
+              headerRight: () =>
+                waiting ? (
+                  <ActivityIndicator />
+                ) : (
+                  <Pressable onPress={submitForm}>
+                    <CustomText>{t("SAVE")}</CustomText>
+                  </Pressable>
+                ),
             });
-          }, [navigation, submitForm]);
+          }, [navigation, submitForm, waiting]);
 
           return (
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -96,12 +109,20 @@ const EditDreamVacationScreen = ({ navigation }) => {
                   onChangeText={handleChange("dreamVacation")}
                   onBlur={handleBlur("dreamVacation")}
                   variant={
-                    (touched.dreamVacation && errors.dreamVacation && "error") ||
-                    (touched.dreamVacation && !errors.dreamVacation && "success")
+                    (touched.dreamVacation &&
+                      errors.dreamVacation &&
+                      "error") ||
+                    (touched.dreamVacation &&
+                      !errors.dreamVacation &&
+                      "success")
                   }
                   afterIcon={
-                    (touched.dreamVacation && errors.dreamVacation && <WrongIcon />) ||
-                    (touched.dreamVacation && !errors.dreamVacation && <CorrectIcon />)
+                    (touched.dreamVacation && errors.dreamVacation && (
+                      <WrongIcon />
+                    )) ||
+                    (touched.dreamVacation && !errors.dreamVacation && (
+                      <CorrectIcon />
+                    ))
                   }
                 />
                 {touched.dreamVacation && errors.dreamVacation && (

@@ -13,6 +13,7 @@ const MovieSelect = ({
   setSelectedTvShows,
   setChoiceCount,
   priorSelect = false,
+  fromAbout = false,
   style,
 }) => {
   const [loading, setLoading] = useState(false);
@@ -21,6 +22,8 @@ const MovieSelect = ({
   const [tvShows, setTvShows] = useState([]);
   const [tvShowsCopy, setTvShowsCopy] = useState([]);
 
+  console.log("qq", selectedTvShows);
+
   useEffect(() => {
     const getTvShows = async () => {
       try {
@@ -28,20 +31,20 @@ const MovieSelect = ({
         const res = await getTvShowsByPopularity(page, priorSelect);
         setTvShows((prevTvShows) => [...prevTvShows, ...res.tvShows]);
         setTvShowsCopy((prevTvShows) => [...prevTvShows, ...res.tvShows]);
-        const newSelectedTvShows = res.tvShows
-          .filter((item) => item.isSelected) // Yalnızca seçili öğeleri filtreleme
-          .map((item) => ({
-            // Filtrelenen öğeleri nesne olarak döndürme
-            id: item.id,
-            name: item.name,
-            poster: item.poster,
-          }));
+        if (!fromAbout) {
+          const newSelectedTvShows = res.tvShows
+            .filter((item) => item.isSelected)
+            .map((item) => ({
+              id: item.id,
+              name: item.name,
+              poster: item.poster,
+            }));
 
-        // Önceki seçilen öğelerle yeni seçilenleri birleştirme
-        setSelectedTvShows((prevSelected) => [
-          ...prevSelected,
-          ...newSelectedTvShows,
-        ]);
+          setSelectedTvShows((prevSelected) => [
+            ...prevSelected,
+            ...newSelectedTvShows,
+          ]);
+        }
         setLoading(false);
       } catch (error) {
         console.error(error);

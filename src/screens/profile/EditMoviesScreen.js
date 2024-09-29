@@ -1,5 +1,6 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
 import {
+  ActivityIndicator,
   Keyboard,
   Pressable,
   StyleSheet,
@@ -16,18 +17,23 @@ const EditMoviesScreen = ({ navigation }) => {
   const [selectedTvShows, setSelectedTvShows] = useState([]);
   const sheetRef = useRef(null);
   const [sheetProps, setSheetProps] = useState(null);
+  const [waiting, setWaiting] = useState(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => (
-        <Pressable onPress={saveBtnHandler}>
-          <CustomText>{t("SAVE")}</CustomText>
-        </Pressable>
-      ),
+      headerRight: () =>
+        waiting ? (
+          <ActivityIndicator />
+        ) : (
+          <Pressable onPress={saveBtnHandler}>
+            <CustomText>{t("SAVE")}</CustomText>
+          </Pressable>
+        ),
     });
-  }, [navigation, selectedTvShows]);
+  }, [navigation, selectedTvShows, waiting]);
 
   const saveBtnHandler = async () => {
+    setWaiting(true);
     const data = {
       tvShowIds: selectedTvShows.map((item) => item.id),
     };
@@ -49,6 +55,7 @@ const EditMoviesScreen = ({ navigation }) => {
       });
       sheetRef.current?.present();
     }
+    setWaiting(false);
   };
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

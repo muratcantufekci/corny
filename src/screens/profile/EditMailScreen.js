@@ -1,5 +1,6 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
 import {
+  ActivityIndicator,
   Keyboard,
   Pressable,
   StyleSheet,
@@ -26,11 +27,13 @@ const EditMailScreen = ({ navigation }) => {
   const userStore = useUserStore();
   const sheetRef = useRef(null);
   const [sheetProps, setSheetProps] = useState(null);
+  const [waiting, setWaiting] = useState(false);
 
   const saveBtnPressHandler = async (email) => {
+    setWaiting(true);
     if (email !== userStore.userAccountDetails.email) {
       const response = await postEmail(email);
-      
+
       if (response.isSuccess) {
         userStore.setUserAccountDetails({
           email: email,
@@ -57,6 +60,7 @@ const EditMailScreen = ({ navigation }) => {
       });
       sheetRef.current?.present();
     }
+    setWaiting(false);
   };
 
   return (
@@ -81,13 +85,16 @@ const EditMailScreen = ({ navigation }) => {
         }) => {
           useLayoutEffect(() => {
             navigation.setOptions({
-              headerRight: () => (
-                <Pressable onPress={submitForm}>
-                  <CustomText>{t("SAVE")}</CustomText>
-                </Pressable>
-              ),
+              headerRight: () =>
+                waiting ? (
+                  <ActivityIndicator />
+                ) : (
+                  <Pressable onPress={submitForm}>
+                    <CustomText>{t("SAVE")}</CustomText>
+                  </Pressable>
+                ),
             });
-          }, [navigation, submitForm]);
+          }, [navigation, submitForm, waiting]);
 
           return (
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

@@ -682,8 +682,6 @@ export default function App() {
             refreshToken: refreshToken,
             deviceUuid: "242141-12432141-213432142",
           });
-          console.log("response",response);
-          
 
           if (response.status_en === "expired") {
             await SecureStore.deleteItemAsync("refresh_token");

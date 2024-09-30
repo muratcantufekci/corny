@@ -22,8 +22,6 @@ const MovieSelect = ({
   const [tvShows, setTvShows] = useState([]);
   const [tvShowsCopy, setTvShowsCopy] = useState([]);
 
-  console.log("qq", selectedTvShows);
-
   useEffect(() => {
     const getTvShows = async () => {
       try {

@@ -94,7 +94,7 @@ const SelectionBox = ({
           <Check style={styles.checkIcon} />
         ) : (
           <View style={styles.plusIcon}>
-            <Plus />
+            <Plus style={{color: "black"}} />
           </View>
         )}
         {selected && !isMovie && (

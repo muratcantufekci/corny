@@ -452,7 +452,7 @@ const ChatHubScreen = ({ route }) => {
               style={styles.plusIcon}
               onPress={() => setMenuModalVisible(true)}
             >
-              <Plus />
+              <Plus style={{color: "black"}}/>
             </TouchableOpacity>
             <View style={styles.inputWrapper}>
               <Input

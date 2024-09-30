@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Platform, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import CustomText from "../../components/CustomText";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Notifications from "expo-notifications";
 import { allowAllUserNotifications } from "../../services/User/allow-all-notifications";
 import { postExpoPushToken } from "../../services/User/send-expo-push-token";
 import Constants from "expo-constants";
+import Undo from "../../assets/svg/undo.svg"
+import Corny from "../../assets/svg/corny.svg"
+import Filter from "../../assets/svg/filter.svg"
+import ProfileCard from "../../components/ProfileCard";
 
 const registerForPushNotificationsAsync = async () => {
   let token;
@@ -72,11 +76,25 @@ const ExploreScreen = () => {
     <View
       style={{
         paddingTop: insets.top,
+        flex: 1
       }}
     >
-      <CustomText>Explore Screen {expoPushToken}</CustomText>
+      <View style={styles.head}>
+        <Undo />
+        <Corny />
+        <Filter />
+      </View>
+      <ProfileCard />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  head: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 12
+  }
+})
 
 export default ExploreScreen;

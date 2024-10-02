@@ -3,7 +3,13 @@ import { Pressable, StyleSheet } from "react-native";
 import CustomText from "./CustomText";
 import * as Haptics from "expo-haptics";
 
-const AboutBox = ({ text, selectedBox, setSelectedBox, keyName }) => {
+const AboutBox = ({
+  text,
+  selectedBox,
+  setSelectedBox,
+  keyName,
+  disabled = false,
+}) => {
   const isSelected = selectedBox.includes(keyName);
   const handlePress = () => {
     if (isSelected) {
@@ -20,6 +26,7 @@ const AboutBox = ({ text, selectedBox, setSelectedBox, keyName }) => {
   return (
     <Pressable
       style={[styles.container, isSelected && styles.selected]}
+      disabled={disabled}
       onPress={handlePress}
     >
       <CustomText style={[styles.text, isSelected && styles.selectedText]}>

@@ -1,15 +1,19 @@
 import React from "react";
-import { Image, ScrollView, StyleSheet, View } from "react-native";
+import { Dimensions, Image, ScrollView, StyleSheet, View } from "react-native";
 import ProggressBar from "./ProggressBar";
 import CustomText from "./CustomText";
 import { BlurView } from "expo-blur";
 import Plus from "../assets/svg/plus.svg";
 import { TouchableOpacity } from "react-native";
 import AboutBox from "./AboutBox";
+import Like from "../assets/svg/likes-passive.svg";
+import Cross from "../assets/svg/cross.svg";
 
 const ProfileCard = () => {
-  const selectedAbouts = ["Women", "Istanbul, Turkey"];
+  const selectedAbouts = ["Leo", "Istanbul, Turkey"];
+  const selectedInterests = ["Sense of humor", "Beaches"];
   return (
+    <>
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.proggressBar}>
         <ProggressBar step={3} totalStep={6} fromProfileCard />
@@ -73,27 +77,109 @@ const ProfileCard = () => {
             text="Woman"
             selectedBox={selectedAbouts}
             keyName="Women"
+            disabled={true}
           />
           <AboutBox
             text="168 cm (5’ 5’’)"
             selectedBox={selectedAbouts}
             keyName="168 cm (5’ 5’’)"
+            disabled={true}
           />
           <AboutBox
             text="Leo"
             selectedBox={selectedAbouts}
             keyName="Leo"
+            disabled={true}
           />
           <AboutBox
             text="Istanbul, Turkey"
             selectedBox={selectedAbouts}
             keyName="Istanbul, Turkey"
+            disabled={true}
           />
         </View>
       </View>
+      <View style={[styles.aboutBox, { backgroundColor: "#FF524F" }]}>
+        <Image
+          source={require("../assets/images/noise.png")}
+          style={styles.aboutBoxNoise}
+        />
+        <CustomText style={styles.subTitle}>My guilty pleasure is</CustomText>
+        <CustomText style={styles.aboutBoxDesc}>Fast and Furious</CustomText>
+      </View>
+      <View style={styles.interestContainer}>
+        <CustomText style={styles.subTitle}>Interests</CustomText>
+        <View style={styles.abouts}>
+          <AboutBox
+            text="Music"
+            selectedBox={selectedInterests}
+            keyName="Music"
+            disabled={true}
+          />
+          <AboutBox
+            text="Swimming"
+            selectedBox={selectedInterests}
+            keyName="Swimming"
+            disabled={true}
+          />
+          <AboutBox
+            text="Beaches"
+            selectedBox={selectedInterests}
+            keyName="Beaches"
+            disabled={true}
+          />
+          <AboutBox
+            text="Sense of humor"
+            selectedBox={selectedInterests}
+            keyName="Sense of humor"
+            disabled={true}
+          />
+        </View>
+      </View>
+      <View style={styles.aboutBoxes}>
+        <View style={[styles.aboutBox, { backgroundColor: "#FFBD51" }]}>
+          <Image
+            source={require("../assets/images/noise.png")}
+            style={styles.aboutBoxNoise}
+          />
+          <CustomText style={styles.subTitle}>Last Watched Movie</CustomText>
+          <CustomText style={styles.aboutBoxDesc}>Poor Things</CustomText>
+        </View>
+        <View style={[styles.aboutBox, { backgroundColor: "#8D85FF" }]}>
+          <Image
+            source={require("../assets/images/noise.png")}
+            style={styles.aboutBoxNoise}
+          />
+          <CustomText style={styles.subTitle}>Dream Vacation</CustomText>
+          <CustomText style={styles.aboutBoxDesc}>
+            New Zealand and Bali
+          </CustomText>
+        </View>
+        <View style={[styles.aboutBox, { backgroundColor: "#FF6FF6" }]}>
+          <Image
+            source={require("../assets/images/noise.png")}
+            style={styles.aboutBoxNoise}
+          />
+          <CustomText style={styles.subTitle}>
+            Current Series Obsession
+          </CustomText>
+          <CustomText style={styles.aboutBoxDesc}>Abbot Elementary</CustomText>
+        </View>
+      </View>
     </ScrollView>
+    <View style={styles.actionWrapper}>
+        <View style={styles.actionBox}>
+          <Cross style={{color: "#FFAC24"}} />
+        </View>
+        <View style={styles.actionBox}>
+          <Like style={{color: "#FF524F"}} />
+        </View>
+      </View>
+    </>
   );
 };
+
+const { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   container: {
@@ -175,12 +261,44 @@ const styles = StyleSheet.create({
   aboutContainer: {
     marginTop: 70,
   },
+  interestContainer: {
+    marginTop: 56,
+  },
   abouts: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
     flexWrap: "wrap",
+    marginBottom: 56,
+    marginTop: 24,
+  },
+  aboutBoxes: {
+    gap: 16,
+    marginBottom: 125,
+  },
+  aboutBox: {
+    paddingVertical: 24,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    gap: 12,
+    overflow: "hidden",
+  },
+  aboutBoxNoise: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    opacity: 0.3,
+    zIndex: 1,
+    width: width - 32,
+    height: 108,
+  },
+  aboutBoxDesc: {
+    fontWeight: "500",
+    fontSize: 24,
+    lineHeight: 24,
+    color: "#000000",
+    textAlign: "center",
   },
   subTitle: {
     fontWeight: "500",
@@ -188,8 +306,24 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: "#000000",
     textAlign: "center",
-    marginBottom: 24
   },
+  actionWrapper: {
+    position: "absolute",
+    bottom: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 16,
+    width: "100%"
+  },
+  actionBox: {
+    width: 64,
+    height: 64,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#000000"
+  }
 });
 
 export default ProfileCard;

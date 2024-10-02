@@ -443,7 +443,7 @@ const ChatHubScreen = ({ route }) => {
                 style={styles.messageReplyIcon}
                 onPress={() => setReplyMessage(null)}
               >
-                <Cross />
+                <Cross style={{color: "#2F384C"}} />
               </TouchableOpacity>
             </View>
           )}
@@ -627,7 +627,7 @@ const ChatHubScreen = ({ route }) => {
             style={styles.photoModalCross}
             onPress={() => setPhotoModalVisible(false)}
           >
-            <Cross width={24} height={24} />
+            <Cross width={24} height={24} style={{color: "#2F384C"}} />
           </TouchableOpacity>
           <Image
             source={{ uri: selectedImage }}

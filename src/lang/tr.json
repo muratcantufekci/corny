@@ -40,9 +40,9 @@
     "CLEAR": "Temizle",
     "GENDER_SCREEN_TITLE": "Cinsiyetiniz Nedir?",
     "GENDER_SCREEN_DESC": "Profilinizde görüntülenecektir. İhtiyacınız olursa profilinizde değiştirebilirsiniz.",
-    "MAN_GENDER": "Erkek",
-    "WOMAN_GENDER": "Kadın",
-    "NON_BINARY_GENDER": "Non-Binary",
+    "MALE": "Erkek",
+    "FEMALE": "Kadın",
+    "NONBINARY": "Non-Binary",
     "BIRTHDAY_SCREEN_TITLE": "Doğum tarihin nedir?",
     "MAIL_SCREEN_TITLE": "E-posta adresiniz nedir?",
     "MAIL": "E-posta",
@@ -324,6 +324,9 @@
     "EDIT_PHONE_DESC": "Lütfen aşağıya cep telefonu numaranızı gir, sana bir doğrulama kodu göndereceğiz",
     "SEND_VERIFICATION_CODE": "Doğrulama Kodunu Gönder",
     "CONTACT_US_TITLE": "Bize Ulaşın Form",
-    "CONTACT_US_DESC": "Sizden haber almayı çok isteriz! Aşağıdaki formu doldurun, mümkün olan en kısa sürede size geri dönüş yapacağız."
+    "CONTACT_US_DESC": "Sizden haber almayı çok isteriz! Aşağıdaki formu doldurun, mümkün olan en kısa sürede size geri dönüş yapacağız.",
+    "MY_GUILTYPLEASURE": "Gizli Zevki",
+    "LAST_WATCHED_MOVIE": "Son İzlediği Film",
+    "CURRENT_SERIES_OBSESSION": "Şu anki Takıntı Dizisi"
   }
 }

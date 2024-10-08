@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "space-between",
+    paddingHorizontal: 16
   },
   img: {
     width: 360,

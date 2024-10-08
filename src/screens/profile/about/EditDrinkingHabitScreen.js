@@ -87,6 +87,7 @@ const EditDrinkingHabitScreen = () => {
     container: {
       flex: 1,
       marginTop: 20,
+      paddingHorizontal: 16
     },
     boxes: {
       gap: 8,

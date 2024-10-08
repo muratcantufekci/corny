@@ -117,6 +117,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginVertical: 20,
+    paddingHorizontal: 16
   },
   boxes: {
     gap: 8,

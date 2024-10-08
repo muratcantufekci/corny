@@ -21,13 +21,14 @@ const styles = StyleSheet.create({
   wrapper: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     gap: 2,
     paddingHorizontal: 40,
     marginBottom: 32,
     marginTop: 16,
   },
   step: {
-    flex: 1,
+    width: 36,
     height: 8,
     borderRadius: 999,
     backgroundColor: "#F5F5F5",

@@ -85,6 +85,7 @@ const styles = StyleSheet.create({
   menu: {
     marginTop: 24,
     flex: 1,
+    paddingHorizontal: 16
   },
   deleteContainer: {
     marginTop: 70,

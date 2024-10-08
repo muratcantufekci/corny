@@ -110,6 +110,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 20,
     justifyContent: "space-between",
+    paddingHorizontal: 16
   },
   content: {
     marginTop: 32,

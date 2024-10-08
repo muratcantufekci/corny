@@ -104,6 +104,12 @@ const AuthStack = () => (
       headerTitle: "",
       headerTintColor: "#045bb3",
       gestureEnabled: false,
+      headerLeftContainerStyle: {
+        paddingLeft: 16,
+      },
+      headerRightContainerStyle: {
+        paddingRight: 16,
+      },
     }}
   >
     <Stack.Screen
@@ -196,6 +202,12 @@ const ProfileStack = () => {
           backgroundColor: "white",
           shadowOpacity: 0,
           elevation: 0,
+        },
+        headerLeftContainerStyle: {
+          paddingLeft: 16,
+        },
+        headerRightContainerStyle: {
+          paddingRight: 16,
         },
         cardStyle: { backgroundColor: "white" },
       }}
@@ -515,7 +527,6 @@ const AppTabs = () => {
           borderTopColor: "#EFEFF1",
           borderTopWidth: 1,
           paddingTop: 16,
-          marginHorizontal: -16,
           display: appUtils.bottomTabStyle,
         },
         tabBarLabelStyle: {
@@ -741,12 +752,7 @@ export default function App() {
             { backgroundColor: appUtils.backgroundColor },
           ]}
         >
-          <View
-            style={[
-              styles.wrapper,
-              { paddingHorizontal: appUtils.paddingHorizontal },
-            ]}
-          >
+          <View style={[styles.wrapper]}>
             <NavigationContainer
               ref={navigationRef}
               theme={{ colors: { background: "transparent" } }}

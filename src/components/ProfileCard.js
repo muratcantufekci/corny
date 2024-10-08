@@ -1,207 +1,286 @@
-import React from "react";
-import { Dimensions, Image, ScrollView, StyleSheet, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  Dimensions,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 import ProggressBar from "./ProggressBar";
 import CustomText from "./CustomText";
 import { BlurView } from "expo-blur";
 import Plus from "../assets/svg/plus.svg";
 import { TouchableOpacity } from "react-native";
 import AboutBox from "./AboutBox";
-import Like from "../assets/svg/likes-passive.svg";
-import Cross from "../assets/svg/cross.svg";
+import * as Haptics from "expo-haptics";
+import { t } from "i18next";
+import { getUserAboutsById } from "../services/Matching/get-user-abouts-by-id";
 
-const ProfileCard = () => {
+const { width, height } = Dimensions.get("window");
+
+const ProfileCard = ({ images, name, age, distance, tvShows, id, insets }) => {
   const selectedAbouts = ["Leo", "Istanbul, Turkey"];
   const selectedInterests = ["Sense of humor", "Beaches"];
+  const [step, setStep] = useState(1);
+  const [userInfo, setUserInfo] = useState(null);
+  const screenWidth = Dimensions.get("window").width;
+
+  useEffect(() => {
+    const userAbouts = async () => {
+      const response = await getUserAboutsById(id);
+      setUserInfo(response);
+    };
+    userAbouts();
+  }, []);
+
+  const handlePress = (event) => {
+    const touchX = event.nativeEvent.locationX;
+
+    if (touchX < screenWidth / 2) {
+      if (step > 1) {
+        setStep((prevStep) => Math.max(prevStep - 1, 1));
+      } else {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      }
+    } else {
+      if (step < images.length) {
+        setStep((prevStep) => Math.min(prevStep + 1, images.length));
+      } else {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      }
+    }
+  };
+
   return (
-    <>
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <View style={styles.proggressBar}>
-        <ProggressBar step={3} totalStep={6} fromProfileCard />
-      </View>
-      <Image
-        source={require("../assets/images/girl5.png")}
-        style={styles.img}
-      />
-      <View style={styles.infoContainer}>
-        <View style={styles.text}>
-          <CustomText style={styles.nameText}>Lydia, 30</CustomText>
-          <View>
-            <CustomText style={styles.distanceText}>3.0 km</CustomText>
-          </View>
-        </View>
-        <BlurView intensity={100} style={styles.blurContainer}>
-          <CustomText style={styles.favoritesText}>
-            All time favorites
-          </CustomText>
-          <View style={styles.tvShows}>
-            <Image
-              source={{
-                uri: "https://media.themoviedb.org/t/p/w220_and_h330_face/fk13FHRcNTBvTXXqDtQaeb5eGjO.jpg",
-              }}
-              style={styles.favoriteImage}
-            />
-            <Image
-              source={{
-                uri: "https://media.themoviedb.org/t/p/w220_and_h330_face/fk13FHRcNTBvTXXqDtQaeb5eGjO.jpg",
-              }}
-              style={styles.favoriteImage}
-            />
-            <Image
-              source={{
-                uri: "https://media.themoviedb.org/t/p/w220_and_h330_face/fk13FHRcNTBvTXXqDtQaeb5eGjO.jpg",
-              }}
-              style={styles.favoriteImage}
-            />
-            <Image
-              source={{
-                uri: "https://media.themoviedb.org/t/p/w220_and_h330_face/fk13FHRcNTBvTXXqDtQaeb5eGjO.jpg",
-              }}
-              style={styles.favoriteImage}
-            />
-            <Image
-              source={{
-                uri: "https://media.themoviedb.org/t/p/w220_and_h330_face/fk13FHRcNTBvTXXqDtQaeb5eGjO.jpg",
-              }}
-              style={styles.favoriteImage}
-            />
-            <TouchableOpacity style={styles.more}>
-              <Plus style={{ color: "white" }} />
-            </TouchableOpacity>
-          </View>
-        </BlurView>
-      </View>
-      <View style={styles.aboutContainer}>
-        <CustomText style={styles.subTitle}>About me</CustomText>
-        <View style={styles.abouts}>
-          <AboutBox
-            text="Woman"
-            selectedBox={selectedAbouts}
-            keyName="Women"
-            disabled={true}
-          />
-          <AboutBox
-            text="168 cm (5’ 5’’)"
-            selectedBox={selectedAbouts}
-            keyName="168 cm (5’ 5’’)"
-            disabled={true}
-          />
-          <AboutBox
-            text="Leo"
-            selectedBox={selectedAbouts}
-            keyName="Leo"
-            disabled={true}
-          />
-          <AboutBox
-            text="Istanbul, Turkey"
-            selectedBox={selectedAbouts}
-            keyName="Istanbul, Turkey"
-            disabled={true}
-          />
-        </View>
-      </View>
-      <View style={[styles.aboutBox, { backgroundColor: "#FF524F" }]}>
-        <Image
-          source={require("../assets/images/noise.png")}
-          style={styles.aboutBoxNoise}
-        />
-        <CustomText style={styles.subTitle}>My guilty pleasure is</CustomText>
-        <CustomText style={styles.aboutBoxDesc}>Fast and Furious</CustomText>
-      </View>
-      <View style={styles.interestContainer}>
-        <CustomText style={styles.subTitle}>Interests</CustomText>
-        <View style={styles.abouts}>
-          <AboutBox
-            text="Music"
-            selectedBox={selectedInterests}
-            keyName="Music"
-            disabled={true}
-          />
-          <AboutBox
-            text="Swimming"
-            selectedBox={selectedInterests}
-            keyName="Swimming"
-            disabled={true}
-          />
-          <AboutBox
-            text="Beaches"
-            selectedBox={selectedInterests}
-            keyName="Beaches"
-            disabled={true}
-          />
-          <AboutBox
-            text="Sense of humor"
-            selectedBox={selectedInterests}
-            keyName="Sense of humor"
-            disabled={true}
-          />
-        </View>
-      </View>
-      <View style={styles.aboutBoxes}>
-        <View style={[styles.aboutBox, { backgroundColor: "#FFBD51" }]}>
-          <Image
-            source={require("../assets/images/noise.png")}
-            style={styles.aboutBoxNoise}
-          />
-          <CustomText style={styles.subTitle}>Last Watched Movie</CustomText>
-          <CustomText style={styles.aboutBoxDesc}>Poor Things</CustomText>
-        </View>
-        <View style={[styles.aboutBox, { backgroundColor: "#8D85FF" }]}>
-          <Image
-            source={require("../assets/images/noise.png")}
-            style={styles.aboutBoxNoise}
-          />
-          <CustomText style={styles.subTitle}>Dream Vacation</CustomText>
-          <CustomText style={styles.aboutBoxDesc}>
-            New Zealand and Bali
-          </CustomText>
-        </View>
-        <View style={[styles.aboutBox, { backgroundColor: "#FF6FF6" }]}>
-          <Image
-            source={require("../assets/images/noise.png")}
-            style={styles.aboutBoxNoise}
-          />
-          <CustomText style={styles.subTitle}>
-            Current Series Obsession
-          </CustomText>
-          <CustomText style={styles.aboutBoxDesc}>Abbot Elementary</CustomText>
-        </View>
-      </View>
-    </ScrollView>
-    <View style={styles.actionWrapper}>
-        <View style={styles.actionBox}>
-          <Cross style={{color: "#FFAC24"}} />
-        </View>
-        <View style={styles.actionBox}>
-          <Like style={{color: "#FF524F"}} />
-        </View>
-      </View>
-    </>
+    <View style={{ height: (height - insets.bottom) / 1.26 }}>
+      <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
+        <Pressable style={{ backgroundColor: "white" }}>
+          <>
+            <View style={styles.proggressBar}>
+              <ProggressBar
+                step={step}
+                totalStep={images && images.length}
+                fromProfileCard
+              />
+            </View>
+            <Pressable onPress={handlePress}>
+              <Image
+                source={{ uri: images && images[step - 1].imageUrl }}
+                style={styles.img}
+              />
+            </Pressable>
+            <View
+              style={[
+                styles.infoContainer,
+                { top: (height + insets.bottom) / 2.2 },
+              ]}
+            >
+              <View style={styles.text}>
+                <CustomText style={styles.nameText}>
+                  {name}, {age}
+                </CustomText>
+                <View>
+                  <CustomText style={styles.distanceText}>
+                    {distance} km
+                  </CustomText>
+                </View>
+              </View>
+              <BlurView intensity={100} style={styles.blurContainer}>
+                <CustomText style={styles.favoritesText}>
+                  All time favorites
+                </CustomText>
+                <View style={styles.tvShows}>
+                  {tvShows &&
+                    tvShows.map((item) => (
+                      <Image
+                        key={item.id}
+                        source={{
+                          uri: item.poster,
+                        }}
+                        style={styles.favoriteImage}
+                      />
+                    ))}
+                  <TouchableOpacity style={styles.more}>
+                    <Plus style={{ color: "white" }} />
+                  </TouchableOpacity>
+                </View>
+              </BlurView>
+            </View>
+            <View style={styles.aboutContainer}>
+              <CustomText style={styles.subTitle}>{t("ABOUT_ME")}</CustomText>
+              <View style={styles.abouts}>
+                <AboutBox
+                  text={t(`${userInfo?.gender.toUpperCase()}`)}
+                  selectedBox={selectedAbouts}
+                  keyName={userInfo?.gender}
+                  disabled={true}
+                />
+                <AboutBox
+                  text={userInfo?.city}
+                  selectedBox={selectedAbouts}
+                  keyName={userInfo?.city}
+                  disabled={true}
+                />
+                {userInfo?.userAbouts.map((userAbout) => {
+                  if (
+                    userAbout.title !== "Interest" &&
+                    userAbout.title !== "DreamVacation" &&
+                    userAbout.title !== "GuiltyPleasure" &&
+                    userAbout.title !== "CurrentObsession" &&
+                    userAbout.title !== "LastWatched"
+                  ) {
+                    return userAbout.values.map((item) => (
+                      <AboutBox
+                        key={item}
+                        text={t(`${item}`)}
+                        selectedBox={selectedAbouts}
+                        keyName={item}
+                        disabled={true}
+                      />
+                    ));
+                  }
+                  return null;
+                })}
+              </View>
+            </View>
+            {userInfo?.userAbouts.find((item) => item.title === "GuiltyPleasure")
+              ?.values?.length > 0 && (
+              <View style={[styles.aboutBox, { backgroundColor: "#FF524F" }]}>
+                <Image
+                  source={require("../assets/images/noise.png")}
+                  style={styles.aboutBoxNoise}
+                />
+                <CustomText style={styles.subTitle}>
+                  {t("MY_GUILTYPLEASURE")}
+                </CustomText>
+                {userInfo?.userAbouts.map((item) => {
+                  if (item.title === "GuiltyPleasure") {
+                    return (
+                      <CustomText key={item} style={styles.aboutBoxDesc}>
+                        {item.values[0]}
+                      </CustomText>
+                    );
+                  }
+                })}
+              </View>
+            )}
+            {userInfo?.userAbouts.find((item) => item.title === "Interest")
+              ?.values?.length > 0 && (
+              <View style={styles.interestContainer}>
+                <CustomText style={styles.subTitle}>{t("INTEREST")}</CustomText>
+                <View style={styles.abouts}>
+                  {userInfo?.userAbouts.map((userAbout) => {
+                    if (userAbout.title === "Interest") {
+                      return userAbout.values.map((item) => (
+                        <AboutBox
+                          key={item}
+                          text={t(`${item}`)}
+                          selectedBox={selectedInterests}
+                          keyName={item}
+                          disabled={true}
+                        />
+                      ));
+                    }
+                    return null;
+                  })}
+                </View>
+              </View>
+            )}
+            <View style={styles.aboutBoxes}>
+              {userInfo?.userAbouts.find((item) => item.title === "LastWatched")
+                ?.values?.length > 0 && (
+                <View style={[styles.aboutBox, { backgroundColor: "#FFBD51" }]}>
+                  <Image
+                    source={require("../assets/images/noise.png")}
+                    style={styles.aboutBoxNoise}
+                  />
+                  <CustomText style={styles.subTitle}>
+                    {t("LAST_WATCHED_MOVIE")}
+                  </CustomText>
+                  {userInfo?.userAbouts.map((item) => {
+                    if (item.title === "LastWatched") {
+                      return (
+                        <CustomText key={item} style={styles.aboutBoxDesc}>
+                          {item.values[0]}
+                        </CustomText>
+                      );
+                    }
+                  })}
+                </View>
+              )}
+
+              {userInfo?.userAbouts.find(
+                (item) => item.title === "DreamVacation"
+              )?.values?.length > 0 && (
+                <View style={[styles.aboutBox, { backgroundColor: "#8D85FF" }]}>
+                  <Image
+                    source={require("../assets/images/noise.png")}
+                    style={styles.aboutBoxNoise}
+                  />
+                  <CustomText style={styles.subTitle}>
+                    {t("DREAMVACATION")}
+                  </CustomText>
+                  {userInfo?.userAbouts.map((item) => {
+                    if (item.title === "DreamVacation") {
+                      return (
+                        <CustomText key={item} style={styles.aboutBoxDesc}>
+                          {item.values[0]}
+                        </CustomText>
+                      );
+                    }
+                  })}
+                </View>
+              )}
+
+              {userInfo?.userAbouts.find(
+                (item) => item.title === "CurrentObsession"
+              )?.values?.length > 0 && (
+                <View style={[styles.aboutBox, { backgroundColor: "#FF6FF6" }]}>
+                  <Image
+                    source={require("../assets/images/noise.png")}
+                    style={styles.aboutBoxNoise}
+                  />
+                  <CustomText style={styles.subTitle}>
+                    {t("CURRENT_SERIES_OBSESSION")}
+                  </CustomText>
+                  {userInfo?.userAbouts.map((item) => {
+                    if (item.title === "CurrentObsession") {
+                      return (
+                        <CustomText key={item} style={styles.aboutBoxDesc}>
+                          {item.values[0]}
+                        </CustomText>
+                      );
+                    }
+                  })}
+                </View>
+              )}
+            </View>
+          </>
+        </Pressable>
+      </ScrollView>
+    </View>
   );
 };
 
-const { width } = Dimensions.get("window");
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   proggressBar: {
     position: "absolute",
     top: 0,
     zIndex: 2,
     width: "100%",
     paddingHorizontal: 20,
+    alignItems: "center",
   },
   img: {
     width: "100%",
-    height: 560,
+    height: height / 1.54,
     borderRadius: 12,
   },
   infoContainer: {
     position: "absolute",
     width: "100%",
     paddingHorizontal: 8,
-    top: 400,
   },
   text: {
     flexDirection: "row",
@@ -291,7 +370,6 @@ const styles = StyleSheet.create({
     opacity: 0.3,
     zIndex: 1,
     width: width - 32,
-    height: 108,
   },
   aboutBoxDesc: {
     fontWeight: "500",
@@ -307,23 +385,6 @@ const styles = StyleSheet.create({
     color: "#000000",
     textAlign: "center",
   },
-  actionWrapper: {
-    position: "absolute",
-    bottom: 20,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 16,
-    width: "100%"
-  },
-  actionBox: {
-    width: 64,
-    height: 64,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#000000"
-  }
 });
 
 export default ProfileCard;

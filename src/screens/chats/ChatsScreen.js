@@ -177,6 +177,7 @@ const ChatsScreen = () => {
       style={{
         flex: 1,
         paddingTop: insets.top,
+        paddingHorizontal: 16
       }}
     >
       <Tabs tabsData={TABS_DATA} />

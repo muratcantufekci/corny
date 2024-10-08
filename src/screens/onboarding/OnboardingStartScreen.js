@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#fff",
     justifyContent: "space-between",
+    paddingHorizontal: 16
   },
   img: {
     marginTop: imgMargin,

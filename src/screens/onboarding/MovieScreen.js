@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "space-between",
+    paddingHorizontal: 16
   },
   textArea: {
     marginBottom: 24,
@@ -100,6 +101,8 @@ const styles = StyleSheet.create({
   btn: {
     position: "absolute",
     bottom: 16,
+    left: 16,
+    right: 16
   },
 });
 

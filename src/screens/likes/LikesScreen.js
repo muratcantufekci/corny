@@ -100,6 +100,7 @@ const LikesScreen = () => {
       style={{
         paddingTop: insets.top + 20,
         flex: 1,
+        paddingHorizontal: 16
       }}
     >
       <Tabs tabsData={TABS_DATA} setTabIndex={setTabIndex} />

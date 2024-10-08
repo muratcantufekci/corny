@@ -12,17 +12,17 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 const genders = [
   {
     id: 1,
-    gender: t("MAN_GENDER"),
+    gender: t("MALE"),
     code: "male",
   },
   {
     id: 2,
-    gender: t("WOMAN_GENDER"),
+    gender: t("FEMALE"),
     code: "female",
   },
   {
     id: 3,
-    gender: t("NON_BINARY_GENDER"),
+    gender: t("NONBINARY"),
     code: "nonbinary",
   },
 ];
@@ -87,6 +87,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "space-between",
+    paddingHorizontal: 16
   },
   genders: {
     gap: 16,

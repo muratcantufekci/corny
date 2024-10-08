@@ -40,9 +40,9 @@
     "CLEAR": "Clear",
     "GENDER_SCREEN_TITLE": "What’s your gender identity?",
     "GENDER_SCREEN_DESC": "It will be displayed in your profile. If you need you can change it in your profile.",
-    "MAN_GENDER": "Man",
-    "WOMAN_GENDER": "Woman",
-    "NON_BINARY_GENDER": "Non-Binary",
+    "MALE": "Man",
+    "FEMALE": "Woman",
+    "NONBINARY": "Non-Binary",
     "BIRTHDAY_SCREEN_TITLE": "What’s your day of birth?",
     "MAIL_SCREEN_TITLE": "What’s your Email?",
     "MAIL": "Email",
@@ -324,6 +324,9 @@
     "EDIT_PHONE_DESC": "Please enter your cell phone number below, and we’ll send you a verification code",
     "SEND_VERIFICATION_CODE": "Send verification Code",
     "CONTACT_US_TITLE": "Contact Form",
-    "CONTACT_US_DESC": "We'd love to hear from you! Fill out the form below and we'll get back to you as soon as we can."
+    "CONTACT_US_DESC": "We'd love to hear from you! Fill out the form below and we'll get back to you as soon as we can.",
+    "MY_GUILTYPLEASURE": "My guilty pleasure is",
+    "LAST_WATCHED_MOVIE": "Last Watched Movie",
+    "CURRENT_SERIES_OBSESSION": "Current Series Obsession"
   }
 }

@@ -80,7 +80,7 @@ const ProfileScreen = () => {
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ paddingBottom: insets.bottom + 55 }}
+      contentContainerStyle={{ paddingBottom: insets.bottom + 55, paddingHorizontal: 16 }}
       style={{
         paddingTop: insets.top,
         flex: 1,

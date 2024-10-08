@@ -258,6 +258,7 @@ const EditPhoneScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingHorizontal: 16
   },
   head: {
     alignItems: "center",

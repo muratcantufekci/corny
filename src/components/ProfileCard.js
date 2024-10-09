@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import {
   Dimensions,
-  Image,
   Pressable,
   ScrollView,
   StyleSheet,
   View,
+  Image as Img
 } from "react-native";
 import ProggressBar from "./ProggressBar";
 import CustomText from "./CustomText";
@@ -16,6 +16,7 @@ import AboutBox from "./AboutBox";
 import * as Haptics from "expo-haptics";
 import { t } from "i18next";
 import { getUserAboutsById } from "../services/Matching/get-user-abouts-by-id";
+import { Image } from "expo-image";
 
 const { width, height } = Dimensions.get("window");
 
@@ -147,9 +148,10 @@ const ProfileCard = ({ images, name, age, distance, tvShows, id, insets }) => {
             {userInfo?.userAbouts.find((item) => item.title === "GuiltyPleasure")
               ?.values?.length > 0 && (
               <View style={[styles.aboutBox, { backgroundColor: "#FF524F" }]}>
-                <Image
+                <Img
                   source={require("../assets/images/noise.png")}
                   style={styles.aboutBoxNoise}
+                  resizeMode="cover"
                 />
                 <CustomText style={styles.subTitle}>
                   {t("MY_GUILTYPLEASURE")}
@@ -191,9 +193,10 @@ const ProfileCard = ({ images, name, age, distance, tvShows, id, insets }) => {
               {userInfo?.userAbouts.find((item) => item.title === "LastWatched")
                 ?.values?.length > 0 && (
                 <View style={[styles.aboutBox, { backgroundColor: "#FFBD51" }]}>
-                  <Image
+                  <Img
                     source={require("../assets/images/noise.png")}
                     style={styles.aboutBoxNoise}
+                    resizeMode="cover"
                   />
                   <CustomText style={styles.subTitle}>
                     {t("LAST_WATCHED_MOVIE")}
@@ -214,9 +217,10 @@ const ProfileCard = ({ images, name, age, distance, tvShows, id, insets }) => {
                 (item) => item.title === "DreamVacation"
               )?.values?.length > 0 && (
                 <View style={[styles.aboutBox, { backgroundColor: "#8D85FF" }]}>
-                  <Image
+                  <Img
                     source={require("../assets/images/noise.png")}
                     style={styles.aboutBoxNoise}
+                    resizeMode="cover"
                   />
                   <CustomText style={styles.subTitle}>
                     {t("DREAMVACATION")}
@@ -237,9 +241,10 @@ const ProfileCard = ({ images, name, age, distance, tvShows, id, insets }) => {
                 (item) => item.title === "CurrentObsession"
               )?.values?.length > 0 && (
                 <View style={[styles.aboutBox, { backgroundColor: "#FF6FF6" }]}>
-                  <Image
+                  <Img
                     source={require("../assets/images/noise.png")}
                     style={styles.aboutBoxNoise}
+                    resizeMode="cover"
                   />
                   <CustomText style={styles.subTitle}>
                     {t("CURRENT_SERIES_OBSESSION")}
@@ -357,6 +362,7 @@ const styles = StyleSheet.create({
     marginBottom: 125,
   },
   aboutBox: {
+    position: "relative",
     paddingVertical: 24,
     paddingHorizontal: 16,
     borderRadius: 12,
@@ -369,7 +375,6 @@ const styles = StyleSheet.create({
     left: 0,
     opacity: 0.3,
     zIndex: 1,
-    width: width - 32,
   },
   aboutBoxDesc: {
     fontWeight: "500",

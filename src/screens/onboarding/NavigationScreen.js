@@ -124,7 +124,7 @@ const NavigationScreen = ({ route }) => {
       ]}
     >
       <View>
-        <ProggressBar step={1} />
+        <ProggressBar step={1} totalStep={7}/>
         <Image
           source={require("../../assets/images/navigation.png")}
           style={styles.img}

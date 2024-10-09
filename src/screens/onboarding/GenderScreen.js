@@ -58,7 +58,7 @@ const GenderScreen = ({ route }) => {
       ]}
     >
       <View>
-        <ProggressBar step={5} />
+        <ProggressBar step={5} totalStep={7}/>
         <OnboardingHeading
           title={t("GENDER_SCREEN_TITLE")}
           desc={t("GENDER_SCREEN_DESC")}

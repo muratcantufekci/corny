@@ -60,7 +60,7 @@ const MovieScreen = ({ route }) => {
         ]}
       >
         <View>
-          <ProggressBar step={4} />
+          <ProggressBar step={4} totalStep={7}/>
           <OnboardingHeading
             title={t("MOVIE_SCREEN_TITLE")}
             desc={t("MOVIE_SCREEN_DESC")}

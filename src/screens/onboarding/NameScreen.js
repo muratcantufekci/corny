@@ -65,7 +65,7 @@ const NameScreen = ({ route }) => {
             ]}
           >
             <View>
-              <ProggressBar step={2} />
+              <ProggressBar step={2} totalStep={7}/>
               <OnboardingHeading
                 title={t("NAME_SCREEN_TITLE")}
                 desc={t("NAME_SCREEN_DESC")}

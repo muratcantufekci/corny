@@ -51,7 +51,7 @@ const BirthdayScreen = ({ route }) => {
       ]}
     >
       <View>
-        <ProggressBar step={6} />
+        <ProggressBar step={6} totalStep={7}/>
         <OnboardingHeading
           title={t("BIRTHDAY_SCREEN_TITLE")}
           style={styles.textArea}

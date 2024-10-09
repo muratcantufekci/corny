@@ -46,7 +46,7 @@ const PhotoScreen = ({ route }) => {
       ]}
     >
       <View>
-        <ProggressBar step={3} />
+        <ProggressBar step={3} totalStep={7}/>
         <OnboardingHeading
           title={t("PHOTO_SCREEN_TITLE")}
           desc={t("PHOTO_SCREEN_DESC")}

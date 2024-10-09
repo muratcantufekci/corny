@@ -78,7 +78,7 @@ const MailScreen = ({ route }) => {
             ]}
           >
             <View>
-              <ProggressBar step={7} />
+              <ProggressBar step={7} totalStep={7}/>
               <OnboardingHeading
                 title={t("MAIL_SCREEN_TITLE")}
                 style={styles.textArea}

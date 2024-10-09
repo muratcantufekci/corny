@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Image, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import CustomText from "../../components/CustomText";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Button from "../../components/Button";
@@ -9,6 +9,7 @@ import { getAccountDetails } from "../../services/User/get-user-account-detail";
 import useUserStore from "../../store/useUserStore";
 import MenuItem from "./components/MenuItem";
 import { t } from "i18next";
+import { Image } from "expo-image";
 
 const menuData = [
   {

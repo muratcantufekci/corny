@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
 
-const ProggressBar = ({ step, totalStep = 7, fromProfileCard }) => {
+const ProggressBar = ({ step, totalStep, fromProfileCard }) => {
   return (
     <View style={styles.wrapper}>
       {Array.from({ length: totalStep }).map((_, index) => (

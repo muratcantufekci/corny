@@ -6,7 +6,6 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import CustomText from "../../components/CustomText";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Notifications from "expo-notifications";
 import { allowAllUserNotifications } from "../../services/User/allow-all-notifications";
@@ -20,6 +19,12 @@ import Swiper from "react-native-deck-swiper";
 import { getPotentialMatches } from "../../services/Matching/get-potential-matches";
 import Like from "../../assets/svg/likes-passive.svg";
 import Cross from "../../assets/svg/cross.svg";
+import { getUserAbouts } from "../../services/User/get-user-abouts";
+import { Image } from "expo-image";
+import CustomText from "../../components/CustomText";
+import { t } from "i18next";
+import { postSwipe } from "../../services/Matching/send-swiper";
+import Quiz from "../../components/Quiz";
 
 const registerForPushNotificationsAsync = async () => {
   let token;
@@ -68,16 +73,22 @@ const ExploreScreen = () => {
   const insets = useSafeAreaInsets();
   const [expoPushToken, setExpoPushToken] = useState("");
   const [matches, setMatches] = useState([]);
+  const [selectedAbouts, setSelectedAbouts] = useState([]);
+  const [selectedInterests, setSelectedInterests] = useState([]);
+  const [showMatches, setShowMatches] = useState(true);
+  const [showQuiz, setShowQuiz] = useState(false);
+  const [isSwipingEnabled, setIsSwipingEnabled] = useState(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [page, setPage] = useState(1);
   const swiperRef = useRef(null);
 
   useEffect(() => {
     const getMatches = async () => {
       const response = await getPotentialMatches(page);
-      setMatches(response.MatchUser.Contents);
+      setMatches((prevData) => [...prevData, ...response.MatchUser.Contents]);
     };
     getMatches();
-  }, []);
+  }, [page]);
 
   useEffect(() => {
     registerForPushNotificationsAsync().then((token) => {
@@ -92,7 +103,73 @@ const ExploreScreen = () => {
     // });
     // console.log("notificationListener",notificationListener);
     // console.log("responseListener",responseListener);
+    const getAboutMe = async () => {
+      const response = await getUserAbouts();
+      const excludeTitles = [
+        "Interest",
+        "DreamVacation",
+        "GuiltyPleasure",
+        "CurrentObsession",
+        "LastWatched",
+      ];
+
+      const interestData = response.userAbouts.find(
+        (userAbout) => userAbout.title === "Interest"
+      );
+
+      const filteredDataForAbouts = response.userAbouts
+        .filter((userAbout) => !excludeTitles.includes(userAbout.title))
+        .flatMap((userAbout) => userAbout.values);
+
+      setSelectedAbouts(filteredDataForAbouts);
+      setSelectedInterests(interestData.values);
+    };
+    getAboutMe();
   }, []);
+
+  const handleOnSwiped = (cardIndex) => {
+    if (cardIndex === matches.length - 4) {
+      setPage((prevPage) => prevPage + 1);
+    } else if (cardIndex === matches.length - 1) {
+      setShowMatches(false);
+    }
+  };
+  const handleOnLeftSwipe = async (id) => {
+    const data = {
+      swipedUserId: id,
+      isLike: false,
+      superLikeUsed: false,
+    };
+    const response = await postSwipe(data);
+    console.log("response", response);
+  };
+
+  const handleOnRightSwipe = async () => {
+    setIsSwipingEnabled(true);
+    setTimeout(() => {
+      setIsSwipingEnabled(false);
+    }, 1000);
+    setShowQuiz(true);
+    // const data = {
+    //   swipedUserId: id,
+    //   isLike: true,
+    //   superLikeUsed: false,
+    // };
+    // const response = await postSwipe(data);
+    // console.log("responseRight",response);
+  };
+
+  const handleRightPress = () => {
+    if (isSwipingEnabled) return;
+
+    swiperRef.current.swipeRight();
+
+    setIsButtonDisabled(true);
+    setTimeout(() => {
+      setIsButtonDisabled(false);
+    }, 1000);
+  };
+
   return (
     <View
       style={{
@@ -102,50 +179,73 @@ const ExploreScreen = () => {
       }}
     >
       <View style={styles.head}>
-        <Pressable onPress={() => swiperRef.current.swipeBack()}>
+        <Pressable
+          onPress={() => swiperRef.current.swipeBack()}
+          style={!showMatches && { opacity: 0, pointerEvents: "none" }}
+        >
           <Undo />
         </Pressable>
         <Corny />
-        <View style={{width:24}}></View>
-        {/* <Filter /> */}
+        <Filter style={{ opacity: 0, pointerEvents: "none" }} />
       </View>
-      <Swiper
-        cards={matches}
-        ref={swiperRef}
-        renderCard={(card) => (
-          <ProfileCard
-            key={card?.ProfileInfo.userId}
-            images={card?.ProfileInfo.images}
-            name={card?.ProfileInfo.name}
-            age={card?.ProfileInfo.age}
-            distance={card?.ProfileInfo.distance}
-            tvShows={card?.ProfileInfo.tvShows}
-            id={card?.ProfileInfo.userId}
-            insets={insets}
+      {showMatches ? (
+        <>
+          <Swiper
+            cards={matches}
+            ref={swiperRef}
+            renderCard={(card) => (
+              <ProfileCard
+                key={card?.ProfileInfo.userId}
+                images={card?.ProfileInfo.images}
+                name={card?.ProfileInfo.name}
+                age={card?.ProfileInfo.age}
+                distance={card?.ProfileInfo.distance}
+                tvShows={card?.ProfileInfo.tvShows}
+                id={card?.ProfileInfo.userId}
+                insets={insets}
+                selectedAbouts={selectedAbouts}
+                selectedInterests={selectedInterests}
+              />
+            )}
+            backgroundColor="none"
+            cardVerticalMargin={40}
+            showSecondCard={true}
+            verticalSwipe={false}
+            cardIndex={0}
+            stackSize={3}
+            onSwiped={handleOnSwiped}
+            onSwipedLeft={handleOnLeftSwipe}
+            onSwipedRight={handleOnRightSwipe}
+            disableRightSwipe={isSwipingEnabled}
           />
-        )}
-        backgroundColor="none"
-        cardVerticalMargin={40}
-        // cardHorizontalMargin={16}
-        showSecondCard={true}
-        verticalSwipe={false}
-        cardIndex={0}
-        stackSize={3}
-      />
-      <View style={styles.actionWrapper}>
-        <Pressable
-          style={styles.actionBox}
-          onPress={() => swiperRef.current.swipeLeft()}
-        >
-          <Cross style={{ color: "#FFAC24" }} />
-        </Pressable>
-        <Pressable
-          style={styles.actionBox}
-          onPress={() => swiperRef.current.swipeRight()}
-        >
-          <Like style={{ color: "#FF524F" }} />
-        </Pressable>
-      </View>
+          <View style={styles.actionWrapper}>
+            <Pressable
+              style={styles.actionBox}
+              onPress={() => swiperRef.current.swipeLeft()}
+            >
+              <Cross style={{ color: "#FFAC24" }} />
+            </Pressable>
+            <Pressable
+              style={styles.actionBox}
+              onPress={handleRightPress}
+              disabled={isButtonDisabled}
+            >
+              <Like style={{ color: "#FF524F" }} />
+            </Pressable>
+          </View>
+        </>
+      ) : (
+        <View style={styles.emptyWrapper}>
+          <Image
+            source={require("../../assets/images/empy-corns.png")}
+            style={styles.emptyImg}
+          />
+          <CustomText style={styles.emptyText}>
+            {t("NOTHING_AROUND")}
+          </CustomText>
+        </View>
+      )}
+      {showQuiz && <Quiz quizOpen={showQuiz} setQuizOpen={setShowQuiz} />}
     </View>
   );
 };
@@ -157,11 +257,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     position: "relative",
-    zIndex: 2
+    zIndex: 2,
   },
   actionWrapper: {
     position: "absolute",
-    bottom: 20,
+    bottom: height > 860 ? 50 : 20,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -175,6 +275,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#000000",
+  },
+
+  emptyWrapper: {
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1,
+  },
+  emptyImg: {
+    width: 120,
+    height: 120,
+  },
+  emptyText: {
+    fontWeight: "500",
+    fontSize: 16,
+    lineHeight: 25,
+    color: "#ACACAC",
   },
 });
 

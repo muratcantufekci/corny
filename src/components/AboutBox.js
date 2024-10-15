@@ -10,11 +10,11 @@ const AboutBox = ({
   keyName,
   disabled = false,
 }) => {
-  const isSelected = selectedBox.includes(keyName);
+  const isSelected = selectedBox?.includes(keyName);
   const handlePress = () => {
     if (isSelected) {
-      if (selectedBox.length > 1) {
-        setSelectedBox(selectedBox.filter((item) => item !== keyName));
+      if (selectedBox?.length > 1) {
+        setSelectedBox(selectedBox?.filter((item) => item !== keyName));
       } else {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
       }

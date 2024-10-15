@@ -6,8 +6,7 @@ import {
   NavigationContainer,
 } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { useEffect, useState } from "react";
-import Logo from "./src/assets/svg/logo.svg";
+import { useCallback, useEffect, useState } from "react";
 import OnboardingStartScreen from "./src/screens/onboarding/OnboardingStartScreen";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
@@ -638,8 +637,10 @@ const checkAndRedirect = (response) => {
   }
 };
 
+SplashScreen.preventAutoHideAsync();
+
 export default function App() {
-  const [isLoading, setIsLoading] = useState(true);
+  const [appIsReady, setAppIsReady] = useState(false);
   const [congifurResponseData, setConfigureResponseData] = useState(null);
   const userStore = useUserStore();
   const appUtils = useAppUtils();
@@ -651,12 +652,6 @@ export default function App() {
     "RethinkSans-Bold": require("./src/assets/fonts/RethinkSans-Bold.ttf"),
     "RethinkSans-ExtraBold": require("./src/assets/fonts/RethinkSans-ExtraBold.ttf"),
   });
-
-  useEffect(() => {
-    if (fontsLoaded || error) {
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded, error]);
 
   useEffect(() => {
     const setUserLogin = async () => {
@@ -697,7 +692,7 @@ export default function App() {
           if (response.status_en === "expired") {
             await SecureStore.deleteItemAsync("refresh_token");
             userStore.setIsUserLoggedIn(false);
-            setIsLoading(false);
+            setAppIsReady(true);
           } else if (response.status_en === "OK") {
             userStore.setToken(response.token);
             await SecureStore.setItemAsync(
@@ -707,12 +702,12 @@ export default function App() {
 
             if (response.isConfigured) {
               userStore.setIsUserLoggedIn(true);
-              setIsLoading(false);
+              setAppIsReady(true);
             } else {
               const congifurResponse = await checkUserConfiguration();
               setConfigureResponseData(congifurResponse);
               userStore.setIsUserLoggedIn(false);
-              setIsLoading(false);
+              setAppIsReady(true);
             }
           }
         } catch (error) {
@@ -720,7 +715,7 @@ export default function App() {
         }
       } else {
         const timer = setTimeout(() => {
-          setIsLoading(false);
+          setAppIsReady(true);
         }, 2000);
 
         return () => clearTimeout(timer);
@@ -730,16 +725,13 @@ export default function App() {
     setUserLogin();
   }, []);
 
-  if (isLoading) {
-    return (
-      <View style={styles.splashContainer}>
-        <Logo width={120} height={40} style={styles.splasgImg} />
-        <StatusBar style="dark" />
-      </View>
-    );
-  }
+  const onLayoutRootView = useCallback(async () => {
+    if (appIsReady) {
+      await SplashScreen.hideAsync();
+    }
+  }, [appIsReady]);
 
-  if (!fontsLoaded && !error) {
+  if (!appIsReady) {
     return null;
   }
 
@@ -752,13 +744,14 @@ export default function App() {
             { backgroundColor: appUtils.backgroundColor },
           ]}
         >
-          <View style={[styles.wrapper]}>
+          <View style={[styles.wrapper]} onLayout={onLayoutRootView}>
             <NavigationContainer
               ref={navigationRef}
               theme={{ colors: { background: "transparent" } }}
               onReady={() =>
                 congifurResponseData && checkAndRedirect(congifurResponseData)
               }
+              
             >
               {userStore.isUserLoggedIn ? <AppTabs /> : <AuthStack />}
             </NavigationContainer>

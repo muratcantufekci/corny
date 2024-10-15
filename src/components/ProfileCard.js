@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Dimensions,
   Pressable,
   ScrollView,
   StyleSheet,
   View,
-  Image as Img
+  Image as Img,
+  FlatList,
+  ActivityIndicator,
 } from "react-native";
 import ProggressBar from "./ProggressBar";
 import CustomText from "./CustomText";
@@ -17,15 +19,31 @@ import * as Haptics from "expo-haptics";
 import { t } from "i18next";
 import { getUserAboutsById } from "../services/Matching/get-user-abouts-by-id";
 import { Image } from "expo-image";
+import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
+import { getUserTvShowsById } from "../services/Matching/get-user-tvshows-by-id";
+import SelectionBox from "./SelectionBox";
 
 const { width, height } = Dimensions.get("window");
 
-const ProfileCard = ({ images, name, age, distance, tvShows, id, insets }) => {
-  const selectedAbouts = ["Leo", "Istanbul, Turkey"];
-  const selectedInterests = ["Sense of humor", "Beaches"];
+const ProfileCard = ({
+  images,
+  name,
+  age,
+  distance,
+  tvShows,
+  id,
+  insets,
+  selectedAbouts,
+  selectedInterests,
+}) => {
   const [step, setStep] = useState(1);
   const [userInfo, setUserInfo] = useState(null);
+  const [userAllTvShows, setUserAllTvShows] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
+  const [loading, setLoading] = useState(false);
   const screenWidth = Dimensions.get("window").width;
+  const sheetRef = useRef(null);
 
   useEffect(() => {
     const userAbouts = async () => {
@@ -53,6 +71,30 @@ const ProfileCard = ({ images, name, age, distance, tvShows, id, insets }) => {
     }
   };
 
+  const renderBackdrop = useCallback(
+    (props) => (
+      <BottomSheetBackdrop
+        appearsOnIndex={0}
+        disappearsOnIndex={-1}
+        style={{ paddingTop: insets.top }}
+        {...props}
+      />
+    ),
+    []
+  );
+
+  const seeAllTvShowsHandler = async () => {
+    if (page <= totalPage && !loading) {
+      setLoading(true);
+      const response = await getUserTvShowsById(id, page);
+      setUserAllTvShows((prevShows) => [...prevShows, ...response.data.Contents]);
+      setTotalPage(response.data.TotalPages);
+      setPage(page + 1);
+      setLoading(false);
+      console.log("response", response.data.Contents);
+    }
+  };
+
   return (
     <View style={{ height: (height - insets.bottom) / 1.26 }}>
       <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
@@ -67,7 +109,9 @@ const ProfileCard = ({ images, name, age, distance, tvShows, id, insets }) => {
             </View>
             <Pressable onPress={handlePress}>
               <Image
-                source={{ uri: images && images[step - 1].imageUrl }}
+                source={{
+                  uri: images?.length > 0 && images[step - 1].imageUrl,
+                }}
                 style={styles.img}
               />
             </Pressable>
@@ -102,7 +146,13 @@ const ProfileCard = ({ images, name, age, distance, tvShows, id, insets }) => {
                         style={styles.favoriteImage}
                       />
                     ))}
-                  <TouchableOpacity style={styles.more}>
+                  <TouchableOpacity
+                    style={styles.more}
+                    onPress={() => {
+                      sheetRef.current?.present();
+                      seeAllTvShowsHandler();
+                    }}
+                  >
                     <Plus style={{ color: "white" }} />
                   </TouchableOpacity>
                 </View>
@@ -112,7 +162,7 @@ const ProfileCard = ({ images, name, age, distance, tvShows, id, insets }) => {
               <CustomText style={styles.subTitle}>{t("ABOUT_ME")}</CustomText>
               <View style={styles.abouts}>
                 <AboutBox
-                  text={t(`${userInfo?.gender.toUpperCase()}`)}
+                  text={t(`${userInfo?.gender?.toUpperCase()}`)}
                   selectedBox={selectedAbouts}
                   keyName={userInfo?.gender}
                   disabled={true}
@@ -145,8 +195,9 @@ const ProfileCard = ({ images, name, age, distance, tvShows, id, insets }) => {
                 })}
               </View>
             </View>
-            {userInfo?.userAbouts.find((item) => item.title === "GuiltyPleasure")
-              ?.values?.length > 0 && (
+            {userInfo?.userAbouts.find(
+              (item) => item.title === "GuiltyPleasure"
+            )?.values?.length > 0 && (
               <View style={[styles.aboutBox, { backgroundColor: "#FF524F" }]}>
                 <Img
                   source={require("../assets/images/noise.png")}
@@ -264,9 +315,41 @@ const ProfileCard = ({ images, name, age, distance, tvShows, id, insets }) => {
           </>
         </Pressable>
       </ScrollView>
+      <BottomSheetModal
+        ref={sheetRef}
+        snapPoints={["80%"]}
+        index={0}
+        backdropComponent={renderBackdrop}
+      >
+        <View style={styles.movieBoxes}>
+          <CustomText style={styles.movieSheetTitle}>
+            All Time Favorites
+          </CustomText>
+          <FlatList
+            columnWrapperStyle={styles.movieContainer}
+            data={userAllTvShows}
+            renderItem={({ item }) => (
+              <View style={styles.movieBox}>
+                <Image
+                  source={{ uri: item.poster }}
+                  style={styles.movieBoxImg}
+                />
+              </View>
+            )}
+            keyExtractor={(item) => item.id}
+            numColumns={3}
+            onEndReached={seeAllTvShowsHandler}
+            onEndReachedThreshold={0.6}
+            ListFooterComponent={loading && <ActivityIndicator />}
+          />
+        </View>
+      </BottomSheetModal>
     </View>
   );
 };
+
+const boxWidth = (Dimensions.get("window").width - 64) / 3;
+const boxHeight = Dimensions.get("window").height / 5.5;
 
 const styles = StyleSheet.create({
   proggressBar: {
@@ -279,6 +362,7 @@ const styles = StyleSheet.create({
   },
   img: {
     width: "100%",
+    height: height / 1.54,
     height: height / 1.54,
     borderRadius: 12,
   },
@@ -298,18 +382,26 @@ const styles = StyleSheet.create({
     fontSize: 26,
     lineHeight: 32,
     color: "#FFFFFF",
+    textShadowColor: "rgba(0, 0, 0, 1)",
+    textShadowOffset: { width: -2, height: 2 },
+    textShadowRadius: 5,
+    elevation: 5,
   },
   distanceText: {
     fontWeight: "500",
     fontSize: 16,
     lineHeight: 24,
     color: "#FFFFFF",
+    textShadowColor: "rgba(0, 0, 0, 1)",
+    textShadowOffset: { width: -2, height: 2 },
+    textShadowRadius: 5,
+    elevation: 5,
   },
   blurContainer: {
     marginTop: 14,
     borderRadius: 12,
     overflow: "hidden",
-    paddingHorizontal: 24,
+    paddingHorizontal: 12,
     paddingTop: 12,
     paddingBottom: 46,
     backgroundColor: "#9F9F9F33",
@@ -332,6 +424,7 @@ const styles = StyleSheet.create({
   tvShows: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     gap: 8,
   },
   more: {
@@ -389,6 +482,34 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: "#000000",
     textAlign: "center",
+  },
+  movieBoxes: {
+    marginTop: 24,
+    paddingBottom: 40,
+    paddingHorizontal: 16,
+    flex: 1,
+  },
+  movieSheetTitle: {
+    fontWeight: "500",
+    fontSize: 24,
+    lineHeight: 32,
+    color: "#000000",
+    textAlign: "center",
+    marginBottom: 16,
+  },
+  movieContainer: {
+    gap: 16,
+  },
+  movieBox: {
+    width: boxWidth,
+    height: boxHeight,
+    borderRadius: 12,
+    overflow: "hidden",
+    marginBottom: 16,
+  },
+  movieBoxImg: {
+    width: "100%",
+    height: "100%",
   },
 });
 

@@ -657,30 +657,30 @@ export default function App() {
     const setUserLogin = async () => {
       // await SecureStore.deleteItemAsync("refresh_token"); // test amaçlı rekfresh token sıfırlayıcı
       const refreshToken = await SecureStore.getItemAsync("refresh_token");
-      let uuid = await SecureStore.getItemAsync("DEVICE_UUID_KEY");
+      // let uuid = await SecureStore.getItemAsync("DEVICE_UUID_KEY");
       // const refreshToken = "5fd59d04-950c-42d3-b854-c78754372457";
       // const refreshToken = null;
       // console.log("tok",userStore.token);
 
-      function generateUUID() {
-        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
-          /[xy]/g,
-          function (c) {
-            var r = (Math.random() * 16) | 0,
-              v = c === "x" ? r : (r & 0x3) | 0x8;
-            return v.toString(16);
-          }
-        );
-      }
+      // function generateUUID() {
+      //   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+      //     /[xy]/g,
+      //     function (c) {
+      //       var r = (Math.random() * 16) | 0,
+      //         v = c === "x" ? r : (r & 0x3) | 0x8;
+      //       return v.toString(16);
+      //     }
+      //   );
+      // }
 
-      try {
-        if (!uuid) {
-          uuid = generateUUID();
-          await SecureStore.setItemAsync("DEVICE_UUID_KEY", uuid);
-        }
-      } catch (error) {
-        console.error("Error fetching device UUID:", error);
-      }
+      // try {
+      //   if (!uuid) {
+      //     uuid = generateUUID();
+      //     await SecureStore.setItemAsync("DEVICE_UUID_KEY", uuid);
+      //   }
+      // } catch (error) {
+      //   console.error("Error fetching device UUID:", error);
+      // }
 
       if (refreshToken) {
         try {

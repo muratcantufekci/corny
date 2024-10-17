@@ -91,7 +91,6 @@ const ProfileCard = ({
       setTotalPage(response.data.TotalPages);
       setPage(page + 1);
       setLoading(false);
-      console.log("response", response.data.Contents);
     }
   };
 

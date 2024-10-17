@@ -141,7 +141,6 @@ const ExploreScreen = () => {
       superLikeUsed: false,
     };
     const response = await postSwipe(data);
-    console.log("response", response);
   };
 
   const handleOnRightSwipe = async () => {
@@ -217,6 +216,46 @@ const ExploreScreen = () => {
             onSwipedLeft={handleOnLeftSwipe}
             onSwipedRight={handleOnRightSwipe}
             disableRightSwipe={isSwipingEnabled}
+            overlayLabels={{
+              left: {
+                title: "NOPE",
+                style: {
+                  label: {
+                    backgroundColor: "red",
+                    color: "white",
+                    fontSize: 24,
+                    borderRadius: 10,
+                    padding: 10,
+                  },
+                  wrapper: {
+                    flexDirection: "column",
+                    alignItems: "flex-end",
+                    justifyContent: "flex-start",
+                    marginTop: 20,
+                    marginLeft: -20,
+                  },
+                },
+              },
+              right: {
+                title: "LIKE",
+                style: {
+                  label: {
+                    backgroundColor: "green",
+                    color: "white",
+                    fontSize: 24,
+                    borderRadius: 10,
+                    padding: 10,
+                  },
+                  wrapper: {
+                    flexDirection: "column",
+                    alignItems: "flex-start",
+                    justifyContent: "flex-start",
+                    marginTop: 20,
+                    marginLeft: 20,
+                  },
+                },
+              },
+            }}
           />
           <View style={styles.actionWrapper}>
             <Pressable

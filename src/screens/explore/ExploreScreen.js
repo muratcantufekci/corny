@@ -85,6 +85,7 @@ const ExploreScreen = () => {
   useEffect(() => {
     const getMatches = async () => {
       const response = await getPotentialMatches(page);
+      console.log("responsee",response.MatchUser.Contents);
       setMatches((prevData) => [...prevData, ...response.MatchUser.Contents]);
     };
     getMatches();
@@ -105,6 +106,7 @@ const ExploreScreen = () => {
     // console.log("responseListener",responseListener);
     const getAboutMe = async () => {
       const response = await getUserAbouts();
+      
       const excludeTitles = [
         "Interest",
         "DreamVacation",
@@ -301,6 +303,7 @@ const styles = StyleSheet.create({
   actionWrapper: {
     position: "absolute",
     bottom: height > 860 ? 50 : 20,
+    zIndex: 999,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",

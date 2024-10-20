@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Tabs from "../../components/Tabs";
 import Button from "../../components/Button";
 import { t } from "i18next";
+import { getUserRecievedLikes } from "../../services/Matching/get-user-recieved-likes";
 
 const TABS_DATA = [
   {
@@ -14,11 +15,6 @@ const TABS_DATA = [
   },
   {
     index: 1,
-    name: t("VIEWED"),
-    count: 5,
-  },
-  {
-    index: 2,
     name: t("MY_LIKES"),
     count: 2,
   },
@@ -47,29 +43,6 @@ const LIKED_ME_DUMMY = [
   },
 ];
 
-const VIEWED_DUMMY = [
-  {
-    id: 1,
-    img: require("../../assets/images/man1.jpeg"),
-  },
-  {
-    id: 2,
-    img: require("../../assets/images/girl2.png"),
-  },
-  {
-    id: 3,
-    img: require("../../assets/images/girl4.png"),
-  },
-  {
-    id: 4,
-    img: require("../../assets/images/girl1.png"),
-  },
-  {
-    id: 5,
-    img: require("../../assets/images/girl3.png"),
-  },
-];
-
 const MY_LIKES_DUMMY = [];
 
 const RenderItem = ({ item }) => (
@@ -82,25 +55,34 @@ const LikesScreen = () => {
   const insets = useSafeAreaInsets();
   const [tabContent, setTabContent] = useState(LIKED_ME_DUMMY);
   const [tabIndex, setTabIndex] = useState(0);
+  const [recievedLikesPage, setRecievedLikesPage] = useState(1);
+  const [likesPage, setLikesPage] = useState(1);
 
   useEffect(() => {
     setTabContent(() => {
       if (tabIndex === 0) {
         return LIKED_ME_DUMMY;
-      } else if (tabIndex === 1) {
-        return VIEWED_DUMMY;
       } else {
         return MY_LIKES_DUMMY;
       }
     });
   }, [tabIndex]);
 
+  useEffect(() => {
+    const getRecievedLikes = async () => {
+      const response = await getUserRecievedLikes(recievedLikesPage)
+      console.log("response",response);
+      
+    }
+    getRecievedLikes()
+  },[recievedLikesPage])
+
   return (
     <View
       style={{
         paddingTop: insets.top + 20,
         flex: 1,
-        paddingHorizontal: 16
+        paddingHorizontal: 16,
       }}
     >
       <Tabs tabsData={TABS_DATA} setTabIndex={setTabIndex} />
@@ -115,8 +97,13 @@ const LikesScreen = () => {
         />
       ) : (
         <View style={styles.emptyWrapper}>
-          <Image source={require("../../assets/images/empy-corns.png")} style={styles.emptyImg} />
-          <CustomText style={styles.emptyText}>{t("NOTHING_AROUND")}</CustomText>
+          <Image
+            source={require("../../assets/images/empy-corns.png")}
+            style={styles.emptyImg}
+          />
+          <CustomText style={styles.emptyText}>
+            {t("NOTHING_AROUND")}
+          </CustomText>
         </View>
       )}
 
@@ -156,18 +143,18 @@ const styles = StyleSheet.create({
   emptyWrapper: {
     justifyContent: "center",
     alignItems: "center",
-    flex: 1
+    flex: 1,
   },
   emptyImg: {
     width: 120,
-    height: 120
+    height: 120,
   },
   emptyText: {
     fontWeight: "500",
     fontSize: 16,
     lineHeight: 25,
-    color: "#ACACAC"
-  }
+    color: "#ACACAC",
+  },
 });
 
 export default LikesScreen;

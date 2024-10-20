@@ -7,6 +7,8 @@ import Input from "../components/Input";
 import { t } from "i18next";
 import Search from "../assets/svg/search.svg";
 import CustomText from "./CustomText";
+import { addUserTvShow } from "../services/TvShow/add-tv-show";
+import { removeUserTvShow } from "../services/TvShow/remove-tv-show";
 
 const MovieSelect = ({
   selectedTvShows,
@@ -14,6 +16,8 @@ const MovieSelect = ({
   setChoiceCount,
   priorSelect = false,
   fromAbout = false,
+  addition = false,
+  setWarning,
   style,
 }) => {
   const [loading, setLoading] = useState(false);
@@ -76,17 +80,29 @@ const MovieSelect = ({
     }
   };
 
-  const selectTvShow = (id, name, poster) => {
+  const selectTvShow = async (id, name, poster) => {
     const isAlreadySelected = selectedTvShows.some(
       (tvShow) => tvShow.id === id
     );
 
     if (isAlreadySelected) {
-      setSelectedTvShows(selectedTvShows.filter((tvShow) => tvShow.id !== id));
-      setChoiceCount && setChoiceCount((prevState) => prevState + 1);
+      if (selectedTvShows.length > 6) {
+        setSelectedTvShows(
+          selectedTvShows.filter((tvShow) => tvShow.id !== id)
+        );
+        setChoiceCount && setChoiceCount((prevState) => prevState + 1);
+        if (addition) {
+          const responsee = await removeUserTvShow(id);
+        }
+      } else {
+        setWarning(true)
+      }
     } else {
       setSelectedTvShows([...selectedTvShows, { id, name, poster }]);
       setChoiceCount && setChoiceCount((prevState) => prevState - 1);
+      if (addition) {
+        const response = await addUserTvShow(id);
+      }
     }
   };
 

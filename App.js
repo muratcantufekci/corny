@@ -527,6 +527,7 @@ const AppTabs = () => {
           borderTopWidth: 1,
           paddingTop: 16,
           display: appUtils.bottomTabStyle,
+          elevation: 0,
         },
         tabBarLabelStyle: {
           marginTop: 8,

@@ -327,6 +327,7 @@
     "CONTACT_US_DESC": "We'd love to hear from you! Fill out the form below and we'll get back to you as soon as we can.",
     "MY_GUILTYPLEASURE": "My guilty pleasure is",
     "LAST_WATCHED_MOVIE": "Last Watched Movie",
-    "CURRENT_SERIES_OBSESSION": "Current Series Obsession"
+    "CURRENT_SERIES_OBSESSION": "Current Series Obsession",
+    "AT_LEAST_SIX": "You must choose at least 6 TV shows!"
   }
 }

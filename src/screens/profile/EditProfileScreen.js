@@ -80,7 +80,7 @@ const EditProfileScreen = () => {
   useEffect(() => {
     const userTvShows = async () => {
       const response = await getUserTvShows();
-      setSelectedMovies(response.tvShows);
+      userStore.setUserTvShows(response.tvShows);
     };
     const getUserAboutsHandler = async () => {
       const response = await getUserAbouts();
@@ -120,7 +120,7 @@ const EditProfileScreen = () => {
           {t("MY_FAVORITE_TV_SHOWS")}
         </CustomText>
         <View style={styles.movieBoxes}>
-          {selectedMovies.map((item, index) => {
+          {userStore.userTvShows.map((item, index) => {
             if (index <= 5) {
               return (
                 <View key={item.id} style={styles.movieBox}>

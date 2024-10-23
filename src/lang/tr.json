@@ -328,6 +328,10 @@
     "MY_GUILTYPLEASURE": "Gizli Zevki",
     "LAST_WATCHED_MOVIE": "Son İzlediği Film",
     "CURRENT_SERIES_OBSESSION": "Şu anki Takıntı Dizisi",
-    "AT_LEAST_SIX": "En az 6 dizi/film seçmelisin!"
+    "AT_LEAST_SIX": "En az 6 dizi/film seçmelisin!",
+    "QUIZ_TITLE": "Eşleşmeyi tamamlamak için doğru cevabı ver.",
+    "HINT": "İpucu",
+    "QUIZ_WRONG": "Üzgünüm, yanlış cevap. Emin olmadığın sorularda ipucu kullanabilirsin.",
+    "QUIZ_TIMEOUT": "Üzgünüm, süre doldu. Emin olmadığın sorularda ipucu kullanabilirsin."
   }
 }

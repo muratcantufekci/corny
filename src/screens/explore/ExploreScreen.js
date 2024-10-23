@@ -77,15 +77,17 @@ const ExploreScreen = () => {
   const [selectedInterests, setSelectedInterests] = useState([]);
   const [showMatches, setShowMatches] = useState(true);
   const [showQuiz, setShowQuiz] = useState(false);
+  const [quizData, setQuizData] = useState(null);
+  const [quizAnswer, setQuizAnswer] = useState(null);
   const [isSwipingEnabled, setIsSwipingEnabled] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [page, setPage] = useState(1);
+  const [cardIndex, setCardIndex] = useState(0);
   const swiperRef = useRef(null);
 
   useEffect(() => {
     const getMatches = async () => {
       const response = await getPotentialMatches(page);
-      console.log("responsee",response.MatchUser.Contents);
       setMatches((prevData) => [...prevData, ...response.MatchUser.Contents]);
     };
     getMatches();
@@ -106,7 +108,7 @@ const ExploreScreen = () => {
     // console.log("responseListener",responseListener);
     const getAboutMe = async () => {
       const response = await getUserAbouts();
-      
+
       const excludeTitles = [
         "Interest",
         "DreamVacation",
@@ -129,6 +131,27 @@ const ExploreScreen = () => {
     getAboutMe();
   }, []);
 
+  useEffect(() => {
+    const handlePostSwipe = async () => {
+      const data = {
+        swipedUserId: matches[cardIndex].ProfileInfo.userId,
+        isLike: true,
+        superLikeUsed: false,
+      };
+
+      try {
+        const response = await postSwipe(data);
+        console.log("responseRight", response);
+      } catch (error) {
+        console.error("Swipe işlemi başarısız", error);
+      }
+    };
+
+    if (quizAnswer === true) {
+      handlePostSwipe();
+    }
+  }, [quizAnswer]);
+
   const handleOnSwiped = (cardIndex) => {
     if (cardIndex === matches.length - 4) {
       setPage((prevPage) => prevPage + 1);
@@ -136,28 +159,23 @@ const ExploreScreen = () => {
       setShowMatches(false);
     }
   };
-  const handleOnLeftSwipe = async (id) => {
+  const handleOnLeftSwipe = async (cardIndex) => {
     const data = {
-      swipedUserId: id,
+      swipedUserId: matches[cardIndex].ProfileInfo.userId,
       isLike: false,
       superLikeUsed: false,
     };
     const response = await postSwipe(data);
   };
 
-  const handleOnRightSwipe = async () => {
+  const handleOnRightSwipe = async (id) => {
+    setCardIndex(cardIndex);
     setIsSwipingEnabled(true);
     setTimeout(() => {
       setIsSwipingEnabled(false);
     }, 1000);
+    setQuizData(matches[cardIndex].CommonTvShowQuestion);
     setShowQuiz(true);
-    // const data = {
-    //   swipedUserId: id,
-    //   isLike: true,
-    //   superLikeUsed: false,
-    // };
-    // const response = await postSwipe(data);
-    // console.log("responseRight",response);
   };
 
   const handleRightPress = () => {
@@ -286,7 +304,15 @@ const ExploreScreen = () => {
           </CustomText>
         </View>
       )}
-      {showQuiz && <Quiz quizOpen={showQuiz} setQuizOpen={setShowQuiz} />}
+      {showQuiz && (
+        <Quiz
+          quizOpen={showQuiz}
+          setQuizOpen={setShowQuiz}
+          quiz={quizData}
+          setQuizAnswer={setQuizAnswer}
+          quizAnswer={quizAnswer}
+        />
+      )}
     </View>
   );
 };

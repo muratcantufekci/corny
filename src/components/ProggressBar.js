@@ -7,7 +7,7 @@ const ProggressBar = ({ step, totalStep, fromProfileCard }) => {
         <View
           style={[
             styles.step,
-            index + 1 <= step && styles.activeStep,
+            fromProfileCard ? index + 1 === step && styles.activeStep : index + 1 <= step && styles.activeStep,
             fromProfileCard && { height: 4 },
           ]}
           key={index}

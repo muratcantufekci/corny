@@ -224,9 +224,9 @@ const ProfileCard = ({
                 <View style={styles.abouts}>
                   {userInfo?.userAbouts.map((userAbout) => {
                     if (userAbout.title === "Interest") {
-                      return userAbout.values.map((item) => (
+                      return userAbout.values.map((item, index) => (
                         <AboutBox
-                          key={item}
+                          key={item + index}
                           text={t(`${item}`)}
                           selectedBox={selectedInterests}
                           keyName={item}

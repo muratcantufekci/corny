@@ -328,6 +328,10 @@
     "MY_GUILTYPLEASURE": "My guilty pleasure is",
     "LAST_WATCHED_MOVIE": "Last Watched Movie",
     "CURRENT_SERIES_OBSESSION": "Current Series Obsession",
-    "AT_LEAST_SIX": "You must choose at least 6 TV shows!"
+    "AT_LEAST_SIX": "You must choose at least 6 TV shows!",
+    "QUIZ_TITLE": "Give the right answer to complete the match.",
+    "HINT": "Hint",
+    "QUIZ_WRONG": "Sorry, wrong answer. You can use hints for questions you are not sure about.",
+    "QUIZ_TIMEOUT": "Sorry, time's up. You can use hints on questions you are not sure about."
   }
 }

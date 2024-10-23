@@ -1,6 +1,6 @@
 import "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View } from "react-native";
+import { AppState, StyleSheet, View } from "react-native";
 import {
   createNavigationContainerRef,
   NavigationContainer,
@@ -73,6 +73,7 @@ import EditDrinkingHabitScreen from "./src/screens/profile/about/EditDrinkingHab
 import EditMoviesScreen from "./src/screens/profile/EditMoviesScreen";
 import EditPhoneScreen from "./src/screens/profile/EditPhoneScreen";
 import ContactUsScreen from "./src/screens/profile/ContactUsScreen";
+import * as Updates from "expo-updates";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -643,6 +644,8 @@ SplashScreen.preventAutoHideAsync();
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
   const [congifurResponseData, setConfigureResponseData] = useState(null);
+  const [appState, setAppState] = useState(AppState.currentState);
+  const [lastInactiveTime, setLastInactiveTime] = useState(null);
   const userStore = useUserStore();
   const appUtils = useAppUtils();
 
@@ -653,6 +656,31 @@ export default function App() {
     "RethinkSans-Bold": require("./src/assets/fonts/RethinkSans-Bold.ttf"),
     "RethinkSans-ExtraBold": require("./src/assets/fonts/RethinkSans-ExtraBold.ttf"),
   });
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (nextAppState) => {
+      if (appState.match(/inactive|background/) && nextAppState === "active") {
+        const currentTime = new Date().getTime();
+        if (lastInactiveTime && currentTime - lastInactiveTime > 300000) {
+          refreshApp();
+        }
+      }
+
+      if (nextAppState.match(/inactive|background/)) {
+        setLastInactiveTime(new Date().getTime());
+      }
+
+      setAppState(nextAppState);
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [appState, lastInactiveTime]);
+
+  const refreshApp = async () => {
+    await Updates.reloadAsync();
+  };
 
   useEffect(() => {
     const setUserLogin = async () => {
@@ -710,6 +738,9 @@ export default function App() {
               userStore.setIsUserLoggedIn(false);
               setAppIsReady(true);
             }
+          } else {
+            userStore.setIsUserLoggedIn(false);
+            setAppIsReady(true);
           }
         } catch (error) {
           console.log(error);
@@ -752,7 +783,6 @@ export default function App() {
               onReady={() =>
                 congifurResponseData && checkAndRedirect(congifurResponseData)
               }
-              
             >
               {userStore.isUserLoggedIn ? <AppTabs /> : <AuthStack />}
             </NavigationContainer>

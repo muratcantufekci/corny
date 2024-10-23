@@ -3,14 +3,15 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import CustomText from "./CustomText";
 import Check from "../assets/svg/check.svg";
 
-const RadioButton = ({ text, code, icon, selected, selectedItemIdSetter }) => {
+const RadioButton = ({ text, code, icon, selected, selectedItemIdSetter, disable = false }) => {
   const radioPressHandler = () => {
     selectedItemIdSetter(code);
   };
   return (
     <TouchableOpacity
-      style={[styles.container, selected && styles.containerSelected]}
+      style={[styles.container, selected && styles.containerSelected, disable && styles.containerDisabled]}
       onPress={radioPressHandler}
+      disabled={disable}
     >
       {selected ? (
         <Check width={20} height={20} style={styles.check} />
@@ -36,6 +37,9 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#FF524F",
   },
+  containerDisabled: {
+    backgroundColor: "#EFEFF1"
+  }, 
   radio: {
     width: 20,
     height: 20,

@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#00000026",
     marginBottom: 16,
     gap: 10,
+    minWidth: "100%",
   },
   tab: {
     flexDirection: "row",

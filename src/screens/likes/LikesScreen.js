@@ -1,81 +1,99 @@
 import React, { useEffect, useState } from "react";
-import { Dimensions, FlatList, Image, StyleSheet, View } from "react-native";
+import {
+  ActivityIndicator,
+  Dimensions,
+  FlatList,
+  Image,
+  StyleSheet,
+  View,
+} from "react-native";
 import CustomText from "../../components/CustomText";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Tabs from "../../components/Tabs";
 import Button from "../../components/Button";
 import { t } from "i18next";
 import { getUserRecievedLikes } from "../../services/Matching/get-user-recieved-likes";
+import { getUserLikes } from "../../services/Matching/get-user-likes";
 
-const TABS_DATA = [
-  {
-    index: 0,
-    name: t("LIKED_ME"),
-    count: 18,
-  },
-  {
-    index: 1,
-    name: t("MY_LIKES"),
-    count: 2,
-  },
-];
-
-const LIKED_ME_DUMMY = [
-  {
-    id: 1,
-    img: require("../../assets/images/man1.jpeg"),
-  },
-  {
-    id: 2,
-    img: require("../../assets/images/girl1.png"),
-  },
-  {
-    id: 3,
-    img: require("../../assets/images/girl2.png"),
-  },
-  {
-    id: 4,
-    img: require("../../assets/images/girl3.png"),
-  },
-  {
-    id: 5,
-    img: require("../../assets/images/girl4.png"),
-  },
-];
-
-const MY_LIKES_DUMMY = [];
-
-const RenderItem = ({ item }) => (
-  <View style={styles.box}>
-    <Image source={item.img} style={styles.boxImg} />
-  </View>
-);
+const RenderItem = ({ item }) => {
+  return (
+    <View style={styles.box} key={item.user.userId}>
+      <Image
+        source={{ uri: item.user.profileImage?.imageUrl }}
+        style={styles.boxImg}
+      />
+    </View>
+  );
+};
 
 const LikesScreen = () => {
   const insets = useSafeAreaInsets();
-  const [tabContent, setTabContent] = useState(LIKED_ME_DUMMY);
+  const [tabContent, setTabContent] = useState([]);
   const [tabIndex, setTabIndex] = useState(0);
+  const [recievedLikes, setRecievedLikes] = useState([]);
+  const [likes, setLikes] = useState([]);
   const [recievedLikesPage, setRecievedLikesPage] = useState(1);
+  const [recievedLikesResponse, setRecievedLikesResponse] = useState(null);
+  const [likesResponse, setLikesResponse] = useState(null);
   const [likesPage, setLikesPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+
+  const TABS_DATA = [
+    {
+      index: 0,
+      name: t("LIKED_ME"),
+      count: recievedLikesResponse?.TotalCount,
+    },
+    {
+      index: 1,
+      name: t("MY_LIKES"),
+      count: likesResponse?.TotalCount,
+    },
+  ];
 
   useEffect(() => {
     setTabContent(() => {
       if (tabIndex === 0) {
-        return LIKED_ME_DUMMY;
+        return recievedLikes;
       } else {
-        return MY_LIKES_DUMMY;
+        return likes;
       }
     });
-  }, [tabIndex]);
+  }, [tabIndex, recievedLikes]);
 
   useEffect(() => {
     const getRecievedLikes = async () => {
-      const response = await getUserRecievedLikes(recievedLikesPage)
-      console.log("response",response);
-      
+      setLoading(true);
+      const response = await getUserRecievedLikes(recievedLikesPage);
+      setRecievedLikes((prevLikes) => [
+        ...prevLikes,
+        ...response.data.Contents,
+      ]);
+      setRecievedLikesResponse(response.data);
+      setLoading(false);
+    };
+    getRecievedLikes();
+  }, [recievedLikesPage]);
+
+  useEffect(() => {
+    const getLikes = async () => {
+      setLoading(true);
+      const response = await getUserLikes(likesPage);
+
+      setLikes((prevLikes) => [...prevLikes, ...response.data.Contents]);
+      setLikesResponse(response.data);
+      setLoading(false);
+    };
+    getLikes();
+  }, [likesPage]);
+
+  const loadMoreTvShows = () => {
+    if (!loading) {
+      tabIndex === 0
+        ? setRecievedLikesPage((prev) => prev + 1)
+        : setLikesPage((prev) => prev + 1);
     }
-    getRecievedLikes()
-  },[recievedLikesPage])
+  };
 
   return (
     <View
@@ -90,10 +108,18 @@ const LikesScreen = () => {
         <FlatList
           data={tabContent}
           renderItem={({ item }) => <RenderItem item={item} />}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.user.userId}
           style={{ flex: 1 }}
           numColumns={2}
           columnWrapperStyle={styles.columnWrapper}
+          onEndReached={
+            tabIndex === 0
+              ? recievedLikesPage < recievedLikesResponse.TotalPages &&
+                loadMoreTvShows
+              : likesPage < likesResponse.TotalPages && loadMoreTvShows
+          }
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={loading && <ActivityIndicator />}
         />
       ) : (
         <View style={styles.emptyWrapper}>

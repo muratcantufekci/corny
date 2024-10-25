@@ -14,6 +14,7 @@ import Button from "../../components/Button";
 import { t } from "i18next";
 import { getUserRecievedLikes } from "../../services/Matching/get-user-recieved-likes";
 import { getUserLikes } from "../../services/Matching/get-user-likes";
+import { useIsFocused } from "@react-navigation/native";
 
 const RenderItem = ({ item }) => {
   return (
@@ -37,6 +38,7 @@ const LikesScreen = () => {
   const [likesResponse, setLikesResponse] = useState(null);
   const [likesPage, setLikesPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const isFocused = useIsFocused();
 
   const TABS_DATA = [
     {
@@ -62,6 +64,15 @@ const LikesScreen = () => {
   }, [tabIndex, recievedLikes]);
 
   useEffect(() => {
+    if (isFocused) {
+      setRecievedLikes([]);
+      setRecievedLikesPage(1);
+      setLikes([]);
+      setLikesPage(1);
+    }
+  }, [isFocused]);
+
+  useEffect(() => {
     const getRecievedLikes = async () => {
       setLoading(true);
       const response = await getUserRecievedLikes(recievedLikesPage);
@@ -72,8 +83,12 @@ const LikesScreen = () => {
       setRecievedLikesResponse(response.data);
       setLoading(false);
     };
-    getRecievedLikes();
-  }, [recievedLikesPage]);
+    if(isFocused) {
+      getRecievedLikes();
+    } else {
+
+    }
+  }, [recievedLikesPage,isFocused]);
 
   useEffect(() => {
     const getLikes = async () => {
@@ -84,8 +99,10 @@ const LikesScreen = () => {
       setLikesResponse(response.data);
       setLoading(false);
     };
-    getLikes();
-  }, [likesPage]);
+    if(isFocused) {
+      getLikes();
+    }
+  }, [likesPage,isFocused]);
 
   const loadMoreTvShows = () => {
     if (!loading) {

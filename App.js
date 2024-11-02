@@ -74,6 +74,7 @@ import EditMoviesScreen from "./src/screens/profile/EditMoviesScreen";
 import EditPhoneScreen from "./src/screens/profile/EditPhoneScreen";
 import ContactUsScreen from "./src/screens/profile/ContactUsScreen";
 import * as Updates from "expo-updates";
+import LikesDetailScreen from "./src/screens/likes/LikesDetailScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -129,6 +130,63 @@ const AuthStack = () => (
     <Stack.Screen name="OnboardingEnd" component={OnboardingEndScreen} />
   </Stack.Navigator>
 );
+
+const LikesStack = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        transitionSpec: {
+          open: {
+            animation: "timing",
+            config: {
+              duration: 100,
+            },
+          },
+          close: {
+            animation: "timing",
+            config: {
+              duration: 100,
+            },
+          },
+        },
+        headerBackImage: () => (
+          <View style={{ padding: 10, paddingLeft: 0 }}>
+            <Back />
+          </View>
+        ),
+        headerBackTitleVisible: false,
+        headerTitle: "",
+        headerTintColor: "#045bb3",
+        headerTransparent: false,
+        headerStyle: {
+          backgroundColor: "white",
+          shadowOpacity: 0,
+          elevation: 0,
+        },
+        headerLeftContainerStyle: {
+          paddingLeft: 16,
+        },
+        headerRightContainerStyle: {
+          paddingRight: 16,
+        },
+        cardStyle: { backgroundColor: "white" },
+      }}
+    >
+      <Stack.Screen
+        name="Likes"
+        component={LikesScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="LikesDetail"
+        component={LikesDetailScreen}
+        options={{
+          headerTransparent: false,
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
 
 const MessagesStack = () => {
   return (
@@ -554,8 +612,8 @@ const AppTabs = () => {
         }}
       />
       <Tab.Screen
-        name="Likes"
-        component={LikesScreen}
+        name="Like"
+        component={LikesStack}
         options={{
           tabBarIcon: ({ focused }) =>
             focused ? (

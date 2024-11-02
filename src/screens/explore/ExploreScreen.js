@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Dimensions,
   Platform,
@@ -25,6 +25,12 @@ import CustomText from "../../components/CustomText";
 import { t } from "i18next";
 import { postSwipe } from "../../services/Matching/send-swiper";
 import Quiz from "../../components/Quiz";
+import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
+import Input from "../../components/Input";
+import { TouchableOpacity } from "react-native";
+import ArrowUp from "../../assets/svg/arrow-up-circle.svg";
+import useUserStore from "../../store/useUserStore";
+import MatchingSheet from "../../components/MatchingSheet";
 
 const registerForPushNotificationsAsync = async () => {
   let token;
@@ -73,8 +79,6 @@ const ExploreScreen = () => {
   const insets = useSafeAreaInsets();
   const [expoPushToken, setExpoPushToken] = useState("");
   const [matches, setMatches] = useState([]);
-  const [selectedAbouts, setSelectedAbouts] = useState([]);
-  const [selectedInterests, setSelectedInterests] = useState([]);
   const [showMatches, setShowMatches] = useState(true);
   const [showQuiz, setShowQuiz] = useState(false);
   const [quizData, setQuizData] = useState(null);
@@ -84,6 +88,9 @@ const ExploreScreen = () => {
   const [page, setPage] = useState(1);
   const [cardIndex, setCardIndex] = useState(0);
   const swiperRef = useRef(null);
+  const sheetRef = useRef(null);
+  const [sheetProps, setSheetProps] = useState(null);
+  const userStore = useUserStore();
 
   useEffect(() => {
     const getMatches = async () => {
@@ -125,8 +132,8 @@ const ExploreScreen = () => {
         .filter((userAbout) => !excludeTitles.includes(userAbout.title))
         .flatMap((userAbout) => userAbout.values);
 
-      setSelectedAbouts(filteredDataForAbouts);
-      setSelectedInterests(interestData.values);
+      userStore.setcardAbouts(filteredDataForAbouts);
+      userStore.setcardInterests(interestData.values);
     };
     getAboutMe();
   }, []);
@@ -141,7 +148,26 @@ const ExploreScreen = () => {
 
       try {
         const response = await postSwipe(data);
-        console.log("responseRight", response);
+
+        if (response.isMatch) {
+          sheetRef.current?.present();
+          setSheetProps({
+            title: t("MATCH_TITLE"),
+            desc: t("MATCH_DESC"),
+            myImg: response.myUser.profileImage.imageUrl,
+            otherUserImg: response.swipedUser.profileImage.imageUrl,
+            swipedUserId: response.swipedUser.userId,
+          });
+        } else {
+          sheetRef.current?.present();
+          setSheetProps({
+            title: t("LIKE_TITLE"),
+            desc: t("LIKE_DESC"),
+            myImg: response.myUser.profileImage.imageUrl,
+            otherUserImg: response.swipedUser.profileImage.imageUrl,
+            swipedUserId: response.swipedUser.userId,
+          });
+        }
       } catch (error) {
         console.error("Swipe işlemi başarısız", error);
       }
@@ -168,7 +194,7 @@ const ExploreScreen = () => {
     const response = await postSwipe(data);
   };
 
-  const handleOnRightSwipe = async (id) => {
+  const handleOnRightSwipe = async (cardIndex) => {
     setCardIndex(cardIndex);
     setIsSwipingEnabled(true);
     setTimeout(() => {
@@ -190,130 +216,133 @@ const ExploreScreen = () => {
   };
 
   return (
-    <View
-      style={{
-        marginTop: insets.top,
-        flex: 1,
-        paddingHorizontal: 16,
-      }}
-    >
-      <View style={styles.head}>
-        <Pressable
-          onPress={() => swiperRef.current.swipeBack()}
-          style={!showMatches && { opacity: 0, pointerEvents: "none" }}
-        >
-          <Undo />
-        </Pressable>
-        <Corny />
-        <Filter style={{ opacity: 0, pointerEvents: "none" }} />
-      </View>
-      {showMatches ? (
-        <>
-          <Swiper
-            cards={matches}
-            ref={swiperRef}
-            renderCard={(card) => (
-              <ProfileCard
-                key={card?.ProfileInfo.userId}
-                images={card?.ProfileInfo.images}
-                name={card?.ProfileInfo.name}
-                age={card?.ProfileInfo.age}
-                distance={card?.ProfileInfo.distance}
-                tvShows={card?.ProfileInfo.tvShows}
-                id={card?.ProfileInfo.userId}
-                insets={insets}
-                selectedAbouts={selectedAbouts}
-                selectedInterests={selectedInterests}
-              />
-            )}
-            backgroundColor="none"
-            cardVerticalMargin={40}
-            showSecondCard={true}
-            verticalSwipe={false}
-            cardIndex={0}
-            stackSize={3}
-            onSwiped={handleOnSwiped}
-            onSwipedLeft={handleOnLeftSwipe}
-            onSwipedRight={handleOnRightSwipe}
-            disableRightSwipe={isSwipingEnabled}
-            overlayLabels={{
-              left: {
-                title: "NOPE",
-                style: {
-                  label: {
-                    backgroundColor: "red",
-                    color: "white",
-                    fontSize: 24,
-                    borderRadius: 10,
-                    padding: 10,
-                  },
-                  wrapper: {
-                    flexDirection: "column",
-                    alignItems: "flex-end",
-                    justifyContent: "flex-start",
-                    marginTop: 20,
-                    marginLeft: -20,
-                  },
-                },
-              },
-              right: {
-                title: "LIKE",
-                style: {
-                  label: {
-                    backgroundColor: "green",
-                    color: "white",
-                    fontSize: 24,
-                    borderRadius: 10,
-                    padding: 10,
-                  },
-                  wrapper: {
-                    flexDirection: "column",
-                    alignItems: "flex-start",
-                    justifyContent: "flex-start",
-                    marginTop: 20,
-                    marginLeft: 20,
-                  },
-                },
-              },
-            }}
-          />
-          <View style={styles.actionWrapper}>
-            <Pressable
-              style={styles.actionBox}
-              onPress={() => swiperRef.current.swipeLeft()}
-            >
-              <Cross style={{ color: "#FFAC24" }} />
-            </Pressable>
-            <Pressable
-              style={styles.actionBox}
-              onPress={handleRightPress}
-              disabled={isButtonDisabled}
-            >
-              <Like style={{ color: "#FF524F" }} />
-            </Pressable>
-          </View>
-        </>
-      ) : (
-        <View style={styles.emptyWrapper}>
-          <Image
-            source={require("../../assets/images/empy-corns.png")}
-            style={styles.emptyImg}
-          />
-          <CustomText style={styles.emptyText}>
-            {t("NOTHING_AROUND")}
-          </CustomText>
+    <>
+      <View
+        style={{
+          marginTop: insets.top,
+          flex: 1,
+          paddingHorizontal: 16,
+        }}
+      >
+        <View style={styles.head}>
+          <Pressable
+            onPress={() => swiperRef.current.swipeBack()}
+            style={!showMatches && { opacity: 0, pointerEvents: "none" }}
+          >
+            <Undo />
+          </Pressable>
+          <Corny />
+          <Filter style={{ opacity: 0, pointerEvents: "none" }} />
         </View>
-      )}
-      {showQuiz && (
-        <Quiz
-          quizOpen={showQuiz}
-          setQuizOpen={setShowQuiz}
-          quiz={quizData}
-          setQuizAnswer={setQuizAnswer}
-          quizAnswer={quizAnswer}
-        />
-      )}
-    </View>
+        {showMatches ? (
+          <>
+            <Swiper
+              cards={matches}
+              ref={swiperRef}
+              renderCard={(card) => (
+                <ProfileCard
+                  key={card?.ProfileInfo.userId}
+                  images={card?.ProfileInfo.images}
+                  name={card?.ProfileInfo.name}
+                  age={card?.ProfileInfo.age}
+                  distance={card?.ProfileInfo.distance}
+                  tvShows={card?.ProfileInfo.tvShows}
+                  id={card?.ProfileInfo.userId}
+                  insets={insets}
+                  selectedAbouts={userStore.cardAbouts}
+                  selectedInterests={userStore.cardInterests}
+                />
+              )}
+              backgroundColor="none"
+              cardVerticalMargin={40}
+              showSecondCard={true}
+              verticalSwipe={false}
+              cardIndex={0}
+              stackSize={3}
+              onSwiped={handleOnSwiped}
+              onSwipedLeft={handleOnLeftSwipe}
+              onSwipedRight={handleOnRightSwipe}
+              disableRightSwipe={isSwipingEnabled}
+              overlayLabels={{
+                left: {
+                  title: "NOPE",
+                  style: {
+                    label: {
+                      backgroundColor: "red",
+                      color: "white",
+                      fontSize: 24,
+                      borderRadius: 10,
+                      padding: 10,
+                    },
+                    wrapper: {
+                      flexDirection: "column",
+                      alignItems: "flex-end",
+                      justifyContent: "flex-start",
+                      marginTop: 20,
+                      marginLeft: -20,
+                    },
+                  },
+                },
+                right: {
+                  title: "LIKE",
+                  style: {
+                    label: {
+                      backgroundColor: "green",
+                      color: "white",
+                      fontSize: 24,
+                      borderRadius: 10,
+                      padding: 10,
+                    },
+                    wrapper: {
+                      flexDirection: "column",
+                      alignItems: "flex-start",
+                      justifyContent: "flex-start",
+                      marginTop: 20,
+                      marginLeft: 20,
+                    },
+                  },
+                },
+              }}
+            />
+            <View style={styles.actionWrapper}>
+              <Pressable
+                style={styles.actionBox}
+                onPress={() => swiperRef.current.swipeLeft()}
+              >
+                <Cross style={{ color: "#FFAC24" }} />
+              </Pressable>
+              <Pressable
+                style={styles.actionBox}
+                onPress={handleRightPress}
+                disabled={isButtonDisabled}
+              >
+                <Like style={{ color: "#FF524F" }} />
+              </Pressable>
+            </View>
+          </>
+        ) : (
+          <View style={styles.emptyWrapper}>
+            <Image
+              source={require("../../assets/images/empy-corns.png")}
+              style={styles.emptyImg}
+            />
+            <CustomText style={styles.emptyText}>
+              {t("NOTHING_AROUND")}
+            </CustomText>
+          </View>
+        )}
+        {showQuiz && (
+          <Quiz
+            quizOpen={showQuiz}
+            setQuizOpen={setShowQuiz}
+            quiz={quizData}
+            setQuizAnswer={setQuizAnswer}
+            quizAnswer={quizAnswer}
+          />
+        )}
+      </View>
+      <MatchingSheet sheetRef={sheetRef} sheetProps={sheetProps} />
+    </>
   );
 };
 
@@ -344,7 +373,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#000000",
   },
-
   emptyWrapper: {
     justifyContent: "center",
     alignItems: "center",

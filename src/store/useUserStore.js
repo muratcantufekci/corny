@@ -6,6 +6,8 @@ const useUserStore = create((set) => ({
   userAccountDetails: null,
   userAbouts: [],
   userTvShows: [],
+  cardAbouts: [],
+  cardInterests: [],
   setToken: (token) => set({ token }),
   setIsUserLoggedIn: (isUserLoggedIn) => set({ isUserLoggedIn }),
   setUserAccountDetails: (newDetails) =>
@@ -33,6 +35,8 @@ const useUserStore = create((set) => ({
       return { userAbouts: updatedUserAbouts };
     }),
     setUserTvShows: (userTvShows) => set({ userTvShows }),
+    setcardAbouts: (cardAbouts) => set({ cardAbouts }),
+    setcardInterests: (cardInterests) => set({ cardInterests }),
 }));
 
 export default useUserStore;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import CustomText from "../../components/CustomText";
 import { t } from "i18next";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
@@ -190,7 +190,7 @@ const ChatsScreen = () => {
           </CustomText>
         </View>
       ) : (
-        <View>
+        <ScrollView>
           {chatRoomsStore.chatRooms?.map((item) => {
             const isIncome =
               item.messages[0]?.sender === item.otherUserConnectionId;
@@ -212,7 +212,7 @@ const ChatsScreen = () => {
                 <View style={styles.messageBoxLeft}>
                   <Image
                     source={{
-                      uri: "https://media.licdn.com/dms/image/v2/D4D03AQFB0oznJhn_Eg/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1707992142190?e=1729123200&v=beta&t=8WUd5YODbi2dSoWP56kqBzK3Ir47WJQG-xclk_BV0mE",
+                      uri: item.otherUserProfileImage.imageUrl,
                     }}
                     style={styles.messageImg}
                   />
@@ -240,7 +240,7 @@ const ChatsScreen = () => {
               </TouchableOpacity>
             );
           })}
-        </View>
+        </ScrollView>
       )}
     </View>
   );

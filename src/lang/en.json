@@ -332,6 +332,10 @@
     "QUIZ_TITLE": "Give the right answer to complete the match.",
     "HINT": "Hint",
     "QUIZ_WRONG": "Sorry, wrong answer. You can use hints for questions you are not sure about.",
-    "QUIZ_TIMEOUT": "Sorry, time's up. You can use hints on questions you are not sure about."
+    "QUIZ_TIMEOUT": "Sorry, time's up. You can use hints on questions you are not sure about.",
+    "MATCH_TITLE": "It’s a Match!",
+    "MATCH_DESC": "You have a common taste in TV series/movies!",
+    "LIKE_TITLE": "You liked it!",
+    "LIKE_DESC": "Make the first move to attract attention!"
   }
 }

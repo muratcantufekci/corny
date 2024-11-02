@@ -14,18 +14,8 @@ import Button from "../../components/Button";
 import { t } from "i18next";
 import { getUserRecievedLikes } from "../../services/Matching/get-user-recieved-likes";
 import { getUserLikes } from "../../services/Matching/get-user-likes";
-import { useIsFocused } from "@react-navigation/native";
-
-const RenderItem = ({ item }) => {
-  return (
-    <View style={styles.box} key={item.user.userId}>
-      <Image
-        source={{ uri: item.user.profileImage?.imageUrl }}
-        style={styles.boxImg}
-      />
-    </View>
-  );
-};
+import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { TouchableOpacity } from "react-native";
 
 const LikesScreen = () => {
   const insets = useSafeAreaInsets();
@@ -39,6 +29,7 @@ const LikesScreen = () => {
   const [likesPage, setLikesPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const isFocused = useIsFocused();
+  const navigation = useNavigation();
 
   const TABS_DATA = [
     {
@@ -52,6 +43,28 @@ const LikesScreen = () => {
       count: likesResponse?.TotalCount,
     },
   ];
+
+  const RenderItem = ({ item }) => {
+    const itemPressHandler = async () => {
+      const userId = item.user.userId
+      navigation.navigate("LikesDetail", {
+        userId,
+        tabIndex
+      });
+    };
+    return (
+      <TouchableOpacity
+        style={styles.box}
+        key={item.user.userId}
+        onPress={itemPressHandler}
+      >
+        <Image
+          source={{ uri: item.user.profileImage?.imageUrl }}
+          style={styles.boxImg}
+        />
+      </TouchableOpacity>
+    );
+  };
 
   useEffect(() => {
     setTabContent(() => {
@@ -76,6 +89,8 @@ const LikesScreen = () => {
     const getRecievedLikes = async () => {
       setLoading(true);
       const response = await getUserRecievedLikes(recievedLikesPage);
+      // console.log("response", response.data.Contents);
+
       setRecievedLikes((prevLikes) => [
         ...prevLikes,
         ...response.data.Contents,
@@ -83,12 +98,11 @@ const LikesScreen = () => {
       setRecievedLikesResponse(response.data);
       setLoading(false);
     };
-    if(isFocused) {
+    if (isFocused) {
       getRecievedLikes();
     } else {
-
     }
-  }, [recievedLikesPage,isFocused]);
+  }, [recievedLikesPage, isFocused]);
 
   useEffect(() => {
     const getLikes = async () => {
@@ -99,10 +113,10 @@ const LikesScreen = () => {
       setLikesResponse(response.data);
       setLoading(false);
     };
-    if(isFocused) {
+    if (isFocused) {
       getLikes();
     }
-  }, [likesPage,isFocused]);
+  }, [likesPage, isFocused]);
 
   const loadMoreTvShows = () => {
     if (!loading) {
@@ -197,6 +211,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 25,
     color: "#ACACAC",
+  },
+  menuWrapper: {
+    flex: 1,
+    justifyContent: "center",
+    // alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
+    paddingHorizontal: 16,
   },
 });
 

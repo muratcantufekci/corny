@@ -72,9 +72,11 @@ const PhoneCodeScreen = () => {
       verificationCode: code,
       identifierCode: onboardingStore.identifierCode,
     };
+    
     if (code && code.length === 6) {
       setIsCodeValid(true);
       const response = await postVerifyCode(data);
+      
       if (response.isSuccess) {
         const authData = {
           verificationCode: code,
@@ -82,6 +84,7 @@ const PhoneCodeScreen = () => {
           deviceUuid: "242141-12432141-213432142"
         };
         const res = await authenticate(authData);
+        
         if (res.isSuccess) {
           userStore.setToken(res.token);
           await SecureStore.setItemAsync("refresh_token", res.refreshToken);

@@ -67,11 +67,12 @@ const EditPhoneScreen = () => {
   };
 
   const sendVerification = async (phoneNumber) => {
-    setAlertSheetProps(null)
+    setAlertSheetProps(null);
     sheetRef.current?.present();
     const response = await postPhoneVerification({
       phoneNumber: `${onboardingStore.code}${phoneNumber}`,
     });
+
     onboardingStore.setIdentifierCode(response.identifierCode);
   };
 
@@ -84,9 +85,15 @@ const EditPhoneScreen = () => {
       sheetRef.current?.close();
       setIsCodeValid(true);
       const response = await postVerifyCode(data);
+
       if (response.isSuccess) {
-        const res = await updateUserPhone(`${onboardingStore.code}${onboardingStore.phone}`,onboardingStore.identifierCode);
-        if(res.isSuccess) {
+        const data = {
+          phoneNumber: `${onboardingStore.code}${onboardingStore.phone}`,
+          identifierCode: onboardingStore.identifierCode,
+        };
+        const res = await updateUserPhone(data);
+
+        if (res.isSuccess) {
           setAlertSheetProps({
             img: require("../../assets/images/done.png"),
             title: t("SUCCESSFULL"),
@@ -104,7 +111,6 @@ const EditPhoneScreen = () => {
           });
           alertSheetRef.current?.present();
         }
-        
       } else {
         setIsCodeValid(false);
       }
@@ -195,61 +201,64 @@ const EditPhoneScreen = () => {
               </View>
             </TouchableWithoutFeedback>
           </KeyboardAvoidingView>
-          {!alertSheetProps &&
+          {!alertSheetProps && (
             <BottomSheetModal
-            ref={sheetRef}
-            snapPoints={["85%"]}
-            index={0}
-            enablePanDownToClose={true}
-            backdropComponent={renderBackdrop}
-          >
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-              <View style={styles.otp}>
-                <OnboardingHeading
-                  title={t("OTP_SCREEN_TITLE")}
-                  desc={t("OTP_SCREEN_DESC")}
-                />
-                <CustomText style={styles.phone}>
-                  {onboardingStore.code + values.phone}
-                </CustomText>
-                <OTPInputView
-                  style={styles.verificationInputs}
-                  pinCount={6}
-                  onCodeChanged={() => setIsCodeValid(true)}
-                  autoFocusOnLoad
-                  codeInputFieldStyle={[
-                    styles.input,
-                    !isCodeValid ? styles.inputError : null,
-                  ]}
-                  codeInputHighlightStyle={styles.underlineStyleHighLighted}
-                  onCodeFilled={(code) => {
-                    submitFormHandler(code);
-                  }}
-                />
-                <View style={styles.resendWrapper}>
-                  <CustomText style={styles.text}>
-                    {t("DONT_RECEIVE_CODE") + " "}
+              ref={sheetRef}
+              snapPoints={["85%"]}
+              index={0}
+              enablePanDownToClose={true}
+              backdropComponent={renderBackdrop}
+            >
+              <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <View style={styles.otp}>
+                  <OnboardingHeading
+                    title={t("OTP_SCREEN_TITLE")}
+                    desc={t("OTP_SCREEN_DESC")}
+                  />
+                  <CustomText style={styles.phone}>
+                    {onboardingStore.code + values.phone}
                   </CustomText>
-                  <TouchableOpacity
-                    onPress={handleResend}
-                    disabled={!resendEnabled}
-                  >
-                    <CustomText
-                      style={[
-                        styles.resendText,
-                        resendEnabled && styles.resendTextActive,
-                      ]}
-                    >
-                      {resendEnabled
-                        ? t("SEND_AGAIN")
-                        : `${t("SEND_AGAIN")} ( ${timer} )`}
+                  <OTPInputView
+                    style={styles.verificationInputs}
+                    pinCount={6}
+                    onCodeChanged={() => setIsCodeValid(true)}
+                    autoFocusOnLoad
+                    codeInputFieldStyle={[
+                      styles.input,
+                      !isCodeValid ? styles.inputError : null,
+                    ]}
+                    codeInputHighlightStyle={styles.underlineStyleHighLighted}
+                    onCodeFilled={(code) => {
+                      submitFormHandler(code);
+                    }}
+                  />
+                  <View style={styles.resendWrapper}>
+                    <CustomText style={styles.text}>
+                      {t("DONT_RECEIVE_CODE") + " "}
                     </CustomText>
-                  </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={handleResend}
+                      disabled={!resendEnabled}
+                    >
+                      <CustomText
+                        style={[
+                          styles.resendText,
+                          resendEnabled && styles.resendTextActive,
+                        ]}
+                      >
+                        {resendEnabled
+                          ? t("SEND_AGAIN")
+                          : `${t("SEND_AGAIN")} ( ${timer} )`}
+                      </CustomText>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
-            </TouchableWithoutFeedback>
-          </BottomSheetModal>}
-          {alertSheetProps && <AlertSheet sheetProps={alertSheetProps} sheetRef={alertSheetRef} />}
+              </TouchableWithoutFeedback>
+            </BottomSheetModal>
+          )}
+          {alertSheetProps && (
+            <AlertSheet sheetProps={alertSheetProps} sheetRef={alertSheetRef} />
+          )}
         </>
       )}
     </Formik>
@@ -258,7 +267,7 @@ const EditPhoneScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
   },
   head: {
     alignItems: "center",

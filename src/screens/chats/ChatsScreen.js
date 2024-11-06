@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  FlatList,
+  Image,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import CustomText from "../../components/CustomText";
 import { t } from "i18next";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
@@ -39,16 +46,16 @@ const ChatsScreen = () => {
       const response = await getChatOverview();
 
       chatRoomsStore.setChatRooms(response.chatRooms);
-      chatRoomsStore.setMyChatUserName(response.myChatUser.myConnectionId);
+      chatRoomsStore.setMyChatUser(response.myChatUser);
     };
     getChats();
   }, []);
 
   useEffect(() => {
-    if (chatRoomsStore.myChatUserName) {
+    if (chatRoomsStore.myChatUser) {
       const newConnection = new SignalR.HubConnectionBuilder()
         .withUrl(
-          `https://cornyapi.azurewebsites.net/chatHub?username=${chatRoomsStore.myChatUserName}`
+          `https://cornyapi.azurewebsites.net/chatHub?username=${chatRoomsStore.myChatUser.myConnectionId}`
         )
         .withAutomaticReconnect()
         .build();
@@ -61,7 +68,7 @@ const ChatsScreen = () => {
         }
       };
     }
-  }, [chatRoomsStore.myChatUserName]);
+  }, [chatRoomsStore.myChatUser]);
 
   useEffect(() => {
     if (chatRoomsStore.connection) {
@@ -165,10 +172,11 @@ const ChatsScreen = () => {
     }
   }, [chatRoomsStore.connection]);
 
-  const messageBoxPressHandler = (chatRoomId, otherUserConnectionId) => {
+  const messageBoxPressHandler = (chatRoomId, otherUserConnectionId, otherUserImg) => {
     navigation.navigate("MessageHub", {
       chatRoomId,
       otherUserConnectionId,
+      otherUserImg
     });
     appUtils.setBottomTabStyle("none");
   };
@@ -177,7 +185,7 @@ const ChatsScreen = () => {
       style={{
         flex: 1,
         paddingTop: insets.top,
-        paddingHorizontal: 16
+        paddingHorizontal: 16,
       }}
     >
       <Tabs tabsData={TABS_DATA} />
@@ -190,22 +198,25 @@ const ChatsScreen = () => {
           </CustomText>
         </View>
       ) : (
-        <ScrollView>
-          {chatRoomsStore.chatRooms?.map((item) => {
+        <FlatList
+          data={chatRoomsStore.chatRooms.reverse()}
+          keyExtractor={(item) => item.chatRoomId.toString()}
+          renderItem={({ item }) => {
             const isIncome =
               item.messages[0]?.sender === item.otherUserConnectionId;
             const myLastSeen =
               SecureStore.getItem(`${item.chatRoomId}`) ||
               item.myUserLastReadTs;
             SecureStore.setItem(`${item.chatRoomId}`, myLastSeen);
+
             return (
               <TouchableOpacity
-                key={item.chatRoomId}
                 style={styles.messageBox}
                 onPress={() =>
                   messageBoxPressHandler(
                     item.chatRoomId,
-                    item.otherUserConnectionId
+                    item.otherUserConnectionId,
+                    item.otherUserProfileImage.imageUrl
                   )
                 }
               >
@@ -239,8 +250,8 @@ const ChatsScreen = () => {
                     ) && <View style={styles.messageDot}></View>}
               </TouchableOpacity>
             );
-          })}
-        </ScrollView>
+          }}
+        />
       )}
     </View>
   );

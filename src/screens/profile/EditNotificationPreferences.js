@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Image, StyleSheet, Switch, View } from "react-native";
+import { Dimensions, Image, StyleSheet, Switch, View } from "react-native";
 import CustomText from "../../components/CustomText";
 import { getUserNotificationPreferences } from "../../services/User/get-user-notification-preferences";
 import { postUserNotificationPreferences } from "../../services/User/send-user-notification-preferences";
@@ -94,6 +94,8 @@ const EditNotificationPreferences = () => {
   );
 };
 
+const { width } = Dimensions.get("window");
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -125,6 +127,7 @@ const styles = StyleSheet.create({
     left: 0,
     opacity: 0.1,
     zIndex: 1,
+    width: width -32
   },
   menuItems: {
     marginTop: 16,

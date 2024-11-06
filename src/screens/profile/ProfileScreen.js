@@ -10,6 +10,9 @@ import useUserStore from "../../store/useUserStore";
 import MenuItem from "./components/MenuItem";
 import { t } from "i18next";
 import { Image } from "expo-image";
+import * as SecureStore from "expo-secure-store";
+import * as Updates from "expo-updates";
+
 
 const menuData = [
   {
@@ -52,6 +55,11 @@ const menuData = [
     id: "9",
     name: t("COOKIE_POLICY"),
   },
+  {
+    id: "10",
+    name: t("LOGOUT"),
+    screen: "Logout"
+  },
 ];
 
 const ProfileScreen = () => {
@@ -59,8 +67,13 @@ const ProfileScreen = () => {
   const navigation = useNavigation();
   const userStore = useUserStore();
 
-  const menuItemPressHandler = (screen) => {
-    navigation.navigate(`${screen}`);
+  const menuItemPressHandler = async (screen) => {
+    if(screen === "Logout") {
+      await SecureStore.deleteItemAsync("refresh_token");
+      await Updates.reloadAsync();
+    } else {
+      navigation.navigate(`${screen}`);
+    }
   };
 
   useEffect(() => {

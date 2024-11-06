@@ -1,8 +1,10 @@
 import React from "react";
-import { Image, StyleSheet, View } from "react-native";
+import { Dimensions, Image, StyleSheet, View } from "react-native";
 import CustomText from "../../../components/CustomText";
+import useChatRoomsStore from "../../../store/useChatRoomsStore";
 
 const EpisodeSection = ({ image }) => {
+  const chatRoomsStore = useChatRoomsStore();
   return (
     <View style={styles.episode}>
       <Image
@@ -14,7 +16,7 @@ const EpisodeSection = ({ image }) => {
       </CustomText>
       <View style={styles.episodeImgs}>
         <Image
-          source={{ uri: image }}
+          source={{ uri: chatRoomsStore.myChatUser.myProfileImage.imageUrl }}
           style={[styles.episodeImg, styles.episodeFirstImg]}
         />
         <Image
@@ -33,6 +35,8 @@ const EpisodeSection = ({ image }) => {
     </View>
   );
 };
+
+const { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   episode: {
@@ -85,6 +89,7 @@ const styles = StyleSheet.create({
     left: 0,
     opacity: 0.3,
     zIndex: 1,
+    width: width - 32,
   },
   episodeBeverage: {
     position: "absolute",

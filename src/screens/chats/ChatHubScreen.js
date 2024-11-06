@@ -52,13 +52,11 @@ import * as Clipboard from "expo-clipboard";
 import MovieSelect from "../../components/MovieSelect";
 
 const ChatHubScreen = ({ route }) => {
-  const image =
-    "https://media.licdn.com/dms/image/v2/D4D03AQFB0oznJhn_Eg/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1707992142190?e=1729123200&v=beta&t=8WUd5YODbi2dSoWP56kqBzK3Ir47WJQG-xclk_BV0mE";
   const isFocused = useIsFocused();
   const appUtils = useAppUtils();
   const navigation = useNavigation();
   const chatRoomsStore = useChatRoomsStore();
-  const { chatRoomId, otherUserConnectionId } = route.params;
+  const { chatRoomId, otherUserConnectionId, otherUserImg } = route.params;
   const [message, setMessage] = useState("");
   const sheetRef = useRef(null);
   const likeSheetRef = useRef(null);
@@ -145,7 +143,7 @@ const ChatHubScreen = ({ route }) => {
       header: () => (
         <ChatHubHeader
           navigation={navigation}
-          userImage={image}
+          userImage={otherUserImg}
           userName={hubMessages.otherUserDisplayName}
           sheetRef={sheetRef}
           pt={insets.top}
@@ -188,7 +186,7 @@ const ChatHubScreen = ({ route }) => {
 
   const sendImageHandler = async (formData) => {
     const response = await postChatImage(
-      chatRoomsStore.myChatUserName,
+      chatRoomsStore.myChatUser.myConnectionId,
       otherUserConnectionId,
       formData
     );
@@ -280,7 +278,7 @@ const ChatHubScreen = ({ route }) => {
         formData.append("audio", file);
 
         const response = await postChatAudio(
-          chatRoomsStore.myChatUserName,
+          chatRoomsStore.myChatUser.myConnectionId,
           otherUserConnectionId,
           formData
         );
@@ -411,7 +409,7 @@ const ChatHubScreen = ({ route }) => {
             <MessageList
               messages={hubMessages.messages}
               otherUserConnectionId={otherUserConnectionId}
-              image={image}
+              image={otherUserImg}
               setPhotoModalVisible={setPhotoModalVisible}
               setPreviewPhoto={setPreviewPhoto}
               setSelectedImage={setSelectedImage}

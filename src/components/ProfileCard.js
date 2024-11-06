@@ -467,6 +467,7 @@ const styles = StyleSheet.create({
     left: 0,
     opacity: 0.3,
     zIndex: 1,
+    width: width - 32
   },
   aboutBoxDesc: {
     fontWeight: "500",

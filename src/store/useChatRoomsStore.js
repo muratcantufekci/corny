@@ -3,7 +3,7 @@ import { create } from "zustand";
 const useChatRoomsStore = create((set) => ({
   chatRooms: [],
   connection: null,
-  myChatUserName: null,
+  myChatUser: null,
   setChatRooms: (chatRoomsOrUpdater) => set((state) => {
     if (typeof chatRoomsOrUpdater === 'function') {
       return { chatRooms: chatRoomsOrUpdater(state.chatRooms) };
@@ -11,7 +11,7 @@ const useChatRoomsStore = create((set) => ({
     return { chatRooms: chatRoomsOrUpdater };
   }),
   setConnection: (connection) => set({ connection }),
-  setMyChatUserName: (myChatUserName) => set({ myChatUserName }),
+  setMyChatUser: (myChatUser) => set({ myChatUser }),
 }));
 
 export default useChatRoomsStore;

@@ -21,7 +21,7 @@ import { getUserAboutsById } from "../services/Matching/get-user-abouts-by-id";
 import { Image } from "expo-image";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { getUserTvShowsById } from "../services/Matching/get-user-tvshows-by-id";
-import SelectionBox from "./SelectionBox";
+import Close from "../assets/svg/close-circle-wrong.svg"
 
 const { width, height } = Dimensions.get("window");
 
@@ -35,6 +35,7 @@ const ProfileCard = ({
   insets,
   selectedAbouts,
   selectedInterests,
+  message,
 }) => {
   const [step, setStep] = useState(1);
   const [userInfo, setUserInfo] = useState(null);
@@ -42,6 +43,7 @@ const ProfileCard = ({
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [messageVisible, setMessageVisible] = useState(true)
   const screenWidth = Dimensions.get("window").width;
   const sheetRef = useRef(null);
 
@@ -87,7 +89,10 @@ const ProfileCard = ({
     if (page <= totalPage && !loading) {
       setLoading(true);
       const response = await getUserTvShowsById(id, page);
-      setUserAllTvShows((prevShows) => [...prevShows, ...response.data.Contents]);
+      setUserAllTvShows((prevShows) => [
+        ...prevShows,
+        ...response.data.Contents,
+      ]);
       setTotalPage(response.data.TotalPages);
       setPage(page + 1);
       setLoading(false);
@@ -114,6 +119,17 @@ const ProfileCard = ({
                 style={styles.img}
               />
             </Pressable>
+            {message && messageVisible && (
+              <View style={[
+                styles.messageContainer,
+                { top: (height + insets.bottom) / 2.6 },
+              ]}>
+                <TouchableOpacity style={styles.messageClose} onPress={() => setMessageVisible(false)}>
+                  <Close />
+                </TouchableOpacity>
+                <CustomText style={styles.message} numberOfLines={2}>{message}</CustomText>
+              </View>
+            )}
             <View
               style={[
                 styles.infoContainer,
@@ -362,8 +378,27 @@ const styles = StyleSheet.create({
   img: {
     width: "100%",
     height: height / 1.54,
-    height: height / 1.54,
     borderRadius: 12,
+  },
+  messageContainer: {
+    position: "absolute",
+    width: "100%",
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#FF524F",
+    backgroundColor: "rgba(255, 82, 79, 0.7)"
+  },
+  messageClose: {
+    position: "absolute",
+    right: 0,
+    top: -10,
+    width: 30,
+    height:30
+  },
+  message: {
+    fontWeight: "500",
+    fontSize: 14,
+    color: "#FFFFFF",
   },
   infoContainer: {
     position: "absolute",
@@ -467,7 +502,7 @@ const styles = StyleSheet.create({
     left: 0,
     opacity: 0.3,
     zIndex: 1,
-    width: width - 32
+    width: width - 32,
   },
   aboutBoxDesc: {
     fontWeight: "500",

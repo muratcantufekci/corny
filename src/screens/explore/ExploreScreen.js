@@ -251,6 +251,7 @@ const ExploreScreen = () => {
                   insets={insets}
                   selectedAbouts={userStore.cardAbouts}
                   selectedInterests={userStore.cardInterests}
+                  message={card?.SwipeMessage?.message}
                 />
               )}
               backgroundColor="none"

@@ -77,6 +77,7 @@ const LikesDetailScreen = ({ route }) => {
           id={userData.ProfileInfo.userId}
           selectedAbouts={userStore.cardAbouts}
           selectedInterests={userStore.cardInterests}
+          message={userData.SwipeMessage?.message}
         />
       )}
       {tabIndex === 0 && (

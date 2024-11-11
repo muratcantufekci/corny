@@ -9,7 +9,9 @@
     "splash": {
       "image": "./assets/splash.png"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.corny",
@@ -21,7 +23,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.anonymous.corny"
     },
     "web": {
       "favicon": "./assets/favicon.png"

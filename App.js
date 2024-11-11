@@ -1,12 +1,12 @@
 import "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
-import { AppState, StyleSheet, View } from "react-native";
+import { AppState, Linking, Platform, StyleSheet, View } from "react-native";
 import {
   createNavigationContainerRef,
   NavigationContainer,
 } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import OnboardingStartScreen from "./src/screens/onboarding/OnboardingStartScreen";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
@@ -42,7 +42,11 @@ import { t } from "i18next";
 import ChatHubScreen from "./src/screens/chats/ChatHubScreen";
 import useAppUtils from "./src/store/useAppUtils";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetModalProvider,
+} from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { authenticateWithRefreshToken } from "./src/services/Login/authenticate-with-refresh-token";
 import EditProfileScreen from "./src/screens/profile/EditProfileScreen";
@@ -75,6 +79,10 @@ import EditPhoneScreen from "./src/screens/profile/EditPhoneScreen";
 import ContactUsScreen from "./src/screens/profile/ContactUsScreen";
 import * as Updates from "expo-updates";
 import LikesDetailScreen from "./src/screens/likes/LikesDetailScreen";
+import Constants from "expo-constants";
+import { versionControl } from "./src/services/Login/version-control";
+import { Image } from "expo-image";
+import Button from "./src/components/Button";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -706,6 +714,8 @@ export default function App() {
   const [lastInactiveTime, setLastInactiveTime] = useState(null);
   const userStore = useUserStore();
   const appUtils = useAppUtils();
+  const sheetRef = useRef(null);
+  const [marketLink, setMarketLink] = useState(null)
 
   const [fontsLoaded, error] = useFonts({
     "RethinkSans-Regular": require("./src/assets/fonts/RethinkSans-Regular.ttf"),
@@ -745,29 +755,9 @@ export default function App() {
       // await SecureStore.deleteItemAsync("refresh_token"); // test amaçlı rekfresh token sıfırlayıcı
       const refreshToken = await SecureStore.getItemAsync("refresh_token");
       // let uuid = await SecureStore.getItemAsync("DEVICE_UUID_KEY");
-      // const refreshToken = "5fd59d04-950c-42d3-b854-c78754372457";
+      // const refreshToken = "63a2f537-cde3-4e9d-b0b4-80b586ccfd96";
       // const refreshToken = null;
       // console.log("tok",userStore.token);
-
-      // function generateUUID() {
-      //   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
-      //     /[xy]/g,
-      //     function (c) {
-      //       var r = (Math.random() * 16) | 0,
-      //         v = c === "x" ? r : (r & 0x3) | 0x8;
-      //       return v.toString(16);
-      //     }
-      //   );
-      // }
-
-      // try {
-      //   if (!uuid) {
-      //     uuid = generateUUID();
-      //     await SecureStore.setItemAsync("DEVICE_UUID_KEY", uuid);
-      //   }
-      // } catch (error) {
-      //   console.error("Error fetching device UUID:", error);
-      // }
 
       if (refreshToken) {
         try {
@@ -812,8 +802,31 @@ export default function App() {
       }
     };
 
+    const checkVersion = async () => {
+      const operatingSystem = Platform.OS;
+      const appVersion = Constants.expoConfig?.version;
+
+      const response = await versionControl(operatingSystem, appVersion);
+      if(response.needVersionUpdate) {
+        sheetRef.current?.present();
+        setMarketLink(response.marketUrl)
+      }
+    };
+    checkVersion();
     setUserLogin();
   }, []);
+
+  const renderBackdrop = useCallback(
+    (props) => (
+      <BottomSheetBackdrop
+        appearsOnIndex={0}
+        disappearsOnIndex={-1}
+        pressBehavior="none"
+        {...props}
+      />
+    ),
+    []
+  );
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
@@ -824,6 +837,8 @@ export default function App() {
   if (!appIsReady) {
     return null;
   }
+
+  
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -844,6 +859,20 @@ export default function App() {
             >
               {userStore.isUserLoggedIn ? <AppTabs /> : <AuthStack />}
             </NavigationContainer>
+            <BottomSheetModal
+              ref={sheetRef}
+              snapPoints={["45%"]}
+              index={0}
+              enablePanDownToClose={false}
+              backdropComponent={renderBackdrop}
+            >
+              <View style={styles.sheetContainer}>
+                <Image source={require("./src/assets/images/warning.png")} style={styles.sheetImg} />
+                <CustomText style={styles.sheetTitle}>Test</CustomText>
+                <CustomText style={styles.sheetDesc}>testsdsdfs</CustomText>
+                <Button variant="primary" onPress={() => Linking.openURL(marketLink)}>testts</Button>
+              </View>
+            </BottomSheetModal>
             <StatusBar style="dark" />
           </View>
         </SafeAreaProvider>
@@ -875,4 +904,29 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: "#000000",
   },
+  sheetContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 32,
+    alignItems: "center"
+  },
+  sheetImg: {
+    width: 102,
+    height: 102,
+    marginBottom: 16
+  },
+  sheetTitle: {
+    fontWeight: "500",
+    fontSize: 28,
+    lineHeight: 32,
+    color: "#000000",
+    textAlign: "center",
+    marginBottom: 8
+  },
+  sheetDesc: {
+    fontWeight: "400",
+    fontSize: 16,
+    lineHeight: 24,
+    color: "#51525C",
+    textAlign: "center"
+  }
 });

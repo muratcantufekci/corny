@@ -868,9 +868,9 @@ export default function App() {
             >
               <View style={styles.sheetContainer}>
                 <Image source={require("./src/assets/images/warning.png")} style={styles.sheetImg} />
-                <CustomText style={styles.sheetTitle}>Test</CustomText>
-                <CustomText style={styles.sheetDesc}>testsdsdfs</CustomText>
-                <Button variant="primary" onPress={() => Linking.openURL(marketLink)}>testts</Button>
+                <CustomText style={styles.sheetTitle}>{t("UPDATE_TITLE")}</CustomText>
+                <CustomText style={styles.sheetDesc}>{t("UPDATE_DESC")}</CustomText>
+                <Button variant="primary" onPress={() => Linking.openURL(marketLink)}>{t("UPDATE")}</Button>
               </View>
             </BottomSheetModal>
             <StatusBar style="dark" />
@@ -927,6 +927,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     color: "#51525C",
-    textAlign: "center"
+    textAlign: "center",
+    marginBottom: 20
   }
 });

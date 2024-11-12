@@ -337,6 +337,9 @@
     "MATCH_TITLE": "Eşleşme!",
     "MATCH_DESC": "Ortak dizi/film zevkine sahipsiniz!",
     "LIKE_TITLE": "Beğendin!",
-    "LIKE_DESC": "İlgisini çekebilmek için ilk hamleyi yap!"
+    "LIKE_DESC": "İlgisini çekebilmek için ilk hamleyi yap!",
+    "UPDATE_TITLE": "Güncelleme Gerekli!",
+    "UPDATE_DESC": "Uygulamayı en verimli hali ile kullanman için güncelleme yapmak gerekli.",
+    "UPDATE": "Güncelle"
   }
 }

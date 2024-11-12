@@ -337,6 +337,9 @@
     "MATCH_TITLE": "It’s a Match!",
     "MATCH_DESC": "You have a common taste in TV series/movies!",
     "LIKE_TITLE": "You liked it!",
-    "LIKE_DESC": "Make the first move to attract attention!"
+    "LIKE_DESC": "Make the first move to attract attention!",
+    "UPDATE_TITLE": "Update Required!",
+    "UPDATE_DESC": "In order to use the application in its most efficient form, it is necessary to update it.",
+    "UPDATE": "Update"
   }
 }

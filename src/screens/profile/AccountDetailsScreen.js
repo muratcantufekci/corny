@@ -7,6 +7,7 @@ import useUserStore from "../../store/useUserStore";
 import Button from "../../components/Button";
 import { useNavigation } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
+import * as Updates from "expo-updates";
 
 const menuData = [
   {
@@ -31,16 +32,18 @@ const menuData = [
 
 const AccountDetailsScreen = () => {
   const userStore = useUserStore();
-  const [modalVisible, setModalVisible] = useState(false)
+  const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
 
   const menuItemPressHandler = (screen) => {
-    navigation.navigate(`${screen}`)
-  }
+    navigation.navigate(`${screen}`);
+  };
 
   const deleteAccount = async () => {
-    await SecureStore.deleteItemAsync("refresh_token")
-  }
+    await SecureStore.deleteItemAsync("refresh_token");
+    await SecureStore.deleteItemAsync("notification_token");
+    await Updates.reloadAsync();
+  };
 
   return (
     <>
@@ -58,7 +61,9 @@ const AccountDetailsScreen = () => {
           <CustomText style={styles.deleteText}>
             {t("DELETE_ACC_TEXT")}
           </CustomText>
-          <Button variant="ghost" onPress={() => setModalVisible(true)}>{t("DELETE_ACCOUNT")}</Button>
+          <Button variant="ghost" onPress={() => setModalVisible(true)}>
+            {t("DELETE_ACCOUNT")}
+          </Button>
         </View>
       </View>
       <Modal transparent={true} animationType="slide" visible={modalVisible}>
@@ -68,11 +73,15 @@ const AccountDetailsScreen = () => {
               {t("DELETE_MODAL_TITLE")}
             </CustomText>
             <CustomText style={styles.modalDesc}>
-            {t("DELETE_MODAL_DESC")}
+              {t("DELETE_MODAL_DESC")}
             </CustomText>
             <View style={styles.btns}>
-              <Button variant="danger" onPress={deleteAccount}>{t("DELETE_PERMANENTLY")}</Button>
-              <Button variant="ghost" onPress={() => setModalVisible(false)}>{t("CANCEL")}</Button>
+              <Button variant="danger" onPress={deleteAccount}>
+                {t("DELETE_PERMANENTLY")}
+              </Button>
+              <Button variant="ghost" onPress={() => setModalVisible(false)}>
+                {t("CANCEL")}
+              </Button>
             </View>
           </View>
         </View>
@@ -85,7 +94,7 @@ const styles = StyleSheet.create({
   menu: {
     marginTop: 24,
     flex: 1,
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
   },
   deleteContainer: {
     marginTop: 70,
@@ -117,19 +126,19 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: "#000000",
     textAlign: "center",
-    marginBottom: 8
+    marginBottom: 8,
   },
   modalDesc: {
     fontWeight: "400",
     fontSize: 16,
     lineHeight: 24,
     color: "#51525C",
-    textAlign: "center"
+    textAlign: "center",
   },
   btns: {
     marginTop: 32,
-    gap: 8
-  }
+    gap: 8,
+  },
 });
 
 export default AccountDetailsScreen;

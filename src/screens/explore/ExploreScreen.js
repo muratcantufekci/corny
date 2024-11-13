@@ -26,11 +26,10 @@ import { t } from "i18next";
 import { postSwipe } from "../../services/Matching/send-swiper";
 import Quiz from "../../components/Quiz";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
-import Input from "../../components/Input";
-import { TouchableOpacity } from "react-native";
 import ArrowUp from "../../assets/svg/arrow-up-circle.svg";
 import useUserStore from "../../store/useUserStore";
 import MatchingSheet from "../../components/MatchingSheet";
+import * as SecureStore from "expo-secure-store";
 
 const registerForPushNotificationsAsync = async () => {
   let token;
@@ -45,6 +44,9 @@ const registerForPushNotificationsAsync = async () => {
   }
 
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  const notificationToken = await SecureStore.getItemAsync(
+    "notification_token"
+  );
 
   if (existingStatus !== "granted") {
     const { status } = await Notifications.requestPermissionsAsync();
@@ -59,6 +61,14 @@ const registerForPushNotificationsAsync = async () => {
     if (!response.isSuccess) {
       console.error("Failed to allow notifications.");
     }
+  } else {
+    if (!notificationToken) {
+      const response = await allowAllUserNotifications();
+
+      if (!response.isSuccess) {
+        console.error("Failed to allow notifications.");
+      }
+    }
   }
 
   token = (
@@ -66,6 +76,8 @@ const registerForPushNotificationsAsync = async () => {
       projectId: Constants.expoConfig.extra.eas.projectId,
     })
   ).data;
+
+  await SecureStore.setItemAsync("notification_token", token);
 
   const resp = await postExpoPushToken({
     expoPushToken: token,

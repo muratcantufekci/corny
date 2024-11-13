@@ -340,6 +340,8 @@
     "LIKE_DESC": "İlgisini çekebilmek için ilk hamleyi yap!",
     "UPDATE_TITLE": "Güncelleme Gerekli!",
     "UPDATE_DESC": "Uygulamayı en verimli hali ile kullanman için güncelleme yapmak gerekli.",
-    "UPDATE": "Güncelle"
+    "UPDATE": "Güncelle",
+    "LOGOUT_MODAL_TITLE": "Çıkış yapmak istediğinize emin misiniz?",
+    "LOGOUT_MODAL_DESC": "Çıkış yap butonuna basmak sizi giriş aşamasına geri döndürecektir."
   }
 }

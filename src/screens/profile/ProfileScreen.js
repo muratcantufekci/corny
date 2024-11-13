@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Modal, ScrollView, StyleSheet, View } from "react-native";
 import CustomText from "../../components/CustomText";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Button from "../../components/Button";
@@ -12,7 +12,6 @@ import { t } from "i18next";
 import { Image } from "expo-image";
 import * as SecureStore from "expo-secure-store";
 import * as Updates from "expo-updates";
-
 
 const menuData = [
   {
@@ -33,7 +32,7 @@ const menuData = [
   {
     id: "4",
     name: t("CONTACT_US"),
-    screen: "ContactUs"
+    screen: "ContactUs",
   },
   {
     id: "5",
@@ -58,7 +57,7 @@ const menuData = [
   {
     id: "10",
     name: t("LOGOUT"),
-    screen: "Logout"
+    screen: "Logout",
   },
 ];
 
@@ -66,11 +65,11 @@ const ProfileScreen = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const userStore = useUserStore();
+  const [modalVisible, setModalVisible] = useState(false);
 
-  const menuItemPressHandler = async (screen) => {
-    if(screen === "Logout") {
-      await SecureStore.deleteItemAsync("refresh_token");
-      await Updates.reloadAsync();
+  const menuItemPressHandler =  (screen) => {
+    if (screen === "Logout") {
+      setModalVisible(true)
     } else {
       navigation.navigate(`${screen}`);
     }
@@ -91,45 +90,75 @@ const ProfileScreen = () => {
     getUserInfo();
   }, []);
 
+  const logoutHandler = async () => {
+    await SecureStore.deleteItemAsync("refresh_token");
+    await Updates.reloadAsync();
+  };
+
   return (
-    <ScrollView
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ paddingBottom: insets.bottom + 55, paddingHorizontal: 16 }}
-      style={{
-        paddingTop: insets.top,
-        flex: 1,
-      }}
-    >
-      <View>
-        <View style={styles.profileHead}>
-          <Image
-            source={{ uri: userStore.userAccountDetails?.profilePicture }}
-            style={styles.profil}
-          />
-          <CustomText style={styles.name}>
-            {userStore.userAccountDetails &&
-              `${userStore.userAccountDetails.name}, ${userStore.userAccountDetails.age}`}
-          </CustomText>
-          <Button
-            variant="primary"
-            prevIcon={<Edit />}
-            style={{ width: "50%", paddingVertical: 8 }}
-            onPress={() => navigation.navigate("EditProfile")}
-          >
-            {t("EDIT_PROFILE")}
-          </Button>
+    <>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: insets.bottom + 55,
+          paddingHorizontal: 16,
+        }}
+        style={{
+          paddingTop: insets.top,
+          flex: 1,
+        }}
+      >
+        <View>
+          <View style={styles.profileHead}>
+            <Image
+              source={{ uri: userStore.userAccountDetails?.profilePicture }}
+              style={styles.profil}
+            />
+            <CustomText style={styles.name}>
+              {userStore.userAccountDetails &&
+                `${userStore.userAccountDetails.name}, ${userStore.userAccountDetails.age}`}
+            </CustomText>
+            <Button
+              variant="primary"
+              prevIcon={<Edit />}
+              style={{ width: "50%", paddingVertical: 8 }}
+              onPress={() => navigation.navigate("EditProfile")}
+            >
+              {t("EDIT_PROFILE")}
+            </Button>
+          </View>
         </View>
-      </View>
-      <View style={styles.menu}>
-        {menuData.map((item) => (
-          <MenuItem
-            key={item.id}
-            name={item.name}
-            onPress={() => menuItemPressHandler(item.screen)}
-          />
-        ))}
-      </View>
-    </ScrollView>
+        <View style={styles.menu}>
+          {menuData.map((item) => (
+            <MenuItem
+              key={item.id}
+              name={item.name}
+              onPress={() => menuItemPressHandler(item.screen)}
+            />
+          ))}
+        </View>
+      </ScrollView>
+      <Modal transparent={true} animationType="slide" visible={modalVisible}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modal}>
+            <CustomText style={styles.modalTitle}>
+              {t("LOGOUT_MODAL_TITLE")}
+            </CustomText>
+            <CustomText style={styles.modalDesc}>
+              {t("LOGOUT_MODAL_DESC")}
+            </CustomText>
+            <View style={styles.btns}>
+              <Button variant="danger" onPress={logoutHandler}>
+                {t("LOGOUT")}
+              </Button>
+              <Button variant="ghost" onPress={() => setModalVisible(false)}>
+                {t("CANCEL")}
+              </Button>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </>
   );
 };
 
@@ -152,6 +181,38 @@ const styles = StyleSheet.create({
   },
   menu: {
     marginTop: 32,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    paddingHorizontal: 22,
+  },
+  modal: {
+    backgroundColor: "#FFFFFF",
+    paddingHorizontal: 16,
+    paddingVertical: 24,
+    borderRadius: 10,
+  },
+  modalTitle: {
+    fontWeight: "600",
+    fontSize: 18,
+    lineHeight: 24,
+    color: "#000000",
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  modalDesc: {
+    fontWeight: "400",
+    fontSize: 16,
+    lineHeight: 24,
+    color: "#51525C",
+    textAlign: "center",
+  },
+  btns: {
+    marginTop: 32,
+    gap: 8,
   },
 });
 

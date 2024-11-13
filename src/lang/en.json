@@ -340,6 +340,8 @@
     "LIKE_DESC": "Make the first move to attract attention!",
     "UPDATE_TITLE": "Update Required!",
     "UPDATE_DESC": "In order to use the application in its most efficient form, it is necessary to update it.",
-    "UPDATE": "Update"
+    "UPDATE": "Update",
+    "LOGOUT_MODAL_TITLE": "Are you sure you want to log out?",
+    "LOGOUT_MODAL_DESC": "Pressing the logout button will return you to the login phase."
   }
 }

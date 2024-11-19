@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Keyboard,
   StyleSheet,
@@ -19,6 +19,7 @@ import { useNavigation } from "@react-navigation/native";
 import { postEmail } from "../../services/User/send-email";
 import { checkUserConfiguration } from "../../services/User/check-user-configurations";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import AlertSheet from "../../components/AlertSheet";
 
 const validation = Yup.object().shape({
   mail: Yup.string()
@@ -32,6 +33,8 @@ const validation = Yup.object().shape({
 const MailScreen = ({ route }) => {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
+  const [sheetProps, setSheetProps] = useState(null);
+  const sheetRef = useRef(null);
 
   useEffect(() => {
     if (route.params?.disableBack) {
@@ -50,64 +53,84 @@ const MailScreen = ({ route }) => {
       if (response.configurationCompleted) {
         navigation.navigate("OnboardingEnd");
       }
+    } else {
+      if (response.status_en === "Email already in use") {
+        setSheetProps({
+          img: require("../../assets/images/cancelled.png"),
+          title: t("UNSUCCESSFULL"),
+          desc: t("MAIL_IN_USE"),
+        });
+        sheetRef.current?.present();
+      } else {
+        setSheetProps({
+          img: require("../../assets/images/cancelled.png"),
+          title: t("UNSUCCESSFULL"),
+          desc: t("UNSUCCESSFULL_DESC"),
+        });
+        sheetRef.current?.present();
+      }
     }
   };
   return (
-    <Formik
-      initialValues={{ mail: "" }}
-      validationSchema={validation}
-      onSubmit={(values) => {
-        formSubmitHandler(values.mail);
-      }}
-    >
-      {({
-        handleChange,
-        handleBlur,
-        handleSubmit,
-        values,
-        errors,
-        touched,
-      }) => (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View
-            style={[
-              styles.container,
-              {
-                paddingBottom: insets.bottom,
-              },
-            ]}
-          >
-            <View>
-              <ProggressBar step={7} totalStep={7}/>
-              <OnboardingHeading
-                title={t("MAIL_SCREEN_TITLE")}
-                style={styles.textArea}
-              />
-              <Input
-                placeholder={t("MAIL")}
-                onChangeText={handleChange("mail")}
-                onBlur={handleBlur("mail")}
-                value={values.mail}
-                variant={
-                  (touched.mail && errors.mail && "error") ||
-                  (touched.mail && !errors.mail && "success")
-                }
-                afterIcon={
-                  (touched.mail && errors.mail && <WrongIcon />) ||
-                  (touched.mail && !errors.mail && <CorrectIcon />)
-                }
-              />
-              {touched.mail && errors.mail && (
-                <ErrorText message={errors.mail} />
-              )}
+    <>
+      <Formik
+        initialValues={{ mail: "" }}
+        validationSchema={validation}
+        onSubmit={(values) => {
+          formSubmitHandler(values.mail);
+        }}
+      >
+        {({
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          values,
+          errors,
+          touched,
+        }) => (
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View
+              style={[
+                styles.container,
+                {
+                  paddingBottom: insets.bottom,
+                },
+              ]}
+            >
+              <View>
+                <ProggressBar step={7} totalStep={7} />
+                <OnboardingHeading
+                  title={t("MAIL_SCREEN_TITLE")}
+                  style={styles.textArea}
+                />
+                <Input
+                  placeholder={t("MAIL")}
+                  onChangeText={handleChange("mail")}
+                  onBlur={handleBlur("mail")}
+                  value={values.mail}
+                  autoCapitalize="none"
+                  variant={
+                    (touched.mail && errors.mail && "error") ||
+                    (touched.mail && !errors.mail && "success")
+                  }
+                  afterIcon={
+                    (touched.mail && errors.mail && <WrongIcon />) ||
+                    (touched.mail && !errors.mail && <CorrectIcon />)
+                  }
+                />
+                {touched.mail && errors.mail && (
+                  <ErrorText message={errors.mail} />
+                )}
+              </View>
+              <Button variant="primary" onPress={handleSubmit}>
+                {t("NEXT")}
+              </Button>
             </View>
-            <Button variant="primary" onPress={handleSubmit}>
-              {t("NEXT")}
-            </Button>
-          </View>
-        </TouchableWithoutFeedback>
-      )}
-    </Formik>
+          </TouchableWithoutFeedback>
+        )}
+      </Formik>
+      {sheetProps && <AlertSheet sheetProps={sheetProps} sheetRef={sheetRef} />}
+    </>
   );
 };
 
@@ -115,7 +138,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "space-between",
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
   },
   textArea: {
     marginBottom: 24,

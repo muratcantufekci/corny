@@ -33,6 +33,8 @@ const EditMailScreen = ({ navigation }) => {
     setWaiting(true);
     if (email !== userStore.userAccountDetails.email) {
       const response = await postEmail(email);
+      console.log("response",response);
+      
 
       if (response.isSuccess) {
         userStore.setUserAccountDetails({
@@ -45,12 +47,21 @@ const EditMailScreen = ({ navigation }) => {
         });
         sheetRef.current?.present();
       } else {
-        setSheetProps({
-          img: require("../../assets/images/cancelled.png"),
-          title: t("UNSUCCESSFULL"),
-          desc: t("UNSUCCESSFULL_DESC"),
-        });
-        sheetRef.current?.present();
+        if (response.status_en === "Email already in use") {
+          setSheetProps({
+            img: require("../../assets/images/cancelled.png"),
+            title: t("UNSUCCESSFULL"),
+            desc: t("MAIL_IN_USE"),
+          });
+          sheetRef.current?.present();
+        } else {
+          setSheetProps({
+            img: require("../../assets/images/cancelled.png"),
+            title: t("UNSUCCESSFULL"),
+            desc: t("UNSUCCESSFULL_DESC"),
+          });
+          sheetRef.current?.present();
+        }
       }
     } else {
       setSheetProps({
@@ -103,6 +114,7 @@ const EditMailScreen = ({ navigation }) => {
                   value={values.email}
                   onChangeText={handleChange("email")}
                   onBlur={handleBlur("email")}
+                  autoCapitalize="none"
                   variant={
                     (touched.email && errors.email && "error") ||
                     (touched.email && !errors.email && "success")

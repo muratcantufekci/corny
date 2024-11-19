@@ -52,7 +52,7 @@ const registerForPushNotificationsAsync = async () => {
     const { status } = await Notifications.requestPermissionsAsync();
 
     if (status !== "granted") {
-      alert("Failed to get push token for push notification!");
+      alert(t("PERMISSION_NOTIFICATION"));
       return;
     }
 
@@ -191,13 +191,19 @@ const ExploreScreen = () => {
   }, [quizAnswer]);
 
   const handleOnSwiped = (cardIndex) => {
-    if (cardIndex === matches.length - 4) {
+    console.log("matches", matches.length, cardIndex);
+
+    if (cardIndex === matches.length - 10) {
       setPage((prevPage) => prevPage + 1);
     } else if (cardIndex === matches.length - 1) {
       setShowMatches(false);
     }
   };
   const handleOnLeftSwipe = async (cardIndex) => {
+    setIsSwipingEnabled(true);
+    setTimeout(() => {
+      setIsSwipingEnabled(false);
+    }, 1000);
     const data = {
       swipedUserId: matches[cardIndex].ProfileInfo.userId,
       isLike: false,
@@ -214,6 +220,17 @@ const ExploreScreen = () => {
     }, 1000);
     setQuizData(matches[cardIndex].CommonTvShowQuestion);
     setShowQuiz(true);
+  };
+
+  const handleLeftPress = () => {
+    if (isSwipingEnabled) return;
+
+    swiperRef.current.swipeLeft();
+
+    setIsButtonDisabled(true);
+    setTimeout(() => {
+      setIsButtonDisabled(false);
+    }, 1000);
   };
 
   const handleRightPress = () => {
@@ -239,14 +256,15 @@ const ExploreScreen = () => {
         <View style={styles.head}>
           <Pressable
             onPress={() => swiperRef.current.swipeBack()}
-            style={!showMatches && { opacity: 0, pointerEvents: "none" }}
+            // style={!showMatches && { opacity: 0, pointerEvents: "none" }} geriye alma etkinliği açılınca burası kullanılabilir
+            style={{ opacity: 0, pointerEvents: "none" }}
           >
             <Undo />
           </Pressable>
           <Corny />
           <Filter style={{ opacity: 0, pointerEvents: "none" }} />
         </View>
-        {showMatches ? (
+        {showMatches && matches.length > 0 ? (
           <>
             <Swiper
               cards={matches}
@@ -276,6 +294,7 @@ const ExploreScreen = () => {
               onSwipedLeft={handleOnLeftSwipe}
               onSwipedRight={handleOnRightSwipe}
               disableRightSwipe={isSwipingEnabled}
+              disableLeftSwipe={isSwipingEnabled}
               overlayLabels={{
                 left: {
                   title: "NOPE",
@@ -318,10 +337,7 @@ const ExploreScreen = () => {
               }}
             />
             <View style={styles.actionWrapper}>
-              <Pressable
-                style={styles.actionBox}
-                onPress={() => swiperRef.current.swipeLeft()}
-              >
+              <Pressable style={styles.actionBox} onPress={handleLeftPress}>
                 <Cross style={{ color: "#FFAC24" }} />
               </Pressable>
               <Pressable

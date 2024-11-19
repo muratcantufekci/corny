@@ -1,9 +1,8 @@
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   ActivityIndicator,
   Keyboard,
   Platform,
-  Pressable,
   StyleSheet,
   View,
 } from "react-native";
@@ -12,7 +11,6 @@ import * as Yup from "yup";
 import WrongIcon from "../../assets/svg/close-circle-wrong.svg";
 import CorrectIcon from "../../assets/svg/minus-tick-correct.svg";
 import { t } from "i18next";
-import CustomText from "../../components/CustomText";
 import Input from "../../components/Input";
 import AlertSheet from "../../components/AlertSheet";
 import ErrorText from "../../components/ErrorText";
@@ -35,18 +33,13 @@ const ContactUsScreen = ({ navigation }) => {
         t("MAIL_FORMAT")
       )
       .required(t("MAIL_REQUIRED")),
-    phone: Yup.string()
-      .max(10, t("PHONE_MAX_LENGTH"))
-      .min(10, t("PHONE_MIN_LENGTH"))
-      .required(t("PHONE_REQUIRED")),
     message: Yup.string().required(t("MESSAGE_REQUIRED")),
   });
 
-  const saveBtnPressHandler = async (name, email, phoneNumber, message) => {
+  const saveBtnPressHandler = async (name, email, message) => {
     setWaiting(true);
     const data = {
       message,
-      phoneNumber,
       email,
       name,
     };
@@ -55,7 +48,7 @@ const ContactUsScreen = ({ navigation }) => {
       setSheetProps({
         img: require("../../assets/images/done.png"),
         title: t("SUCCESSFULL"),
-        desc: t("SUCCESSFULL_DESC"),
+        desc: t("SUCCESSFULL_CONTACT"),
       });
       sheetRef.current?.present();
     } else {
@@ -81,7 +74,6 @@ const ContactUsScreen = ({ navigation }) => {
         initialValues={{
           name: "",
           email: "",
-          phone: "",
           message: "",
         }}
         validationSchema={validation}
@@ -90,7 +82,6 @@ const ContactUsScreen = ({ navigation }) => {
           saveBtnPressHandler(
             values.name,
             values.email,
-            values.phone,
             values.message
           ).then(() => {
             resetForm();
@@ -148,26 +139,6 @@ const ContactUsScreen = ({ navigation }) => {
                   />
                   {touched.email && errors.email && (
                     <ErrorText message={errors.email} />
-                  )}
-                </View>
-                <View>
-                  <Input
-                    placeholder={t("YOUR_PHONE_NUMBER")}
-                    onChangeText={handleChange("phone")}
-                    onBlur={handleBlur("phone")}
-                    value={values.phone}
-                    inputMode="numeric"
-                    variant={
-                      (touched.phone && errors.phone && "error") ||
-                      (touched.phone && !errors.phone && "success")
-                    }
-                    afterIcon={
-                      (touched.phone && errors.phone && <WrongIcon />) ||
-                      (touched.phone && !errors.phone && <CorrectIcon />)
-                    }
-                  />
-                  {touched.phone && errors.phone && (
-                    <ErrorText message={errors.phone} />
                   )}
                 </View>
                 <View>

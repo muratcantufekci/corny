@@ -34,28 +34,22 @@ const menuData = [
     name: t("CONTACT_US"),
     screen: "ContactUs",
   },
-  {
-    id: "5",
-    name: t("HELP"),
-  },
+  // {
+  //   id: "5",
+  //   name: t("RESTORE_PURCHASE"),
+  // },
   {
     id: "6",
-    name: t("RESTORE_PURCHASE"),
+    name: t("TERM_AND_CONDITIONS"),
+    screen: "TermsAndConditions",
   },
   {
     id: "7",
-    name: t("TERM_AND_CONDITIONS"),
+    name: t("PRIVACY_POLICY"),
+    screen: "PrivacyPolicy",
   },
   {
     id: "8",
-    name: t("PRIVACY_POLICY"),
-  },
-  {
-    id: "9",
-    name: t("COOKIE_POLICY"),
-  },
-  {
-    id: "10",
     name: t("LOGOUT"),
     screen: "Logout",
   },

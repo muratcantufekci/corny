@@ -1,17 +1,17 @@
 import * as ImagePicker from "expo-image-picker";
+import { t } from "i18next";
 
-export const selectImage = async () => {
+export const selectImage = async (allowsEditing = true) => {
   const permissionResult =
     await ImagePicker.requestMediaLibraryPermissionsAsync();
   if (permissionResult.granted === false) {
-    alert("Permission to access camera roll is required!");
+    alert(t("PERMISSION_CAMERA"));
     return;
   }
 
   const result = await ImagePicker.launchImageLibraryAsync({
     mediaTypes: ImagePicker.MediaTypeOptions.Images,
-    allowsEditing: true,
-    aspect: [4, 3],
+    allowsEditing: allowsEditing,
     quality: 0.5,
   });
 

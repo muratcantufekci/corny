@@ -1,6 +1,8 @@
 import {
   Keyboard,
+  Linking,
   StyleSheet,
+  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
@@ -18,6 +20,7 @@ import { useTranslation } from "react-i18next";
 import WrongIcon from "../../assets/svg/close-circle-wrong.svg";
 import CorrectIcon from "../../assets/svg/minus-tick-correct.svg";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import CustomText from "../../components/CustomText";
 
 const NumberScreen = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -41,6 +44,13 @@ const NumberScreen = () => {
   const pageWrapperPressHandler = () => {
     Keyboard.dismiss();
     setIsOpen(false);
+  };
+
+  const handleLinkPress = async (url) => {
+    const supported = await Linking.canOpenURL(url);
+    if (supported) {
+      await Linking.openURL(url);
+    }
   };
 
   return (
@@ -95,9 +105,34 @@ const NumberScreen = () => {
                 <ErrorText message={errors.phone} />
               )}
             </View>
-            <Button variant="primary" onPress={handleSubmit}>
-              {t("CONTİNUE")}
-            </Button>
+            <View>
+              <CustomText style={styles.acceptPolicies}>
+                {t("ACCEPT_POLICIES")}
+              </CustomText>
+              <View style={styles.policiesWrapper}>
+                <TouchableOpacity
+                  onPress={() =>
+                    handleLinkPress("https://corny-web.netlify.app/gizlilik-sozlesmesi")
+                  }
+                >
+                  <CustomText style={styles.policy}>
+                    {t("PRIVACY_POLICY")}
+                  </CustomText>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() =>
+                    handleLinkPress("https://corny-web.netlify.app/sartlar-ve-kosullar")
+                  }
+                >
+                  <CustomText style={styles.policy}>
+                    {t("TERM_AND_CONDITIONS")}
+                  </CustomText>
+                </TouchableOpacity>
+              </View>
+              <Button variant="primary" onPress={handleSubmit}>
+                {t("CONTİNUE")}
+              </Button>
+            </View>
           </View>
         </TouchableWithoutFeedback>
       )}
@@ -110,11 +145,29 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 20,
     justifyContent: "space-between",
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
   },
   content: {
     marginTop: 32,
     gap: 16,
+  },
+  acceptPolicies: {
+    fontWeight: "400",
+    fontSize: 14,
+    color: "#ACACAC",
+  },
+  policiesWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    marginTop: 4,
+    marginBottom: 24,
+  },
+  policy: {
+    fontWeight: "500",
+    fontSize: 14,
+    color: "#FF524F",
+    textDecorationLine: "underline",
   },
 });
 

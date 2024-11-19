@@ -69,7 +69,7 @@ const NavigationScreen = ({ route }) => {
           const data = {
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,
-            city: reverseGeocode[0].city,
+            city: reverseGeocode[0].region ? reverseGeocode[0].region : reverseGeocode[0].city,
             isoCountryCode: reverseGeocode[0].isoCountryCode,
           };
           try {

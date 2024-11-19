@@ -15,7 +15,7 @@ const MovieSelect = ({
   setSelectedTvShows,
   setChoiceCount,
   priorSelect = false,
-  fromAbout = false,
+  singleSelection = false,
   addition = false,
   setWarning,
   style,
@@ -33,7 +33,7 @@ const MovieSelect = ({
         const res = await getTvShowsByPopularity(page, priorSelect);
         setTvShows((prevTvShows) => [...prevTvShows, ...res.tvShows]);
         setTvShowsCopy((prevTvShows) => [...prevTvShows, ...res.tvShows]);
-        if (!fromAbout) {
+        if (!singleSelection) {
           const newSelectedTvShows = res.tvShows
             .filter((item) => item.isSelected)
             .map((item) => ({

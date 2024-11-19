@@ -382,23 +382,26 @@ const styles = StyleSheet.create({
   },
   messageContainer: {
     position: "absolute",
-    width: "100%",
     padding: 10,
     borderWidth: 1,
-    borderColor: "#FF524F",
-    backgroundColor: "rgba(255, 82, 79, 0.7)"
+    borderColor: "#FCE89E",
+    backgroundColor: "#FCE89E",
+    left: 20,
+    borderRadius: 16,
+    borderBottomLeftRadius: 0,
+    maxWidth: "90%"
   },
   messageClose: {
     position: "absolute",
-    right: 0,
+    right: -10,
     top: -10,
     width: 30,
     height:30
   },
   message: {
     fontWeight: "500",
-    fontSize: 14,
-    color: "#FFFFFF",
+    fontSize: 12,
+    color: "black",
   },
   infoContainer: {
     position: "absolute",

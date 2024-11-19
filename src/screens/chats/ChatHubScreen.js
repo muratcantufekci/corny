@@ -176,7 +176,7 @@ const ChatHubScreen = ({ route }) => {
   };
 
   const selectImageHandler = async () => {
-    const data = await selectImage();
+    const data = await selectImage(false);
     setMenuModalVisible(false);
     setSelectedImage(data.uri);
     setPhotoModalVisible(true);
@@ -218,7 +218,7 @@ const ChatHubScreen = ({ route }) => {
   const takePhoto = async () => {
     const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
     if (permissionResult.granted === false) {
-      alert("Permission to access camera is required!");
+      alert(t("PERMISSION_CAMERA"));
       return;
     }
 
@@ -535,6 +535,7 @@ const ChatHubScreen = ({ route }) => {
                 selectedTvShows={selectedTvShows}
                 setSelectedTvShows={setSelectedTvShows}
                 style={{ height: Dimensions.get("window").height / 1.5 }}
+                singleSelection
               />
             </View>
           </TouchableWithoutFeedback>

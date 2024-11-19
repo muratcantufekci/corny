@@ -83,6 +83,8 @@ import Constants from "expo-constants";
 import { versionControl } from "./src/services/Login/version-control";
 import { Image } from "expo-image";
 import Button from "./src/components/Button";
+import TermsAndConditionsScreen from "./src/screens/profile/TermsAndConditionsScreen";
+import PrivacyPolicyScreen from "./src/screens/profile/PrivacyPolicyScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -334,6 +336,28 @@ const ProfileStack = () => {
           headerTitle: () => (
             <CustomText style={styles.profileHeaderText}>
               {t("CONTACT_US")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="TermsAndConditions"
+        component={TermsAndConditionsScreen}
+        options={{
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("TERM_AND_CONDITIONS")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="PrivacyPolicy"
+        component={PrivacyPolicyScreen}
+        options={{
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("PRIVACY_POLICY")}
             </CustomText>
           ),
         }}
@@ -715,7 +739,7 @@ export default function App() {
   const userStore = useUserStore();
   const appUtils = useAppUtils();
   const sheetRef = useRef(null);
-  const [marketLink, setMarketLink] = useState(null)
+  const [marketLink, setMarketLink] = useState(null);
 
   const [fontsLoaded, error] = useFonts({
     "RethinkSans-Regular": require("./src/assets/fonts/RethinkSans-Regular.ttf"),
@@ -807,9 +831,12 @@ export default function App() {
       const appVersion = Constants.expoConfig?.version;
 
       const response = await versionControl(operatingSystem, appVersion);
-      if(response.needVersionUpdate) {
-        sheetRef.current?.present();
-        setMarketLink(response.marketUrl)
+
+      if (response.needVersionUpdate) {
+        setMarketLink(response.marketUrl);
+        setTimeout(() => {
+          sheetRef.current?.present();
+        }, 200);
       }
     };
     checkVersion();
@@ -838,8 +865,6 @@ export default function App() {
     return null;
   }
 
-  
-
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <BottomSheetModalProvider>
@@ -867,10 +892,22 @@ export default function App() {
               backdropComponent={renderBackdrop}
             >
               <View style={styles.sheetContainer}>
-                <Image source={require("./src/assets/images/warning.png")} style={styles.sheetImg} />
-                <CustomText style={styles.sheetTitle}>{t("UPDATE_TITLE")}</CustomText>
-                <CustomText style={styles.sheetDesc}>{t("UPDATE_DESC")}</CustomText>
-                <Button variant="primary" onPress={() => Linking.openURL(marketLink)}>{t("UPDATE")}</Button>
+                <Image
+                  source={require("./src/assets/images/warning.png")}
+                  style={styles.sheetImg}
+                />
+                <CustomText style={styles.sheetTitle}>
+                  {t("UPDATE_TITLE")}
+                </CustomText>
+                <CustomText style={styles.sheetDesc}>
+                  {t("UPDATE_DESC")}
+                </CustomText>
+                <Button
+                  variant="primary"
+                  onPress={() => Linking.openURL(marketLink)}
+                >
+                  {t("UPDATE")}
+                </Button>
               </View>
             </BottomSheetModal>
             <StatusBar style="dark" />
@@ -907,12 +944,12 @@ const styles = StyleSheet.create({
   sheetContainer: {
     paddingHorizontal: 16,
     paddingVertical: 32,
-    alignItems: "center"
+    alignItems: "center",
   },
   sheetImg: {
     width: 102,
     height: 102,
-    marginBottom: 16
+    marginBottom: 16,
   },
   sheetTitle: {
     fontWeight: "500",
@@ -920,7 +957,7 @@ const styles = StyleSheet.create({
     lineHeight: 32,
     color: "#000000",
     textAlign: "center",
-    marginBottom: 8
+    marginBottom: 8,
   },
   sheetDesc: {
     fontWeight: "400",
@@ -928,6 +965,6 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: "#51525C",
     textAlign: "center",
-    marginBottom: 20
-  }
+    marginBottom: 20,
+  },
 });

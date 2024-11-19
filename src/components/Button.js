@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { TouchableOpacity, Text, StyleSheet } from "react-native";
+import { TouchableOpacity, StyleSheet } from "react-native";
 import CustomText from "./CustomText";
 
 const Button = ({
@@ -12,26 +12,19 @@ const Button = ({
   prevIcon,
   ...props
 }) => {
-  const variantStyles = {
-    primary: styles.primary,
-    disable: styles.disable,
-    white: styles.white,
-    ghost: styles.ghost,
-    danger: styles.danger
-  };
-
-  const containerStyle = [styles.button, variantStyles[variant], style];
-  const textStyle = [styles.text, variantStyles[variant]];
+  const variantStyles = styles.variants[variant] || styles.variants.primary;
 
   return (
     <TouchableOpacity
       type={type}
-      style={containerStyle}
+      style={[styles.button, variantStyles.container, style]}
       disabled={disabled}
       {...props}
     >
       {prevIcon && prevIcon}
-      <CustomText style={textStyle}>{children}</CustomText>
+      <CustomText style={[styles.text, variantStyles.text]}>
+        {children}
+      </CustomText>
       {loader ?? loader}
     </TouchableOpacity>
   );
@@ -43,42 +36,63 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     borderRadius: 12,
     flexDirection: "row",
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderWidth: 1,
-    width: '100%',
-    gap: 12
+    width: "100%",
+    gap: 12,
   },
   text: {
-    color: 'white',
     fontSize: 18,
-    fontWeight: '500',
+    fontWeight: "500",
   },
-  primary: {
-    backgroundColor: 'black',
-    borderColor: 'black',
-    color: 'white',
+  variants: {
+    primary: {
+      container: {
+        backgroundColor: "black",
+        borderColor: "black",
+      },
+      text: {
+        color: "white",
+      },
+    },
+    disable: {
+      container: {
+        backgroundColor: "#D1D1D6",
+        borderColor: "#D1D1D6",
+      },
+      text: {
+        color: "#93939F",
+      },
+    },
+    white: {
+      container: {
+        backgroundColor: "white",
+        borderColor: "white",
+      },
+      text: {
+        color: "black",
+      },
+    },
+    ghost: {
+      container: {
+        backgroundColor: "#EFEFF1",
+        borderColor: "#EFEFF1",
+      },
+      text: {
+        color: "#000000",
+      },
+    },
+    danger: {
+      container: {
+        backgroundColor: "#E41F2E",
+        borderColor: "#E41F2E",
+      },
+      text: {
+        color: "#FFFFFF",
+      },
+    },
   },
-  disable: {
-    backgroundColor: '#D1D1D6',
-    borderColor: '#D1D1D6',
-    color: '#93939F',
-  },
-  white: {
-    backgroundColor: 'white',
-    borderColor: 'white',
-    color: 'black',
-  },
-  ghost: {
-    backgroundColor: "#EFEFF1",
-    borderColor: "#EFEFF1",
-    color: "#000000"
-  },
-  danger: {
-    backgroundColor: "#E41F2E",
-    borderColor: "#E41F2E",
-    color: "#FFFFFF"
-  }
 });
 
 Button.propTypes = {

@@ -30,6 +30,7 @@ import ArrowUp from "../../assets/svg/arrow-up-circle.svg";
 import useUserStore from "../../store/useUserStore";
 import MatchingSheet from "../../components/MatchingSheet";
 import * as SecureStore from "expo-secure-store";
+import WaitlistScreen from "../waitlist/WaitlistScreen";
 
 const registerForPushNotificationsAsync = async () => {
   let token;
@@ -245,6 +246,7 @@ const ExploreScreen = () => {
   };
 
   return (
+    userStore.waitListStatus == true ? 
     <>
       <View
         style={{
@@ -371,7 +373,7 @@ const ExploreScreen = () => {
         )}
       </View>
       <MatchingSheet sheetRef={sheetRef} sheetProps={sheetProps} />
-    </>
+    </> : <WaitlistScreen></WaitlistScreen>
   );
 };
 

@@ -1,20 +1,17 @@
 import "react-native-gesture-handler";
-import { StatusBar } from "expo-status-bar";
-import { AppState, Linking, Platform, StyleSheet, View } from "react-native";
-import {
-  createNavigationContainerRef,
-  NavigationContainer,
-} from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {StatusBar} from "expo-status-bar";
+import {AppState, Linking, Platform, StyleSheet, View} from "react-native";
+import {createNavigationContainerRef, NavigationContainer,} from "@react-navigation/native";
+import {createStackNavigator} from "@react-navigation/stack";
+import {useCallback, useEffect, useRef, useState} from "react";
 import OnboardingStartScreen from "./src/screens/onboarding/OnboardingStartScreen";
-import { useFonts } from "expo-font";
+import {useFonts} from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import NumberScreen from "./src/screens/onboarding/NumberScreen";
 import PhoneCodeScreen from "./src/screens/onboarding/PhoneCodeScreen";
 import NavigationScreen from "./src/screens/onboarding/NavigationScreen";
 import NameScreen from "./src/screens/onboarding/NameScreen";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import "./src/lang/i18n";
 import PhotoScreen from "./src/screens/onboarding/PhotoScreen";
 import MovieScreen from "./src/screens/onboarding/MovieScreen";
@@ -25,7 +22,7 @@ import OnboardingEndScreen from "./src/screens/onboarding/OnboardingEndScreen";
 import Back from "./src/assets/svg/arrow-left.svg";
 import * as SecureStore from "expo-secure-store";
 import useUserStore from "./src/store/useUserStore";
-import { checkUserConfiguration } from "./src/services/User/check-user-configurations";
+import {checkUserConfiguration} from "./src/services/User/check-user-configurations";
 import ExploreScreen from "./src/screens/explore/ExploreScreen";
 import LikesScreen from "./src/screens/likes/LikesScreen";
 import ChatsScreen from "./src/screens/chats/ChatsScreen";
@@ -38,17 +35,13 @@ import ChatsPassive from "./src/assets/svg/chat-passive.svg";
 import ChatsActive from "./src/assets/svg/chats-active.svg";
 import ProfilePassive from "./src/assets/svg/user.svg";
 import ProfileActive from "./src/assets/svg/user-active.svg";
-import { t } from "i18next";
+import {t} from "i18next";
 import ChatHubScreen from "./src/screens/chats/ChatHubScreen";
 import useAppUtils from "./src/store/useAppUtils";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import {
-  BottomSheetBackdrop,
-  BottomSheetModal,
-  BottomSheetModalProvider,
-} from "@gorhom/bottom-sheet";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { authenticateWithRefreshToken } from "./src/services/Login/authenticate-with-refresh-token";
+import {SafeAreaProvider} from "react-native-safe-area-context";
+import {BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider,} from "@gorhom/bottom-sheet";
+import {GestureHandlerRootView} from "react-native-gesture-handler";
+import {authenticateWithRefreshToken} from "./src/services/Login/authenticate-with-refresh-token";
 import EditProfileScreen from "./src/screens/profile/EditProfileScreen";
 import CustomText from "./src/components/CustomText";
 import AccountDetailsScreen from "./src/screens/profile/AccountDetailsScreen";
@@ -80,8 +73,8 @@ import ContactUsScreen from "./src/screens/profile/ContactUsScreen";
 import * as Updates from "expo-updates";
 import LikesDetailScreen from "./src/screens/likes/LikesDetailScreen";
 import Constants from "expo-constants";
-import { versionControl } from "./src/services/Login/version-control";
-import { Image } from "expo-image";
+import {versionControl} from "./src/services/Login/version-control";
+import {Image} from "expo-image";
 import Button from "./src/components/Button";
 import TermsAndConditionsScreen from "./src/screens/profile/TermsAndConditionsScreen";
 import PrivacyPolicyScreen from "./src/screens/profile/PrivacyPolicyScreen";
@@ -831,6 +824,13 @@ export default function App() {
       const appVersion = Constants.expoConfig?.version;
 
       const response = await versionControl(operatingSystem, appVersion);
+      if (response.waitlist == null) {
+            userStore.setWaitListStatus(false);
+      } else {
+            userStore.setWaitListStatus(response?.waitlist?.waitlistActive);
+            userStore.setWaitlistCounter(response.waitlist.waitListCounter);
+            userStore.setWaitlistTarget(response.waitlist.waitListTarget);
+      }
 
       if (response.needVersionUpdate) {
         setMarketLink(response.marketUrl);

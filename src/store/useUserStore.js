@@ -8,6 +8,9 @@ const useUserStore = create((set) => ({
   userTvShows: [],
   cardAbouts: [],
   cardInterests: [],
+  waitListStatus: false,
+  waitListCounter: 1,
+  waitListTarget: 500,
   setToken: (token) => set({ token }),
   setIsUserLoggedIn: (isUserLoggedIn) => set({ isUserLoggedIn }),
   setUserAccountDetails: (newDetails) =>
@@ -37,6 +40,9 @@ const useUserStore = create((set) => ({
     setUserTvShows: (userTvShows) => set({ userTvShows }),
     setcardAbouts: (cardAbouts) => set({ cardAbouts }),
     setcardInterests: (cardInterests) => set({ cardInterests }),
+    setWaitListStatus: (status) => set({ status }),
+    setWaitlistCounter: (counter) => set({counter}),
+    setWaitlistTarget: (targetCount) => set({targetCount}),
 }));
 
 export default useUserStore;

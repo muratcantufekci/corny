@@ -94,9 +94,9 @@ const NavigationScreen = ({ route }) => {
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
     } else {
-      Alert.alert("İzin verilmedi", "Konum izni gerekli", [
-        { text: "İptal", style: "cancel" },
-        { text: "Ayarlar", onPress: () => openSettings() },
+      Alert.alert(t("ALERT"), t("PERMISSION_LOCATION"), [
+        { text: t("CANCEL"), style: "cancel" },
+        { text: t("OPEN_SETTINGS"), onPress: () => openSettings() },
       ]);
     }
     setLoading(false);

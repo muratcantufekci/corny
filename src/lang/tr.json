@@ -97,7 +97,7 @@
     "ABOUT_ME": "Hakkımda",
     "HEIGHT": "Boy(cm)",
     "WORKINDUSTRY": "Sektör",
-    "LOOKINGFOR": "Aradığı",
+    "LOOKINGFOR": "Ne Arıyorsun ?",
     "EATINGHABIT": "Beslenme Alışkanlığı",
     "RELIGIOUSVIEW": "Dini Görüş",
     "EDUCATION": "Eğitim",
@@ -397,6 +397,12 @@
     "PRIVACY_POLICY_P15": "Uygulamayı kullanarak, bilgilerinizin bu Gizlilik Politikasında belirtilen şekilde işlenmesini kabul etmiş oluyorsunuz.",
     "PRIVACY_POLICY_P16": "Uygulamayı kullanırken gizlilikle ilgili herhangi bir sorunuz varsa veya uygulamalar hakkında sorularınız varsa, info@cornyapp.com adresinden Hizmet Sağlayıcı ile iletişime geçebilirsiniz.",
     "MAIL_IN_USE": "Bu mail kullanılmaktadır!",
-    "ACCEPT_POLICIES": "Devam ederek şu politikaları kabul etmiş olacaksınız:"
+    "ACCEPT_POLICIES": "Devam ederek şu politikaları kabul etmiş olacaksınız:",
+    "SEASON": "1. Sezon 1. Bölüm",
+    "MATCHED": "Corny'de eşleşti!",
+    "AND": "ve",
+    "ALERT": "Uyarı",
+    "OK": "Tamam",
+    "PERMISSION_LOCATION": "Konum izni gerekli"
   }
 }

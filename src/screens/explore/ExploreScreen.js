@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
+  Alert,
   Dimensions,
   Platform,
   Pressable,
@@ -53,7 +54,11 @@ const registerForPushNotificationsAsync = async () => {
     const { status } = await Notifications.requestPermissionsAsync();
 
     if (status !== "granted") {
-      alert(t("PERMISSION_NOTIFICATION"));
+      Alert.alert(t("ALERT"), t("PERMISSION_NOTIFICATION"), [
+        {
+          text: t("OK"),
+        },
+      ]);
       return;
     }
 
@@ -92,6 +97,7 @@ const ExploreScreen = () => {
   const insets = useSafeAreaInsets();
   const [expoPushToken, setExpoPushToken] = useState("");
   const [matches, setMatches] = useState([]);
+  const [excludeIds, setExcludeIds] = useState([]);
   const [showMatches, setShowMatches] = useState(true);
   const [showQuiz, setShowQuiz] = useState(false);
   const [quizData, setQuizData] = useState(null);
@@ -107,7 +113,7 @@ const ExploreScreen = () => {
 
   useEffect(() => {
     const getMatches = async () => {
-      const response = await getPotentialMatches(page);
+      const response = await getPotentialMatches(page, excludeIds);
       setMatches((prevData) => [...prevData, ...response.MatchUser.Contents]);
     };
     getMatches();
@@ -192,9 +198,9 @@ const ExploreScreen = () => {
   }, [quizAnswer]);
 
   const handleOnSwiped = (cardIndex) => {
-    console.log("matches", matches.length, cardIndex);
-
-    if (cardIndex === matches.length - 10) {
+    if (cardIndex === matches.length - 11) {
+      const lastTenIds = matches.slice(-10).map((match) => match.UserId);
+      setExcludeIds(lastTenIds);
       setPage((prevPage) => prevPage + 1);
     } else if (cardIndex === matches.length - 1) {
       setShowMatches(false);
@@ -204,7 +210,7 @@ const ExploreScreen = () => {
     setIsSwipingEnabled(true);
     setTimeout(() => {
       setIsSwipingEnabled(false);
-    }, 1000);
+    }, 500);
     const data = {
       swipedUserId: matches[cardIndex].ProfileInfo.userId,
       isLike: false,
@@ -231,7 +237,7 @@ const ExploreScreen = () => {
     setIsButtonDisabled(true);
     setTimeout(() => {
       setIsButtonDisabled(false);
-    }, 1000);
+    }, 500);
   };
 
   const handleRightPress = () => {
@@ -245,8 +251,9 @@ const ExploreScreen = () => {
     }, 1000);
   };
 
-  return (
-    userStore.waitListStatus == true ? 
+  return userStore.waitListStatus ? (
+    <WaitlistScreen />
+  ) : (
     <>
       <View
         style={{
@@ -373,7 +380,7 @@ const ExploreScreen = () => {
         )}
       </View>
       <MatchingSheet sheetRef={sheetRef} sheetProps={sheetProps} />
-    </> : <WaitlistScreen></WaitlistScreen>
+    </>
   );
 };
 

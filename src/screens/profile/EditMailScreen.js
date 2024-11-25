@@ -115,6 +115,7 @@ const EditMailScreen = ({ navigation }) => {
                   onChangeText={handleChange("email")}
                   onBlur={handleBlur("email")}
                   autoCapitalize="none"
+                  inputMode="email"
                   variant={
                     (touched.email && errors.email && "error") ||
                     (touched.email && !errors.email && "success")

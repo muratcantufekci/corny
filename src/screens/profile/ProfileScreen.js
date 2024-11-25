@@ -74,7 +74,7 @@ const ProfileScreen = () => {
       const response = await getAccountDetails();
 
       userStore.setUserAccountDetails({
-        profilePicture: response.account.profileImage.imageUrl,
+        profilePicture: response.account.profileImage?.imageUrl,
         name: response.account.name,
         age: response.account.age,
         email: response.account.email,

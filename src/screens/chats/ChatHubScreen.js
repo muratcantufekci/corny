@@ -7,6 +7,7 @@ import React, {
   useState,
 } from "react";
 import {
+  Alert,
   Dimensions,
   Image,
   Keyboard,
@@ -218,7 +219,11 @@ const ChatHubScreen = ({ route }) => {
   const takePhoto = async () => {
     const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
     if (permissionResult.granted === false) {
-      alert(t("PERMISSION_CAMERA"));
+      Alert.alert(t("ALERT"), t("PERMISSION_CAMERA"), [
+        {
+          text: t("OK"),
+        },
+      ]);
       return;
     }
 
@@ -441,7 +446,7 @@ const ChatHubScreen = ({ route }) => {
                 style={styles.messageReplyIcon}
                 onPress={() => setReplyMessage(null)}
               >
-                <Cross style={{color: "#2F384C"}} />
+                <Cross style={{ color: "#2F384C" }} />
               </TouchableOpacity>
             </View>
           )}
@@ -450,7 +455,7 @@ const ChatHubScreen = ({ route }) => {
               style={styles.plusIcon}
               onPress={() => setMenuModalVisible(true)}
             >
-              <Plus style={{color: "black"}}/>
+              <Plus style={{ color: "black" }} />
             </TouchableOpacity>
             <View style={styles.inputWrapper}>
               <Input
@@ -626,7 +631,7 @@ const ChatHubScreen = ({ route }) => {
             style={styles.photoModalCross}
             onPress={() => setPhotoModalVisible(false)}
           >
-            <Cross width={24} height={24} style={{color: "#2F384C"}} />
+            <Cross width={24} height={24} style={{ color: "#2F384C" }} />
           </TouchableOpacity>
           <Image
             source={{ uri: selectedImage }}

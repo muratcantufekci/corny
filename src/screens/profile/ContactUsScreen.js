@@ -128,6 +128,7 @@ const ContactUsScreen = ({ navigation }) => {
                     onChangeText={handleChange("email")}
                     onBlur={handleBlur("email")}
                     value={values.email}
+                    inputMode="email"
                     variant={
                       (touched.email && errors.email && "error") ||
                       (touched.email && !errors.email && "success")

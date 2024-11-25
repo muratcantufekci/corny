@@ -1,16 +1,12 @@
 import axios from "axios";
 import useUserStore from "../store/useUserStore";
-// const getBaseHeaders = (headers) => {
-//   return {
-//     ...headers
-//   };
-// };
+import * as SecureStore from "expo-secure-store";
 
 class Request {
   constructor(apiUrl) {
     this.instance = axios.create({
       headers: {
-        // ...getBaseHeaders(),
+        Lang: SecureStore.getItem("userLanguage")
       },
       baseURL: apiUrl,
     });

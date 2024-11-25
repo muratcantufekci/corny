@@ -1,11 +1,16 @@
 import * as ImagePicker from "expo-image-picker";
 import { t } from "i18next";
+import { Alert } from "react-native";
 
 export const selectImage = async (allowsEditing = true) => {
   const permissionResult =
     await ImagePicker.requestMediaLibraryPermissionsAsync();
   if (permissionResult.granted === false) {
-    alert(t("PERMISSION_CAMERA"));
+    Alert.alert(t("ALERT"), t("PERMISSION_CAMERA"), [
+      {
+        text: t("OK"),
+      },
+    ]);
     return;
   }
 

@@ -20,6 +20,7 @@ const SelectionBox = ({
   deleteFunc,
   onLongPress,
   isShaking,
+  availableDelete = true
 }) => {
   const rotation = useRef(new Animated.Value(0)).current;
 
@@ -97,7 +98,7 @@ const SelectionBox = ({
             <Plus style={{color: "black"}} />
           </View>
         )}
-        {selected && !isMovie && (
+        {selected && availableDelete && !isMovie && (
           <TouchableOpacity style={styles.closeIcon} onPress={deleteFunc}>
             <Close width={30} height={30} />
           </TouchableOpacity>

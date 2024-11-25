@@ -109,6 +109,7 @@ const MailScreen = ({ route }) => {
                   onBlur={handleBlur("mail")}
                   value={values.mail}
                   autoCapitalize="none"
+                  inputMode="email"
                   variant={
                     (touched.mail && errors.mail && "error") ||
                     (touched.mail && !errors.mail && "success")

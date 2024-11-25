@@ -13,11 +13,13 @@ const EditHeightScreen = ({ navigation }) => {
   const [sheetProps, setSheetProps] = useState(null);
   const [waiting, setWaiting] = useState(false);
   const [selectedHeight, setSelectedHeight] = useState(
-    userStore.userAbouts.find((item) => item.title === "Height")?.values
+    userStore.userAbouts.find((item) => item.title === "Height")?.values[0]
   );
+  console.log("selected",selectedHeight);
+  
   const initialHeight = userStore.userAbouts.find(
     (item) => item.title === "Height"
-  )?.values;
+  )?.values[0];
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -43,10 +45,12 @@ const EditHeightScreen = ({ navigation }) => {
     if (initialHeight !== selectedHeight) {
       const data = {
         title: "Height",
-        values: selectedHeight,
+        values: [selectedHeight],
       };
 
       const response = await postUserAbouts(data);
+      console.log("res",response);
+      
 
       if (response.isSuccess) {
         setSheetProps({
@@ -76,14 +80,14 @@ const EditHeightScreen = ({ navigation }) => {
     <View style={styles.container}>
       <Picker
         selectedValue={selectedHeight}
-        onValueChange={(itemValue) => setSelectedHeight([itemValue])}
+        onValueChange={(itemValue) => setSelectedHeight(itemValue)}
         mode="dropdown"
       >
-        <Picker.Item label="<90 cm" value="<90" />
+        <Picker.Item label="<90 cm" value="90" />
         {Array.from({ length: 129 }, (_, i) => (
           <Picker.Item key={i} label={`${i + 91} cm`} value={`${i + 91}`} />
         ))}
-        <Picker.Item label="220> cm" value="220>" />
+        <Picker.Item label="220> cm" value="220" />
       </Picker>
       {sheetProps && <AlertSheet sheetProps={sheetProps} sheetRef={sheetRef} />}
     </View>

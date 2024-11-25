@@ -2,8 +2,9 @@ import React from "react";
 import { Dimensions, Image, StyleSheet, View } from "react-native";
 import CustomText from "../../../components/CustomText";
 import useChatRoomsStore from "../../../store/useChatRoomsStore";
+import { t } from "i18next";
 
-const EpisodeSection = ({ image }) => {
+const EpisodeSection = ({ image, displayName }) => {
   const chatRoomsStore = useChatRoomsStore();
   return (
     <View style={styles.episode}>
@@ -12,7 +13,9 @@ const EpisodeSection = ({ image }) => {
         style={styles.episodeNoise}
       />
       <CustomText style={styles.episodeText}>
-        Season 1, Episode 1 - The One who Matt and Lydia matches in Corny!
+        {`${t("SEASON")} - ${chatRoomsStore.myChatUser.myDisplayName} ${t(
+          "AND"
+        )} ${displayName} ${t("MATCHED")}`}
       </CustomText>
       <View style={styles.episodeImgs}>
         <Image

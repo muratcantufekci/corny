@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "377457788498",
+    "project_id": "corny-e721b",
+    "storage_bucket": "corny-e721b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:377457788498:android:9e908fe0bfef1d00e3c18b",
+        "android_client_info": {
+          "package_name": "com.anonymous.corny"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBOOJQ9xlAtk7dKnplXxq1hXPLydm18z8w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

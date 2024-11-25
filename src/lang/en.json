@@ -397,6 +397,12 @@
     "PRIVACY_POLICY_P15": "By using the App, you agree to the processing of your information as described in this Privacy Policy.",
     "PRIVACY_POLICY_P16": "If you have any questions regarding privacy while using the App or have questions about their practices, please contact the Service Provider at info@cornyapp.com.",
     "MAIL_IN_USE": "This email is being used!",
-    "ACCEPT_POLICIES": "By continuing, you agree to these policies:"
+    "ACCEPT_POLICIES": "By continuing, you agree to these policies:",
+    "SEASON": "Season 1 Episode 1",
+    "MATCHED": "matched in Corny!",
+    "AND": "and",
+    "ALERT": "Alert",
+    "OK": "Okay",
+    "PERMISSION_LOCATION": "Location permission required"
   }
 }

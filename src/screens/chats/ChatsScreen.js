@@ -45,7 +45,7 @@ const ChatsScreen = () => {
     const getChats = async () => {
       const response = await getChatOverview();
 
-      chatRoomsStore.setChatRooms(response.chatRooms);
+      chatRoomsStore.setChatRooms(response.chatRooms.reverse());
       chatRoomsStore.setMyChatUser(response.myChatUser);
     };
     getChats();
@@ -199,7 +199,7 @@ const ChatsScreen = () => {
         </View>
       ) : (
         <FlatList
-          data={chatRoomsStore.chatRooms.reverse()}
+          data={chatRoomsStore.chatRooms}
           keyExtractor={(item) => item.chatRoomId.toString()}
           renderItem={({ item }) => {
             const isIncome =

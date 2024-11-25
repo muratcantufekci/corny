@@ -87,6 +87,7 @@ const PhotoSelect = ({
               : null
           }
           selected={selectedImages.length >= index + 1 ? true : false}
+          availableDelete={selectedImages.length <= 1 ? false : true}
           onLongPress={() => {
             setLongPressesIndex(index);
             setIsShaking(true);
@@ -95,7 +96,7 @@ const PhotoSelect = ({
         />
       ))}
     </View>
-  ); 
+  );
 };
 
 const styles = StyleSheet.create({

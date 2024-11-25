@@ -23,6 +23,7 @@ import { getChatroomMessages } from "../../../services/Chat/get-chatroom-message
 import useChatRoomsStore from "../../../store/useChatRoomsStore";
 import { t } from "i18next";
 import { goToChatMessage } from "../../../services/Chat/go-to-chat-message";
+import * as SecureStore from "expo-secure-store";
 
 const SWIPE_THRESHOLD = 70;
 const SCROLL_THRESHOLD = 10;
@@ -43,7 +44,7 @@ const MessageList = ({
   setSelectedMessage,
   likesPressHandler,
 }) => {
-  const locale = navigator.language || "tr-TR";
+  const locale = SecureStore.getItem("userLanguage") || "tr";
   const formatter = new Intl.DateTimeFormat(locale, {
     day: "numeric",
     month: "long",
@@ -494,7 +495,7 @@ const MessageList = ({
       initialNumToRender={500}
       ListFooterComponent={
         <View>
-          <EpisodeSection image={image} />
+          <EpisodeSection image={image} displayName={otherUserName}/>
           {loading && <ActivityIndicator />}
         </View>
       }

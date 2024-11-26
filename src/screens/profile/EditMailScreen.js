@@ -33,8 +33,6 @@ const EditMailScreen = ({ navigation }) => {
     setWaiting(true);
     if (email !== userStore.userAccountDetails.email) {
       const response = await postEmail(email);
-      console.log("response",response);
-      
 
       if (response.isSuccess) {
         userStore.setUserAccountDetails({

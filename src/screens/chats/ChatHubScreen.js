@@ -147,7 +147,7 @@ const ChatHubScreen = ({ route }) => {
           userImage={otherUserImg}
           userName={hubMessages.otherUserDisplayName}
           sheetRef={sheetRef}
-          pt={insets.top}
+          pt={insets.top + 16}
         />
       ),
     });
@@ -409,7 +409,7 @@ const ChatHubScreen = ({ route }) => {
         behavior={!holdScreen && (Platform.OS === "ios" ? "padding" : "height")}
         keyboardVerticalOffset={Platform.OS === "ios" ? 120 : 0}
       >
-        <View style={[styles.container, { paddingBottom: insets.bottom }]}>
+        <View style={[styles.container, { paddingBottom: insets.bottom + 16 }]}>
           <View style={styles.messageContainer}>
             <MessageList
               messages={hubMessages.messages}

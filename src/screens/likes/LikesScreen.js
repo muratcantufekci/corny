@@ -129,7 +129,7 @@ const LikesScreen = () => {
   return (
     <View
       style={{
-        paddingTop: insets.top + 20,
+        paddingTop: insets.top + 36,
         flex: 1,
         paddingHorizontal: 16,
       }}

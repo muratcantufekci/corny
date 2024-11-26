@@ -41,7 +41,7 @@ const PhotoScreen = ({ route }) => {
       style={[
         styles.container,
         {
-          paddingBottom: insets.bottom,
+          paddingBottom: insets.bottom + 16,
         },
       ]}
     >

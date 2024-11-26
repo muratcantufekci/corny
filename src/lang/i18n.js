@@ -11,6 +11,7 @@ const resources = {
 };
 
 const deviceLanguage = SecureStore.getItem("userLanguage") || Localization.locale.split('-')[0];
+SecureStore.setItem("userLanguage", deviceLanguage)
 
 i18n.use(initReactI18next).init({
   compatibilityJSON: "v3",

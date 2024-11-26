@@ -184,7 +184,7 @@ const ChatsScreen = () => {
     <View
       style={{
         flex: 1,
-        paddingTop: insets.top,
+        paddingTop: insets.top + 16,
         paddingHorizontal: 16,
       }}
     >

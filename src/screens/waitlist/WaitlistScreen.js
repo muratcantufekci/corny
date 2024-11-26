@@ -83,7 +83,7 @@ const WaitlistScreen = () => {
   });
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar style="light" />
       <LinearGradient
         colors={['#FF524F', '#FFE6E5']}
@@ -157,7 +157,7 @@ const WaitlistScreen = () => {
           </Text>
         </View>
       </LinearGradient>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginTop: IS_SMALL_DEVICE ? 5 : 10,
+    marginTop: IS_SMALL_DEVICE ? 25: 50,
     marginBottom: IS_SMALL_DEVICE ? 10 : 20,
   },
   title: {

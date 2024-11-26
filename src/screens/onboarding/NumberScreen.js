@@ -72,7 +72,7 @@ const NumberScreen = () => {
             style={[
               styles.container,
               {
-                paddingBottom: insets.bottom,
+                paddingBottom: insets.bottom + 16,
               },
             ]}
           >

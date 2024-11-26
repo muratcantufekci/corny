@@ -831,13 +831,13 @@ export default function App() {
       const appVersion = Constants.expoConfig?.version;
 
       const response = await versionControl(operatingSystem, appVersion);
-      
+
       if (!response.waitlist?.waitlistActive) {
         userStore.setWaitListStatus(false);
       } else {
         userStore.setWaitListStatus(response?.waitlist?.waitlistActive);
-        userStore.setWaitlistCounter(response.waitlist.waitListCounter);
-        userStore.setWaitlistTarget(response.waitlist.waitListTarget);
+        userStore.setWaitlistCounter(response.waitlist.waitlistCounter);
+        userStore.setWaitlistTarget(response.waitlist.waitlistTarget);
       }
 
       if (response.needVersionUpdate) {
@@ -941,7 +941,6 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     flex: 1,
-    paddingVertical: 16,
   },
   profileHeaderText: {
     fontWeight: "400",

@@ -15,7 +15,6 @@ const EditHeightScreen = ({ navigation }) => {
   const [selectedHeight, setSelectedHeight] = useState(
     userStore.userAbouts.find((item) => item.title === "Height")?.values[0]
   );
-  console.log("selected",selectedHeight);
   
   const initialHeight = userStore.userAbouts.find(
     (item) => item.title === "Height"
@@ -49,8 +48,6 @@ const EditHeightScreen = ({ navigation }) => {
       };
 
       const response = await postUserAbouts(data);
-      console.log("res",response);
-      
 
       if (response.isSuccess) {
         setSheetProps({

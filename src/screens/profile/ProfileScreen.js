@@ -94,11 +94,11 @@ const ProfileScreen = () => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          paddingBottom: insets.bottom + 55,
+          paddingBottom: insets.bottom + 71,
           paddingHorizontal: 16,
         }}
         style={{
-          paddingTop: insets.top,
+          paddingTop: insets.top + 16,
           flex: 1,
         }}
       >

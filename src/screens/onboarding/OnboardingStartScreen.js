@@ -19,7 +19,7 @@ const OnboardingStartScreen = () => {
       style={[
         styles.container,
         {
-          paddingBottom: insets.bottom,
+          paddingBottom: insets.bottom + 16,
         },
       ]}
     >
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#fff",
     justifyContent: "space-between",
-    paddingHorizontal: 16
+    padding: 16
   },
   img: {
     marginTop: imgMargin,

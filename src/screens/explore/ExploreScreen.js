@@ -257,9 +257,10 @@ const ExploreScreen = () => {
     <>
       <View
         style={{
-          marginTop: insets.top,
+          marginTop: insets.top + 16,
           flex: 1,
           paddingHorizontal: 16,
+          marginBottom: 16
         }}
       >
         <View style={styles.head}>

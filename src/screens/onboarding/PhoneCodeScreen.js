@@ -108,7 +108,7 @@ const PhoneCodeScreen = () => {
         style={[
           styles.wrapper,
           {
-            paddingBottom: insets.bottom,
+            paddingBottom: insets.bottom + 16,
           },
         ]}
       >

@@ -55,7 +55,7 @@ const MovieScreen = ({ route }) => {
         style={[
           styles.container,
           {
-            paddingBottom: insets.bottom,
+            paddingBottom: insets.bottom + 16,
           },
         ]}
       >
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   },
   btn: {
     position: "absolute",
-    bottom: 16,
+    bottom: 32,
     left: 16,
     right: 16
   },

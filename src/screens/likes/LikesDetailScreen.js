@@ -105,7 +105,7 @@ const { height, width } = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16,
+    padding: 16,
   },
   actionWrapper: {
     position: "absolute",

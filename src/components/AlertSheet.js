@@ -27,7 +27,7 @@ const AlertSheet = ({ sheetProps, sheetRef }) => {
         <Image source={sheetProps.img} style={styles.img}/>
         <CustomText style={styles.title}>{sheetProps.title}</CustomText>
         <CustomText style={styles.desc}>{sheetProps.desc}</CustomText>
-        {sheetProps.btnText && <Button variant="primary">{sheetProps.btnText}</Button>}
+        {sheetProps.btnText && <Button variant="primary" onPress={sheetProps.btnPress} style={styles.btn}>{sheetProps.btnText}</Button>}
       </View>
     </BottomSheetModal>
   );
@@ -58,6 +58,9 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: "#51525C",
     textAlign: "center"
+  },
+  btn: {
+    marginTop: 24
   }
 });
 

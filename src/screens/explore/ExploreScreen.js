@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Alert,
   Dimensions,
+  Linking,
   Platform,
   Pressable,
   StyleSheet,
@@ -32,8 +33,9 @@ import useUserStore from "../../store/useUserStore";
 import MatchingSheet from "../../components/MatchingSheet";
 import * as SecureStore from "expo-secure-store";
 import WaitlistScreen from "../waitlist/WaitlistScreen";
+import AlertSheet from "../../components/AlertSheet";
 
-const registerForPushNotificationsAsync = async () => {
+const registerForPushNotificationsAsync = async (setAlertSheetProps, sheetRef) => {
   let token;
 
   if (Platform.OS === "android") {
@@ -54,11 +56,14 @@ const registerForPushNotificationsAsync = async () => {
     const { status } = await Notifications.requestPermissionsAsync();
 
     if (status !== "granted") {
-      Alert.alert(t("ALERT"), t("PERMISSION_NOTIFICATION"), [
-        {
-          text: t("OK"),
-        },
-      ]);
+      setAlertSheetProps({
+        img: require("../../assets/images/warning.png"),
+        title: t("WARNING"),
+        desc: t("PERMISSION_NOTIFICATION"),
+        btnText: t("OPEN_SETTINGS"),
+        btnPress: openSettings
+      });
+      sheetRef.current?.present();
       return;
     }
 
@@ -93,6 +98,14 @@ const registerForPushNotificationsAsync = async () => {
   return token;
 };
 
+const openSettings = () => {
+  if (Platform.OS === "ios") {
+    Linking.openURL("app-settings:");
+  } else {
+    Linking.openSettings();
+  }
+};
+
 const ExploreScreen = () => {
   const insets = useSafeAreaInsets();
   const [expoPushToken, setExpoPushToken] = useState("");
@@ -108,7 +121,9 @@ const ExploreScreen = () => {
   const [cardIndex, setCardIndex] = useState(0);
   const swiperRef = useRef(null);
   const sheetRef = useRef(null);
+  const alertSheetRef = useRef(null);
   const [sheetProps, setSheetProps] = useState(null);
+  const [alertSheetProps, setAlertSheetProps] = useState(null);
   const userStore = useUserStore();
 
   useEffect(() => {
@@ -120,7 +135,7 @@ const ExploreScreen = () => {
   }, [page]);
 
   useEffect(() => {
-    registerForPushNotificationsAsync().then((token) => {
+    registerForPushNotificationsAsync(setAlertSheetProps, alertSheetRef).then((token) => {
       setExpoPushToken(token);
     });
     // const notificationListener = Notifications.addNotificationReceivedListener(notification => {
@@ -260,7 +275,7 @@ const ExploreScreen = () => {
           marginTop: insets.top + 16,
           flex: 1,
           paddingHorizontal: 16,
-          marginBottom: 16
+          marginBottom: 16,
         }}
       >
         <View style={styles.head}>
@@ -381,6 +396,9 @@ const ExploreScreen = () => {
         )}
       </View>
       <MatchingSheet sheetRef={sheetRef} sheetProps={sheetProps} />
+      {alertSheetProps && (
+        <AlertSheet sheetRef={alertSheetRef} sheetProps={alertSheetProps} />
+      )}
     </>
   );
 };

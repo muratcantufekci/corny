@@ -344,7 +344,7 @@
     "UPDATE": "Güncelle",
     "LOGOUT_MODAL_TITLE": "Çıkış yapmak istediğinize emin misiniz?",
     "LOGOUT_MODAL_DESC": "Çıkış yap butonuna basmak sizi giriş aşamasına geri döndürecektir.",
-    "PERMISSION_CAMERA": "Kamera erişim izinler gereklidir!",
+    "PERMISSION_CAMERA": "Kamera erişim izinleri gereklidir!",
     "PERMISSION_NOTIFICATION": "Bildirim izinleri gereklidir!",
     "TERM_AND_CONDITIONS_DATE": "Bu şartlar ve koşullar 02.11.2024 tarihi itibariyle geçerlidir.",
     "TERM_AND_CONDITIONS_P1": "Bu şartlar ve koşullar, Corny tarafından mobil cihazlar için oluşturulan Corny uygulaması (bundan sonra 'Uygulama' olarak anılacaktır) için geçerlidir. Bu uygulama, bir Freemium hizmet olarak sunulmuştur.",

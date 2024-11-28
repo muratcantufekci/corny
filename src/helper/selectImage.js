@@ -1,6 +1,14 @@
 import * as ImagePicker from "expo-image-picker";
 import { t } from "i18next";
-import { Alert } from "react-native";
+import { Alert, Linking, Platform } from "react-native";
+
+const openSettings = () => {
+  if (Platform.OS === "ios") {
+    Linking.openURL("app-settings:");
+  } else {
+    Linking.openSettings();
+  }
+};
 
 export const selectImage = async (allowsEditing = true) => {
   const permissionResult =
@@ -10,9 +18,12 @@ export const selectImage = async (allowsEditing = true) => {
       {
         text: t("OK"),
       },
+      { text: t("OPEN_SETTINGS"), onPress: () => openSettings() },
     ]);
     return;
   }
+
+  
 
   const result = await ImagePicker.launchImageLibraryAsync({
     mediaTypes: ImagePicker.MediaTypeOptions.Images,

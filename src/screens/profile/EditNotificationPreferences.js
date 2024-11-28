@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { Dimensions, Image, StyleSheet, Switch, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { Dimensions, Image, Linking, Platform, StyleSheet, Switch, View } from "react-native";
 import CustomText from "../../components/CustomText";
 import { getUserNotificationPreferences } from "../../services/User/get-user-notification-preferences";
 import { postUserNotificationPreferences } from "../../services/User/send-user-notification-preferences";
 import { t } from "i18next";
+import * as Notifications from "expo-notifications";
+import AlertSheet from "../../components/AlertSheet";
 
 const menuItemData = [
   {
@@ -57,8 +59,22 @@ const MenuItem = ({ name, notification }) => {
 
 const EditNotificationPreferences = () => {
   const [userNotifications, setUserNotifications] = useState([]);
+  const alertSheetRef = useRef(null);
+  const [alertSheetProps, setAlertSheetProps] = useState(null);
+
   useEffect(() => {
     const getNotifications = async () => {
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      if (existingStatus !== "granted") {
+        setAlertSheetProps({
+          img: require("../../assets/images/warning.png"),
+          title: t("WARNING"),
+          desc: t("PERMISSION_NOTIFICATION"),
+          btnText: t("OPEN_SETTINGS"),
+          btnPress: openSettings
+        });
+        alertSheetRef.current?.present();
+      }
       const response = await getUserNotificationPreferences();
       if (response.isSuccess) {
         setUserNotifications(response.preferences);
@@ -66,6 +82,14 @@ const EditNotificationPreferences = () => {
     };
     getNotifications();
   }, []);
+
+  const openSettings = () => {
+    if (Platform.OS === "ios") {
+      Linking.openURL("app-settings:");
+    } else {
+      Linking.openSettings();
+    }
+  };
   return (
     <View style={styles.container}>
       <View style={styles.notificationWrapper}>
@@ -90,6 +114,9 @@ const EditNotificationPreferences = () => {
           />
         ))}
       </View>
+      {alertSheetProps && (
+        <AlertSheet sheetRef={alertSheetRef} sheetProps={alertSheetProps} />
+      )}
     </View>
   );
 };

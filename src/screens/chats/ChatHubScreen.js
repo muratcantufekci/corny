@@ -12,6 +12,7 @@ import {
   Image,
   Keyboard,
   KeyboardAvoidingView,
+  Linking,
   Modal,
   Platform,
   StyleSheet,
@@ -216,6 +217,14 @@ const ChatHubScreen = ({ route }) => {
     }
   };
 
+  const openSettings = () => {
+    if (Platform.OS === "ios") {
+      Linking.openURL("app-settings:");
+    } else {
+      Linking.openSettings();
+    }
+  };
+
   const takePhoto = async () => {
     const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
     if (permissionResult.granted === false) {
@@ -223,6 +232,7 @@ const ChatHubScreen = ({ route }) => {
         {
           text: t("OK"),
         },
+        { text: t("OPEN_SETTINGS"), onPress: () => openSettings() },
       ]);
       return;
     }
@@ -474,12 +484,12 @@ const ChatHubScreen = ({ route }) => {
                 <TouchableOpacity onPress={takePhoto}>
                   <Camera width={24} height={24} />
                 </TouchableOpacity>
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   onPressIn={startRecording}
                   onPressOut={stopRecording}
                 >
                   <Microphone width={24} height={24} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </>
             )}
           </View>

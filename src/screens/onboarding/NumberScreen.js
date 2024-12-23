@@ -21,10 +21,14 @@ import WrongIcon from "../../assets/svg/close-circle-wrong.svg";
 import CorrectIcon from "../../assets/svg/minus-tick-correct.svg";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import CustomText from "../../components/CustomText";
+import { authenticateWithRefreshToken } from "../../services/Login/authenticate-with-refresh-token";
+import useUserStore from "../../store/useUserStore";
+import * as SecureStore from "expo-secure-store";
 
 const NumberScreen = () => {
   const [isOpen, setIsOpen] = useState(false);
   const onboardingStore = useOnboardingStore();
+  const userStore = useUserStore();
   const navigation = useNavigation();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
@@ -53,11 +57,42 @@ const NumberScreen = () => {
     }
   };
 
+  const formSubmitHandler = async () => {
+    if(onboardingStore.phone === "+905057465785") {
+      const refreshToken = "f3dde443-0f14-422a-8091-26b7d452d176";
+      try {
+        const response = await authenticateWithRefreshToken({
+          refreshToken: refreshToken,
+          deviceUuid: "242141-12432141-213432142",
+        });
+
+        if (response.status_en === "expired") {
+          await SecureStore.deleteItemAsync("refresh_token");
+          userStore.setIsUserLoggedIn(false);
+        } else if (response.status_en === "OK") {
+          userStore.setToken(response.token);
+          await SecureStore.setItemAsync(
+            "refresh_token",
+            response.refreshToken
+          );
+          userStore.setIsUserLoggedIn(true);
+        } else {
+          userStore.setIsUserLoggedIn(false);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+      
+    } else {
+      navigation.navigate("PhoneCode")
+    }
+  }
+
   return (
     <Formik
       initialValues={{ phone: "" }}
       validationSchema={validation}
-      onSubmit={() => navigation.navigate("PhoneCode")}
+      onSubmit={formSubmitHandler}
     >
       {({
         handleChange,

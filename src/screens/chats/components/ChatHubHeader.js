@@ -11,16 +11,16 @@ const ChatHubHeader = ({ navigation, userImage, userName, sheetRef, pt }) => {
         <TouchableOpacity onPress={() => navigation.goBack()} style={{ padding: 10, paddingLeft: 0 }}>
           <Back width={30} height={30} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.headerMid}>
+        <View style={styles.headerMid}>
           <Image source={{ uri: userImage }} style={styles.headerImg} />
           <View style={styles.headerNameWrap}>
             <CustomText style={styles.headerName}>{userName}</CustomText>
           </View>
-        </TouchableOpacity>
+        </View>
       </View>
-      <TouchableOpacity onPress={() => sheetRef.current?.present()}>
+      {/* <TouchableOpacity onPress={() => sheetRef.current?.present()}>
         <Dots width={32} height={32} />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 };

@@ -17,6 +17,8 @@ import useChatRoomsStore from "../../store/useChatRoomsStore";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as SecureStore from "expo-secure-store";
 import Tabs from "../../components/Tabs";
+import { getDeviceInfo } from "../../helper/getDeviceInfo";
+import { postMarketingEvents } from "../../services/Event/send-marketing-event";
 
 const ChatsScreen = () => {
   const navigation = useNavigation();
@@ -48,7 +50,19 @@ const ChatsScreen = () => {
       chatRoomsStore.setChatRooms(response.chatRooms.reverse());
       chatRoomsStore.setMyChatUser(response.myChatUser);
     };
+    const postViewContent = async () => {
+      const deviceInfo = await getDeviceInfo();
+      const viewContentData = {
+        deviceInfo,
+        eventType: "ViewContent",
+        eventData: ["chat"],
+        fbc: "",
+      };
+      const viewContentRespone = await postMarketingEvents(viewContentData);
+      console.log("viewContentChat", viewContentRespone);
+    };
     getChats();
+    postViewContent();
   }, []);
 
   useEffect(() => {

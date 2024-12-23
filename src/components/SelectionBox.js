@@ -108,7 +108,7 @@ const SelectionBox = ({
   );
 };
 
-const boxWidth = (Dimensions.get("window").width - 64) / 3;
+const boxWidth = (Dimensions.get("window").width - 66) / 3;
 const boxHeight = Dimensions.get("window").height / 5.5;
 
 const styles = StyleSheet.create({

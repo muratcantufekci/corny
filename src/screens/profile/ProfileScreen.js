@@ -12,6 +12,8 @@ import { t } from "i18next";
 import { Image } from "expo-image";
 import * as SecureStore from "expo-secure-store";
 import * as Updates from "expo-updates";
+import { getDeviceInfo } from "../../helper/getDeviceInfo";
+import { postMarketingEvents } from "../../services/Event/send-marketing-event";
 
 const menuData = [
   {
@@ -61,9 +63,9 @@ const ProfileScreen = () => {
   const userStore = useUserStore();
   const [modalVisible, setModalVisible] = useState(false);
 
-  const menuItemPressHandler =  (screen) => {
+  const menuItemPressHandler = (screen) => {
     if (screen === "Logout") {
-      setModalVisible(true)
+      setModalVisible(true);
     } else {
       navigation.navigate(`${screen}`);
     }
@@ -81,7 +83,21 @@ const ProfileScreen = () => {
         phoneNumber: response.account.phoneNumber,
       });
     };
+
+    const postViewContent = async () => {
+      const deviceInfo = await getDeviceInfo();
+      const viewContentData = {
+        deviceInfo,
+        eventType: "ViewContent",
+        eventData: ["profile"],
+        fbc: "",
+      };
+      const viewContentRespone = await postMarketingEvents(viewContentData);
+      console.log("viewContent", viewContentRespone);
+    };
+
     getUserInfo();
+    postViewContent();
   }, []);
 
   const logoutHandler = async () => {

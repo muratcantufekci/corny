@@ -569,12 +569,12 @@ const ChatHubScreen = ({ route }) => {
                   {t("PHOTOS")}
                 </CustomText>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.messageMenuItem}>
+              {/* <TouchableOpacity style={styles.messageMenuItem}>
                 <Gifs width={24} height={24} />
                 <CustomText style={styles.messageMenuItemText}>
                   {t("GIFS")}
                 </CustomText>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
               <TouchableOpacity
                 style={styles.messageMenuItem}
                 onPress={suggestTvSeriesPressHandler}
@@ -584,12 +584,12 @@ const ChatHubScreen = ({ route }) => {
                   {t("SUGGEST_TV_SERIES")}
                 </CustomText>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.messageMenuItem}>
+              {/* <TouchableOpacity style={styles.messageMenuItem}>
                 <Quiz width={24} height={24} />
                 <CustomText style={styles.messageMenuItemText}>
                   {t("INVITE_QUIZ")}
                 </CustomText>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           </BlurView>
         </TouchableWithoutFeedback>

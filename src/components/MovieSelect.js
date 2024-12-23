@@ -9,6 +9,8 @@ import Search from "../assets/svg/search.svg";
 import CustomText from "./CustomText";
 import { addUserTvShow } from "../services/TvShow/add-tv-show";
 import { removeUserTvShow } from "../services/TvShow/remove-tv-show";
+import { getDeviceInfo } from "../helper/getDeviceInfo";
+import { postMarketingEvents } from "../services/Event/send-marketing-event";
 
 const MovieSelect = ({
   selectedTvShows,
@@ -95,13 +97,25 @@ const MovieSelect = ({
           const responsee = await removeUserTvShow(id);
         }
       } else {
-        setWarning(true)
+        setWarning(true);
       }
     } else {
       setSelectedTvShows([...selectedTvShows, { id, name, poster }]);
       setChoiceCount && setChoiceCount((prevState) => prevState - 1);
       if (addition) {
         const response = await addUserTvShow(id);
+      }
+      if (searchInputValue.length > 0) {
+        const deviceInfo = await getDeviceInfo();
+        const searchData = {
+          deviceInfo,
+          eventType: "Search",
+          eventData: ["tvShow", searchInputValue],
+          fbc: "",
+        };
+        
+        const searchRespone = await postMarketingEvents(searchData);
+        console.log("searchRespone", searchRespone);
       }
     }
   };

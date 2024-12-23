@@ -1,14 +1,29 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Dimensions, Image, StyleSheet, View } from "react-native";
 import CustomText from "../../components/CustomText";
 import Button from "../../components/Button";
 import { t } from "i18next";
 import useUserStore from "../../store/useUserStore";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { getDeviceInfo } from "../../helper/getDeviceInfo";
+import { postMarketingEvents } from "../../services/Event/send-marketing-event";
 
 const OnboardingEndScreen = () => {
   const userStore = useUserStore();
   const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    const postRegistration = async () => {
+      const deviceInfo = await getDeviceInfo();
+      const registrationData = {
+        deviceInfo,
+        eventType: "Registration",
+        fbc: "",
+      };
+      const registrationRespone = await postMarketingEvents(registrationData);
+    };
+    postRegistration();
+  }, []);
 
   const discoverBtnPressHandler = () => {
     userStore.setIsUserLoggedIn(true);
@@ -44,7 +59,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
   },
   img: {
     width: 360,

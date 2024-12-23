@@ -85,6 +85,9 @@ import { Image } from "expo-image";
 import Button from "./src/components/Button";
 import TermsAndConditionsScreen from "./src/screens/profile/TermsAndConditionsScreen";
 import PrivacyPolicyScreen from "./src/screens/profile/PrivacyPolicyScreen";
+import { getDeviceInfo } from "./src/helper/getDeviceInfo";
+import { postLog } from "./src/services/Test/insert-log";
+import { postMarketingEvents } from "./src/services/Event/send-marketing-event";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -847,8 +850,40 @@ export default function App() {
         }, 200);
       }
     };
+
+    const postEvent = async () => {
+      const appInstallEvent = await SecureStore.getItemAsync("appInstallEvent");
+      const deviceInfo = await getDeviceInfo();
+
+      if (appInstallEvent === null) {
+        const installData = {
+          deviceInfo,
+          eventType: "AppInstall",
+          fbc: "",
+        };
+        const installRespone = await postMarketingEvents(installData, false);
+        console.log("installRespone", installRespone);
+
+        if (installRespone.isSuccess) {
+          await SecureStore.setItemAsync("appInstallEvent", "true");
+        }
+      }
+
+      const loginData = {
+        deviceInfo,
+        eventType: "Login",
+        fbc: "",
+      };
+      const loginRespone = await postMarketingEvents(loginData);
+      console.log("loginRespone", loginRespone);
+    };
+
     checkVersion();
     setUserLogin();
+    setTimeout(() => {
+      postEvent();
+    }, 1000);
+    
   }, []);
 
   const renderBackdrop = useCallback(

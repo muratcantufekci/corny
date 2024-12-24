@@ -147,7 +147,7 @@ const NumberScreen = () => {
               <View style={styles.policiesWrapper}>
                 <TouchableOpacity
                   onPress={() =>
-                    handleLinkPress("https://corny-web.netlify.app/gizlilik-sozlesmesi")
+                    handleLinkPress("https://cornyapp.com/gizlilik-politikasi/")
                   }
                 >
                   <CustomText style={styles.policy}>
@@ -156,7 +156,7 @@ const NumberScreen = () => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() =>
-                    handleLinkPress("https://corny-web.netlify.app/sartlar-ve-kosullar")
+                    handleLinkPress("https://cornyapp.com/kullanim-kosullari/")
                   }
                 >
                   <CustomText style={styles.policy}>

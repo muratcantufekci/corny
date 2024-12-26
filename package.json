@@ -1,9 +1,8 @@
 {
   "name": "corny",
   "version": "1.0.1",
-  "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "start": "expo start",
+    "start": "expo start --dev-client",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web"
@@ -48,6 +47,7 @@
     "react-native-circular-progress": "^1.4.0",
     "react-native-confetti-cannon": "^1.5.2",
     "react-native-deck-swiper": "^2.0.17",
+    "react-native-fbsdk-next": "^13.3.0",
     "react-native-gesture-handler": "~2.20.2",
     "react-native-image-picker": "^7.1.2",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",

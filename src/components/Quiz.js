@@ -26,21 +26,21 @@ const Quiz = ({ quizOpen, setQuizOpen, quiz, setQuizAnswer, quizAnswer }) => {
   const options = [
     {
       key: 1,
-      code: quiz.Option_A_TR,
-      text: quiz.Option_A_TR,
-      isCorrect: quiz.CorrectAnswer_TR === quiz.Option_A_TR,
+      code: quiz.Option_A,
+      text: quiz.Option_A,
+      isCorrect: quiz.CorrectAnswer === quiz.Option_A,
     },
     {
       key: 2,
-      code: quiz.Option_B_TR,
-      text: quiz.Option_B_TR,
-      isCorrect: quiz.CorrectAnswer_TR === quiz.Option_B_TR,
+      code: quiz.Option_B,
+      text: quiz.Option_B,
+      isCorrect: quiz.CorrectAnswer === quiz.Option_B,
     },
     {
       key: 3,
-      code: quiz.Option_C_TR,
-      text: quiz.Option_C_TR,
-      isCorrect: quiz.CorrectAnswer_TR === quiz.Option_C_TR,
+      code: quiz.Option_C,
+      text: quiz.Option_C,
+      isCorrect: quiz.CorrectAnswer === quiz.Option_C,
     },
   ];
 
@@ -127,9 +127,19 @@ const Quiz = ({ quizOpen, setQuizOpen, quiz, setQuizAnswer, quizAnswer }) => {
                   />
                 ))}
               </View>
-              <Pressable style={styles.hint} onPress={handleHint} disabled={hintUsed}>
-                <LightBulb style={{color: hintUsed ? "#70707B" : "#FF524F"}} />
-                <CustomText style={[styles.hintText, hintUsed && styles.hintUsedText]}>{t("HINT")}</CustomText>
+              <Pressable
+                style={styles.hint}
+                onPress={handleHint}
+                disabled={hintUsed}
+              >
+                <LightBulb
+                  style={{ color: hintUsed ? "#70707B" : "#FF524F" }}
+                />
+                <CustomText
+                  style={[styles.hintText, hintUsed && styles.hintUsedText]}
+                >
+                  {t("HINT")}
+                </CustomText>
               </Pressable>
               {quizAnswer === false && (
                 <CustomText style={styles.wrongAnswerText}>

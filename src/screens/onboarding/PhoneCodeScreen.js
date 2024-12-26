@@ -19,11 +19,12 @@ import { authenticate } from "../../services/Login/authenticate";
 import useUserStore from "../../store/useUserStore";
 import * as SecureStore from "expo-secure-store";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { AppEventsLogger } from 'react-native-fbsdk-next';
 
 const PhoneCodeScreen = () => {
   const onboardingStore = useOnboardingStore();
   const userStore = useUserStore();
-  const [timer, setTimer] = useState(20);
+  const [timer, setTimer] = useState(40);
   const [resendEnabled, setResendEnabled] = useState(false);
   const [isCodeValid, setIsCodeValid] = useState(true);
   const navigation = useNavigation();
@@ -86,6 +87,7 @@ const PhoneCodeScreen = () => {
         const res = await authenticate(authData);
         
         if (res.isSuccess) {
+          AppEventsLogger.setUserID(res.userUniqueId);
           userStore.setToken(res.token);
           await SecureStore.setItemAsync("refresh_token", res.refreshToken);
           if (res.isConfigured) {

@@ -86,8 +86,8 @@ import Button from "./src/components/Button";
 import TermsAndConditionsScreen from "./src/screens/profile/TermsAndConditionsScreen";
 import PrivacyPolicyScreen from "./src/screens/profile/PrivacyPolicyScreen";
 import { getDeviceInfo } from "./src/helper/getDeviceInfo";
-import { postLog } from "./src/services/Test/insert-log";
 import { postMarketingEvents } from "./src/services/Event/send-marketing-event";
+import { AppEventsLogger, Settings } from 'react-native-fbsdk-next';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -744,6 +744,8 @@ export default function App() {
   const sheetRef = useRef(null);
   const [marketLink, setMarketLink] = useState(null);
 
+  Settings.initializeSDK();
+
   const [fontsLoaded, error] = useFonts({
     "RethinkSans-Regular": require("./src/assets/fonts/RethinkSans-Regular.ttf"),
     "RethinkSans-Medium": require("./src/assets/fonts/RethinkSans-Medium.ttf"),
@@ -792,12 +794,14 @@ export default function App() {
             refreshToken: refreshToken,
             deviceUuid: "242141-12432141-213432142",
           });
+          
 
           if (response.status_en === "expired") {
             await SecureStore.deleteItemAsync("refresh_token");
             userStore.setIsUserLoggedIn(false);
             setAppIsReady(true);
           } else if (response.status_en === "OK") {
+            AppEventsLogger.setUserID(response.userUniqueId);
             userStore.setToken(response.token);
             await SecureStore.setItemAsync(
               "refresh_token",
@@ -861,9 +865,8 @@ export default function App() {
           eventType: "AppInstall",
           fbc: "",
         };
+        
         const installRespone = await postMarketingEvents(installData, false);
-        console.log("installRespone", installRespone);
-
         if (installRespone.isSuccess) {
           await SecureStore.setItemAsync("appInstallEvent", "true");
         }

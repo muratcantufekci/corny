@@ -1,0 +1,7 @@
+<resources>
+  <string name="app_name">Corny</string>
+  <string name="expo_splash_screen_resize_mode" translatable="false">contain</string>
+  <string name="expo_splash_screen_status_bar_translucent" translatable="false">false</string>
+  <string name="facebook_app_id">485898797868038</string>
+  <string name="facebook_client_token">291599f1b0ac63894556d8c2064021ae</string>
+</resources>

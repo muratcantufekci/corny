@@ -37,7 +37,7 @@ const EditPhoneScreen = () => {
   const [isCodeValid, setIsCodeValid] = useState(true);
   const [resendEnabled, setResendEnabled] = useState(false);
   const [alertSheetProps, setAlertSheetProps] = useState(null);
-  const [timer, setTimer] = useState(35);
+  const [timer, setTimer] = useState(65);
   const onboardingStore = useOnboardingStore();
   const userStore = useUserStore();
 

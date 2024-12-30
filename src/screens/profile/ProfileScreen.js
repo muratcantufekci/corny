@@ -93,7 +93,6 @@ const ProfileScreen = () => {
         fbc: "",
       };
       const viewContentRespone = await postMarketingEvents(viewContentData);
-      console.log("viewContent", viewContentRespone);
     };
 
     getUserInfo();

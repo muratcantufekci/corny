@@ -94,7 +94,7 @@ const Quiz = ({ quizOpen, setQuizOpen, quiz, setQuizAnswer, quizAnswer }) => {
   return (
     <Modal transparent={true} visible={quizOpen} animationType="fade">
       <TouchableWithoutFeedback>
-        <BlurView intensity={70} style={StyleSheet.absoluteFill}>
+        <BlurView intensity={70} style={StyleSheet.absoluteFill} experimentalBlurMethod="dimezisBlurView">
           <View style={styles.container}>
             <View style={styles.questionCard}>
               <CustomText style={styles.questionTitle}>

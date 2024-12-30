@@ -146,7 +146,7 @@ const ProfileCard = ({
                   </CustomText>
                 </View>
               </View>
-              <BlurView intensity={100} style={styles.blurContainer}>
+              <BlurView intensity={100} style={styles.blurContainer} experimentalBlurMethod="dimezisBlurView">
                 <CustomText style={styles.favoritesText}>
                   All time favorites
                 </CustomText>

@@ -40,15 +40,12 @@ const PhotoSelect = ({
   const selectImageHandler = async () => {
     const data = await selectImage();
     const response = await postUserPhoto(data.formData);
-
-    if (response.isSuccess) {
       setSelectedImages([
         ...selectedImages,
         { id: response.imageId, uri: response.imageUrl },
       ]);
       setBtnVariant && setBtnVariant("primary");
       setIsBtnDisaled && setIsBtnDisaled(false);
-    }
   };
 
   const orderImages = (index) => {

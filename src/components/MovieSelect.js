@@ -115,7 +115,6 @@ const MovieSelect = ({
         };
         
         const searchRespone = await postMarketingEvents(searchData);
-        console.log("searchRespone", searchRespone);
       }
     }
   };

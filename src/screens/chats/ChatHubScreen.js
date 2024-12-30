@@ -417,7 +417,7 @@ const ChatHubScreen = ({ route }) => {
           flex: 1,
         }}
         behavior={!holdScreen && (Platform.OS === "ios" ? "padding" : "height")}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 120 : 0}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 120 : 120}
       >
         <View style={[styles.container, { paddingBottom: insets.bottom + 16 }]}>
           <View style={styles.messageContainer}>
@@ -558,7 +558,7 @@ const ChatHubScreen = ({ route }) => {
       </KeyboardAvoidingView>
       <Modal transparent={true} visible={menuModalVisible} animationType="fade">
         <TouchableWithoutFeedback onPress={() => setMenuModalVisible(false)}>
-          <BlurView intensity={50} style={StyleSheet.absoluteFill}>
+          <BlurView intensity={50} style={StyleSheet.absoluteFill} experimentalBlurMethod="dimezisBlurView">
             <View style={styles.messageMenu}>
               <TouchableOpacity
                 style={styles.messageMenuItem}

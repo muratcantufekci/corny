@@ -878,7 +878,6 @@ export default function App() {
         fbc: "",
       };
       const loginRespone = await postMarketingEvents(loginData);
-      console.log("loginRespone", loginRespone);
     };
 
     checkVersion();

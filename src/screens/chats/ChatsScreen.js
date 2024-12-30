@@ -59,7 +59,6 @@ const ChatsScreen = () => {
         fbc: "",
       };
       const viewContentRespone = await postMarketingEvents(viewContentData);
-      console.log("viewContentChat", viewContentRespone);
     };
     getChats();
     postViewContent();

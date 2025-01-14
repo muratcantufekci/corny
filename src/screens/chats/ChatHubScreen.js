@@ -178,12 +178,15 @@ const ChatHubScreen = ({ route }) => {
   };
 
   const selectImageHandler = async () => {
-    const data = await selectImage(false);
     setMenuModalVisible(false);
+    const data = await selectImage(false);
     setSelectedImage(data.uri);
-    setPhotoModalVisible(true);
     setPreviewPhoto(false);
     setImageFormData(data.formData);
+    setTimeout(() => {
+      setPhotoModalVisible(true);
+    },500);
+    
   };
 
   const sendImageHandler = async (formData) => {
@@ -255,7 +258,9 @@ const ChatHubScreen = ({ route }) => {
 
       setSelectedImage(uri);
       setImageFormData(formData);
-      setPhotoModalVisible(true);
+      setTimeout(() => {
+        setPhotoModalVisible(true);
+      },500);
     }
   };
 

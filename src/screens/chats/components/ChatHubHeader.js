@@ -18,10 +18,10 @@ const ChatHubHeader = ({ navigation, userImage, userName, sheetRef, pt }) => {
           </View>
         </View>
       </View>
-      {/* <TouchableOpacity onPress={() => sheetRef.current?.present()}>
+      <TouchableOpacity onPress={() => sheetRef.current?.present()}>
         <Dots width={32} height={32} />
-      </TouchableOpacity> */}
-    </View>
+      </TouchableOpacity>
+    </View> 
   );
 };
 

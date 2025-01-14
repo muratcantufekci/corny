@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  AppState,
   FlatList,
   Image,
   ScrollView,
@@ -84,11 +85,51 @@ const ChatsScreen = () => {
   }, [chatRoomsStore.myChatUser]);
 
   useEffect(() => {
+    let pingInterval = null;
+    const appStateSubscription = AppState.addEventListener(
+      "change",
+      (nextAppState) => {
+        if (nextAppState === "active") {
+          // App came to foreground - start ping
+          startPing();
+        } else {
+          // App went to background - stop ping
+          if (pingInterval) {
+            clearInterval(pingInterval);
+            pingInterval = null;
+          }
+        }
+      }
+    );
+
+    const startPing = () => {
+      if (pingInterval) {
+        clearInterval(pingInterval);
+      }
+
+      pingInterval = setInterval(() => {
+        if (chatRoomsStore.connection?.state === "Connected") {
+          if (chatRoomsStore.connection) {
+            chatRoomsStore.connection
+              .send("Ping")
+              .catch((error) =>
+                console.error("Message sending failed: ", error)
+              );
+          } else {
+            console.warn("SignalR connection not established.");
+          }
+        }
+      }, 8000);
+    };
+
     if (chatRoomsStore.connection) {
       chatRoomsStore.connection
         .start()
         .then(() => {
           console.log("Connected to SignalR!");
+
+          // Start ping when connection is established
+          startPing();
 
           chatRoomsStore.connection.on("ReceiveMessage", (receivedMessage) => {
             console.log("receivedMessage", receivedMessage);
@@ -183,13 +224,25 @@ const ChatsScreen = () => {
         })
         .catch((error) => console.error("Connection failed: ", error));
     }
+
+    // Cleanup function
+    return () => {
+      if (pingInterval) {
+        clearInterval(pingInterval);
+      }
+      appStateSubscription.remove();
+    };
   }, [chatRoomsStore.connection]);
 
-  const messageBoxPressHandler = (chatRoomId, otherUserConnectionId, otherUserImg) => {
+  const messageBoxPressHandler = (
+    chatRoomId,
+    otherUserConnectionId,
+    otherUserImg
+  ) => {
     navigation.navigate("MessageHub", {
       chatRoomId,
       otherUserConnectionId,
-      otherUserImg
+      otherUserImg,
     });
     appUtils.setBottomTabStyle("none");
   };

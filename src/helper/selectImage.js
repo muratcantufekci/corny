@@ -26,7 +26,7 @@ export const selectImage = async (allowsEditing = true) => {
   
 
   const result = await ImagePicker.launchImageLibraryAsync({
-    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    mediaTypes: ['images'],
     allowsEditing: allowsEditing,
     quality: 0.5,
   });

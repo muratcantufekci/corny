@@ -5,7 +5,7 @@ import {
   Image,
   ScrollView,
   StyleSheet,
-  TouchableOpacity,
+  TouchableOpacity, TouchableWithoutFeedback,
   View,
 } from "react-native";
 import { t } from "i18next";
@@ -18,6 +18,7 @@ import { getUserTvShows } from "../../services/TvShow/get-user-tv-shows";
 import { getUserAbouts } from "../../services/User/get-user-abouts";
 import { useNavigation } from "@react-navigation/native";
 import { getTvShowById } from "../../services/TvShow/get-tv-show-by-id";
+import { customEvent } from 'vexo-analytics'
 
 const MenuItem = ({ name, values, navigation }) => {
   const [translatedValues, setTranslatedValues] = useState("");
@@ -124,10 +125,19 @@ const EditProfileScreen = () => {
             if (index <= 5) {
               return (
                 <View key={item.id} style={styles.movieBox}>
-                  <Image
-                    source={{ uri: item.poster }}
-                    style={styles.movieImg}
-                  />
+                  <TouchableWithoutFeedback
+                      onPress={() => {
+                        customEvent('click-on-movie-image', {
+                          page: 'edit-profile',
+                          movieId: item.id
+                        });
+                      }}
+                  >
+                    <Image
+                        source={{ uri: item.poster }}
+                        style={styles.movieImg}
+                    />
+                  </TouchableWithoutFeedback>
                 </View>
               );
             }

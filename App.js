@@ -88,9 +88,12 @@ import PrivacyPolicyScreen from "./src/screens/profile/PrivacyPolicyScreen";
 import { getDeviceInfo } from "./src/helper/getDeviceInfo";
 import { postMarketingEvents } from "./src/services/Event/send-marketing-event";
 import { AppEventsLogger, Settings } from 'react-native-fbsdk-next';
+import {identifyDevice, vexo} from "vexo-analytics";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+
+vexo('5f639c5e-4b27-4f55-83fa-aa2dca12df99');
 
 const AuthStack = () => (
   <Stack.Navigator
@@ -802,6 +805,7 @@ export default function App() {
             setAppIsReady(true);
           } else if (response.status_en === "OK") {
             AppEventsLogger.setUserID(response.userUniqueId);
+            await identifyDevice(response.userUniqueId);
             userStore.setToken(response.token);
             await SecureStore.setItemAsync(
               "refresh_token",

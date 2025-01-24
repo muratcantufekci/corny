@@ -1792,6 +1792,9 @@ PODS:
     - Yoga
   - RNSVG (15.8.0):
     - React-Core
+  - RNVexoAnalytics (1.4.4):
+    - React-Core
+    - VexoAnalytics (= 0.4.0)
   - SDWebImage (5.19.7):
     - SDWebImage/Core (= 5.19.7)
   - SDWebImage/Core (5.19.7)
@@ -1801,6 +1804,7 @@ PODS:
   - SDWebImageSVGCoder (1.7.0):
     - SDWebImage/Core (~> 5.6)
   - SocketRocket (0.7.1)
+  - VexoAnalytics (0.4.0)
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -1907,6 +1911,7 @@ DEPENDENCIES:
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
+  - RNVexoAnalytics (from `../node_modules/vexo-analytics`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -1924,6 +1929,7 @@ SPEC REPOS:
     - SDWebImageAVIFCoder
     - SDWebImageSVGCoder
     - SocketRocket
+    - VexoAnalytics
 
 EXTERNAL SOURCES:
   boost:
@@ -2128,6 +2134,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-screens"
   RNSVG:
     :path: "../node_modules/react-native-svg"
+  RNVexoAnalytics:
+    :path: "../node_modules/vexo-analytics"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -2242,10 +2250,12 @@ SPEC CHECKSUMS:
   RNReanimated: 6df033a2ec944640e21b8ee0721eda0a1c041c9b
   RNScreens: 6ba8e720d9c6a969dcf4aa09b9e8688a273635cb
   RNSVG: 8b1a777d54096b8c2a0fd38fc9d5a454332bbb4d
+  RNVexoAnalytics: d44cf93993f29ea938384bd9311118e8edfb32f9
   SDWebImage: 8a6b7b160b4d710e2a22b6900e25301075c34cb3
   SDWebImageAVIFCoder: 00310d246aab3232ce77f1d8f0076f8c4b021d90
   SDWebImageSVGCoder: 15a300a97ec1c8ac958f009c02220ac0402e936c
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
+  VexoAnalytics: 6c3ecb0681b1cf78f43e343eb56b886e596197de
   Yoga: fcc198acd4a55599b3468cfb6ebc526baff5f06e
 
 PODFILE CHECKSUM: c97a59517f6ccbc6d41c7f12470614ce0e835c1c

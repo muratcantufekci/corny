@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   AppState,
   FlatList,
@@ -10,7 +10,11 @@ import {
 } from "react-native";
 import CustomText from "../../components/CustomText";
 import { t } from "i18next";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
+import {
+  useFocusEffect,
+  useIsFocused,
+  useNavigation,
+} from "@react-navigation/native";
 import useAppUtils from "../../store/useAppUtils";
 import * as SignalR from "@microsoft/signalr";
 import { getChatOverview } from "../../services/Chat/get-chat-overview";
@@ -21,7 +25,7 @@ import Tabs from "../../components/Tabs";
 import { getDeviceInfo } from "../../helper/getDeviceInfo";
 import { postMarketingEvents } from "../../services/Event/send-marketing-event";
 
-const ChatsScreen = () => {
+const ChatsScreen = ({route}) => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const appUtils = useAppUtils();
@@ -36,6 +40,13 @@ const ChatsScreen = () => {
     },
   ];
 
+  const getChats = async () => {
+    const response = await getChatOverview();
+
+    chatRoomsStore.setChatRooms(response.chatRooms.reverse());
+    chatRoomsStore.setMyChatUser(response.myChatUser);
+  };
+
   useEffect(() => {
     if (isFocused) {
       appUtils.setBottomTabStyle("flex");
@@ -45,12 +56,6 @@ const ChatsScreen = () => {
   }, [isFocused]);
 
   useEffect(() => {
-    const getChats = async () => {
-      const response = await getChatOverview();
-
-      chatRoomsStore.setChatRooms(response.chatRooms.reverse());
-      chatRoomsStore.setMyChatUser(response.myChatUser);
-    };
     const postViewContent = async () => {
       const deviceInfo = await getDeviceInfo();
       const viewContentData = {
@@ -64,6 +69,19 @@ const ChatsScreen = () => {
     getChats();
     postViewContent();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (route.params?.refresh) {
+        const fetchChats = async () => {
+          await getChats();
+        };
+
+        fetchChats();
+        navigation.setParams({ refresh: undefined });
+      }
+    }, [route.params?.refresh])
+  );
 
   useEffect(() => {
     if (chatRoomsStore.myChatUser) {

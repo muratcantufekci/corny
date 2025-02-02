@@ -19,11 +19,12 @@ import Input from "./Input";
 import ArrowUp from "../assets/svg/arrow-up-circle.svg";
 import Cross from "../assets/svg/cross.svg";
 import { postSwipeMessage } from "../services/Matching/send-message";
+import { useNavigation } from "@react-navigation/native";
 
 const MatchingSheet = ({ sheetRef, sheetProps, setMessageSend }) => {
-    
   const insets = useSafeAreaInsets();
   const [message, setMessage] = useState("");
+  const navigation = useNavigation();
 
   const renderBackdrop = useCallback(
     (props) => (
@@ -66,7 +67,6 @@ const MatchingSheet = ({ sheetRef, sheetProps, setMessageSend }) => {
     sheetRef.current?.close()
     const response = await postSwipeMessage(data);
     setMessageSend && setMessageSend(true)
-    
   };
 
   return (
@@ -80,7 +80,10 @@ const MatchingSheet = ({ sheetRef, sheetProps, setMessageSend }) => {
         <View style={styles.sheetWrapper}>
           <TouchableOpacity
             style={styles.close}
-            onPress={() => sheetRef.current?.close()}
+            onPress={() => {
+              sheetRef.current?.close()
+              navigation.goBack();
+            }}
           >
             <Cross style={{ color: "#51525C" }} />
           </TouchableOpacity>

@@ -52,6 +52,8 @@ import MessageList from "./components/MessageList";
 import * as SecureStore from "expo-secure-store";
 import * as Clipboard from "expo-clipboard";
 import MovieSelect from "../../components/MovieSelect";
+import { unMatch } from "../../services/Matching/unmatch";
+import { blockUserByConnectionId } from "../../services/User/block-user-by-connection-id";
 
 const ChatHubScreen = ({ route }) => {
   const isFocused = useIsFocused();
@@ -185,8 +187,7 @@ const ChatHubScreen = ({ route }) => {
     setImageFormData(data.formData);
     setTimeout(() => {
       setPhotoModalVisible(true);
-    },500);
-    
+    }, 500);
   };
 
   const sendImageHandler = async (formData) => {
@@ -260,7 +261,7 @@ const ChatHubScreen = ({ route }) => {
       setImageFormData(formData);
       setTimeout(() => {
         setPhotoModalVisible(true);
-      },500);
+      }, 500);
     }
   };
 
@@ -415,6 +416,24 @@ const ChatHubScreen = ({ route }) => {
     movieSheetRef.current?.present();
   };
 
+  const unmatchPressHandler = async () => {
+    sheetRef.current?.close();
+
+    const response = await unMatch(otherUserConnectionId);
+    if (response.isSuccess) {
+      navigation.navigate("Messages", { refresh: true });
+    }
+  };
+
+  const blockUserPressHandler = async () => {
+    sheetRef.current?.close();
+
+    const response = await blockUserByConnectionId(otherUserConnectionId);
+    if (response.isSuccess) {
+      navigation.navigate("Messages", { refresh: true });
+    }
+  };
+
   return (
     <>
       <KeyboardAvoidingView
@@ -427,7 +446,7 @@ const ChatHubScreen = ({ route }) => {
         <View style={[styles.container, { paddingBottom: insets.bottom + 16 }]}>
           <View style={styles.messageContainer}>
             <MessageList
-              messages={hubMessages.messages}
+              messages={hubMessages?.messages}
               otherUserConnectionId={otherUserConnectionId}
               image={otherUserImg}
               setPhotoModalVisible={setPhotoModalVisible}
@@ -435,7 +454,7 @@ const ChatHubScreen = ({ route }) => {
               setSelectedImage={setSelectedImage}
               onReply={onReply}
               otherUserLastSeen={SecureStore.getItem(otherUserConnectionId)}
-              otherUserName={hubMessages.otherUserDisplayName}
+              otherUserName={hubMessages?.otherUserDisplayName}
               chatRoomId={chatRoomId}
               setMenuVisible={setMenuVisible}
               setSelectedMessage={setSelectedMessage}
@@ -507,12 +526,18 @@ const ChatHubScreen = ({ route }) => {
           backdropComponent={renderBackdrop}
         >
           <View>
-            <TouchableOpacity style={styles.bottomSheetItem}>
+            <TouchableOpacity
+              style={styles.bottomSheetItem}
+              onPress={unmatchPressHandler}
+            >
               <CustomText style={styles.bottomSheetItemText}>
                 {t("UNMATCH")}
               </CustomText>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.bottomSheetItem}>
+            <TouchableOpacity
+              style={styles.bottomSheetItem}
+              onPress={blockUserPressHandler}
+            >
               <CustomText style={styles.bottomSheetItemText}>
                 {t("BLOCK")}
               </CustomText>
@@ -563,7 +588,11 @@ const ChatHubScreen = ({ route }) => {
       </KeyboardAvoidingView>
       <Modal transparent={true} visible={menuModalVisible} animationType="fade">
         <TouchableWithoutFeedback onPress={() => setMenuModalVisible(false)}>
-          <BlurView intensity={50} style={StyleSheet.absoluteFill} experimentalBlurMethod="dimezisBlurView">
+          <BlurView
+            intensity={50}
+            style={StyleSheet.absoluteFill}
+            experimentalBlurMethod="dimezisBlurView"
+          >
             <View style={styles.messageMenu}>
               <TouchableOpacity
                 style={styles.messageMenuItem}

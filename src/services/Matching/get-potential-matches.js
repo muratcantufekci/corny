@@ -8,5 +8,7 @@ export const getPotentialMatches = async (page, data) => {
       withAuth: true,
     }
   );
+  console.log("1212",res);
+  
   return res;
 };

@@ -37,6 +37,14 @@ allprojects {
 
         google()
         mavenCentral()
-        maven { url 'https://www.jitpack.io' }
+        maven { url "https://www.jitpack.io" }
+        maven {
+            // Android SDK'nın local maven repository'si
+            url "$rootDir/../node_modules/react-native/android"
+        }
+        maven {
+            // Expo modülleri için gerekli
+            url "$rootDir/../node_modules/expo/android/maven"
+        }
     }
 }

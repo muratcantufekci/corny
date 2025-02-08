@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>824446959819-130a49frf9bjrp5nffrbhkmji2eh7vln.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.824446959819-130a49frf9bjrp5nffrbhkmji2eh7vln</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>824446959819-v064673834vql4oo4h7i0k32rshmbbkq.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBjKdbxJs01KXiZ2mdulFDBNXL31m340gk</string>
+	<key>GCM_SENDER_ID</key>
+	<string>824446959819</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.anonymous.corny</string>
+	<key>PROJECT_ID</key>
+	<string>corny-app-b042b</string>
+	<key>STORAGE_BUCKET</key>
+	<string>corny-app-b042b.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:824446959819:ios:2277e71f2bcf1151cc9b4e</string>
+</dict>
+</plist>

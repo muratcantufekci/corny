@@ -12,7 +12,20 @@
           "package_name": "com.corny.cornyapp"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "824446959819-v064673834vql4oo4h7i0k32rshmbbkq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.corny.cornyapp",
+            "certificate_hash": "d1a90f14420627bf1e180cd28287914b70000715"
+          }
+        },
+        {
+          "client_id": "824446959819-lls6q9nbdtae8d39n8hclkvt6u9iqj9d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyA0Gjsp4cEbEUiZFpCxJ5LbE8UChvUotro"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "824446959819-lls6q9nbdtae8d39n8hclkvt6u9iqj9d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

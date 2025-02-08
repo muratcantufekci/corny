@@ -2,6 +2,8 @@
   "translation": {
     "START_SCREEN_TEXT": "Sizin gibi düşünen insanlarla eşleşin!",
     "CONTİNUE_W_PHONE": "Telefonla Devam Et",
+    "CONTİNUE_W_APPLE": "Apple İle Devam Et",
+    "CONTİNUE_W_GOOGLE": "Google İle Devam Et",
     "NUMBER_SCREEN_TITLE": "Numaranızı Giriniz",
     "NUMBER_SCREEN_DESC": "Corny, numaranızı doğrulamak için size SMS yoluyla tek kullanımlık bir şifre gönderecek",
     "YOUR_PHONE_NUMBER": "Telefon numaranız",

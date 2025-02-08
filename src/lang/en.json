@@ -2,6 +2,8 @@
   "translation": {
     "START_SCREEN_TEXT": "Match with people who think like you!",
     "CONTİNUE_W_PHONE": "Continue with Phone",
+    "CONTİNUE_W_APPLE": "Continue with Apple",
+    "CONTİNUE_W_GOOGLE": "Continue with Google",
     "NUMBER_SCREEN_TITLE": "Enter your number",
     "NUMBER_SCREEN_DESC": "Corny will send you a one-time password via SMS to verify your number",
     "YOUR_PHONE_NUMBER": "Your phone number",

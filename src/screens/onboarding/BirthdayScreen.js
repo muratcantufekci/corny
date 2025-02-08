@@ -40,7 +40,7 @@ const BirthdayScreen = ({ route }) => {
     const response = await postBirthday(day, month, year);
 
     if (response.isSuccess) {
-      navigation.navigate("Mail");
+      navigation.navigate("OnboardingEnd");
     }
   };
 

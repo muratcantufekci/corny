@@ -786,8 +786,6 @@ export default function App() {
     const setUserLogin = async () => {
       // await SecureStore.deleteItemAsync("refresh_token"); // test amaçlı rekfresh token sıfırlayıcı
       const refreshToken = await SecureStore.getItemAsync("refresh_token");
-      console.log("refreshToken",refreshToken);
-      
       // let uuid = await SecureStore.getItemAsync("DEVICE_UUID_KEY");
       // const refreshToken = "63a2f537-cde3-4e9d-b0b4-80b586ccfd96";
       // const refreshToken = null;
@@ -799,8 +797,6 @@ export default function App() {
             refreshToken: refreshToken,
             deviceUuid: "242141-12432141-213432142",
           });
-          console.log("response",response);
-          
 
           if (response.status_en === "expired") {
             await SecureStore.deleteItemAsync("refresh_token");

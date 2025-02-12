@@ -19,7 +19,7 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.3</string>
+	<string>1.0.4</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -50,17 +50,17 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>We need access to your camera usage for personalized and maximed experience</string>
+	<string>We need access to your camera to let you take photos and upload them to your profile or share them with other users.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>We need access to your location for personalized and maximed experience</string>
+	<string>We need access to your location to show you nearby users and improve matching based on your region.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>We need access to your location for personalized and maximed experience</string>
+	<string>We need access to your location to show you nearby users and improve matching based on your region.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We need access to your location for personalized and maximed experience</string>
+	<string>We need access to your location to show you nearby users and improve matching based on your region.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Allow $(PRODUCT_NAME) to access your microphone</string>
+	<string>We need access to your microphone to let you record and send voice messages to other users.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>We need access to your library for more personalized and maximed experience</string>
+	<string>We need access to your photo library to let you select photos for your profile or share them with other users.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>SplashScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>

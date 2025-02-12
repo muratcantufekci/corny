@@ -93,7 +93,9 @@ const MessageList = ({
   };
 
   const openImage = (uri, messageIdentifier, isIncome) => {
-    setPhotoModalVisible(true);
+    setTimeout(() => {
+      setPhotoModalVisible(true);
+    }, 500);
     setPreviewPhoto(true);
     setSelectedImage(uri);
 

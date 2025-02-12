@@ -137,7 +137,7 @@ const ChatsScreen = ({route}) => {
             console.warn("SignalR connection not established.");
           }
         }
-      }, 8000);
+      }, 5000);
     };
 
     if (chatRoomsStore.connection) {

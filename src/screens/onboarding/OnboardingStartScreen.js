@@ -1,13 +1,5 @@
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  Dimensions,
-  Platform,
-  Alert,
-} from "react-native";
+import { View, StyleSheet, Image, Dimensions, Platform } from "react-native";
 import CustomText from "../../components/CustomText";
 import Button from "../../components/Button";
 import { useNavigation } from "@react-navigation/native";
@@ -21,7 +13,6 @@ import * as SecureStore from "expo-secure-store";
 import Apple from "../../assets/svg/apple-icon.svg";
 import Google from "../../assets/svg/google-icon.svg";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
-import auth from "@react-native-firebase/auth";
 import { postLog } from "../../services/Test/insert-log";
 import { authenticateWithGoogle } from "../../services/Login/authenticate-with-google";
 
@@ -98,7 +89,6 @@ const OnboardingStartScreen = () => {
           navigation.navigate("Navigation");
         }
       }
-
     } catch (error) {
       console.error("error", error);
       const data = {

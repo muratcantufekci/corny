@@ -441,7 +441,7 @@ const ChatHubScreen = ({ route }) => {
           flex: 1,
         }}
         behavior={!holdScreen && (Platform.OS === "ios" ? "padding" : "height")}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 120 : 120}
+        keyboardVerticalOffset={100}
       >
         <View style={[styles.container, { paddingBottom: insets.bottom + 16 }]}>
           <View style={styles.messageContainer}>
@@ -574,16 +574,20 @@ const ChatHubScreen = ({ route }) => {
           index={0}
           backdropComponent={renderBackdrop}
         >
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={{ padding: 16 }}>
-              <MovieSelect
-                selectedTvShows={selectedTvShows}
-                setSelectedTvShows={setSelectedTvShows}
-                style={{ height: Dimensions.get("window").height / 1.5 }}
-                singleSelection
-              />
-            </View>
-          </TouchableWithoutFeedback>
+          <View
+            style={{ padding: 16 }}
+            onStartShouldSetResponder={() => {
+              Keyboard.dismiss();
+              return false;
+            }}
+          >
+            <MovieSelect
+              selectedTvShows={selectedTvShows}
+              setSelectedTvShows={setSelectedTvShows}
+              style={{ height: Dimensions.get("window").height / 1.5 }}
+              singleSelection
+            />
+          </View>
         </BottomSheetModal>
       </KeyboardAvoidingView>
       <Modal transparent={true} visible={menuModalVisible} animationType="fade">

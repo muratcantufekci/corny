@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, View } from "react-native";
+import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
 import SelectionBox from "./SelectionBox";
 import { getTvShowsByPopularity } from "../services/TvShow/get-tv-shows-by-popularity";
 import { searchTvShowsByText } from "../services/TvShow/search-tv-shows";
@@ -163,7 +163,7 @@ const MovieSelect = ({
   );
 };
 
-const styles = {
+const styles = StyleSheet.create({
   boxes: {
     marginTop: 24,
     paddingBottom: 40,
@@ -184,6 +184,6 @@ const styles = {
   input: {
     flex: 1,
   },
-};
+});
 
 export default MovieSelect;

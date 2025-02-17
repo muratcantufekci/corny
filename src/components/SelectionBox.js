@@ -77,7 +77,7 @@ const SelectionBox = ({
     >
       <TouchableOpacity
         onPress={selectFunc}
-        disabled={selected}
+        disabled={!isMovie && selected}
         onLongPress={() => {
           if (!isMovie) {
             startShakeAnimation();

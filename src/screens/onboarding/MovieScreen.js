@@ -3,7 +3,6 @@ import {
   Dimensions,
   Keyboard,
   StyleSheet,
-  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import ProggressBar from "../../components/ProggressBar";
@@ -50,42 +49,44 @@ const MovieScreen = ({ route }) => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View
-        style={[
-          styles.container,
-          {
-            paddingBottom: insets.bottom + 16,
-          },
-        ]}
-      >
-        <View>
-          <ProggressBar step={4} totalStep={7}/>
-          <OnboardingHeading
-            title={t("MOVIE_SCREEN_TITLE")}
-            desc={t("MOVIE_SCREEN_DESC")}
-            style={styles.textArea}
-          />
+    <View
+      style={[
+        styles.container,
+        {
+          paddingBottom: insets.bottom + 16,
+        },
+      ]}
+      onStartShouldSetResponder={() => {
+        Keyboard.dismiss();
+        return false;
+      }}
+    >
+      <View>
+        <ProggressBar step={4} totalStep={7} />
+        <OnboardingHeading
+          title={t("MOVIE_SCREEN_TITLE")}
+          desc={t("MOVIE_SCREEN_DESC")}
+          style={styles.textArea}
+        />
 
-          <MovieSelect
-            selectedTvShows={selectedTvShows}
-            setSelectedTvShows={setSelectedTvShows}
-            setChoiceCount={setChoiceCount}
-            style={{height: Dimensions.get("window").height / 2.1}}
-          />
-        </View>
-        <Button
-          variant={btnVariant}
-          disabled={isBtnDisabled}
-          style={styles.btn}
-          onPress={nextBtnHandler}
-        >
-          {choiceCount <= 0
-            ? t("NEXT")
-            : t("MAKE_CHOICE") + ` ( ${choiceCount} )`}
-        </Button>
+        <MovieSelect
+          selectedTvShows={selectedTvShows}
+          setSelectedTvShows={setSelectedTvShows}
+          setChoiceCount={setChoiceCount}
+          style={{ height: Dimensions.get("window").height / 2.1 }}
+        />
       </View>
-    </TouchableWithoutFeedback>
+      <Button
+        variant={btnVariant}
+        disabled={isBtnDisabled}
+        style={styles.btn}
+        onPress={nextBtnHandler}
+      >
+        {choiceCount <= 0
+          ? t("NEXT")
+          : t("MAKE_CHOICE") + ` ( ${choiceCount} )`}
+      </Button>
+    </View>
   );
 };
 
@@ -93,7 +94,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "space-between",
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
   },
   textArea: {
     marginBottom: 24,
@@ -102,7 +103,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 32,
     left: 16,
-    right: 16
+    right: 16,
   },
 });
 

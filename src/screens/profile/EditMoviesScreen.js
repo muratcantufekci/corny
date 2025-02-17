@@ -28,24 +28,20 @@ const EditMoviesScreen = ({ navigation }) => {
       desc: t("AT_LEAST_SIX"),
     });
     sheetRef.current?.present();
-    setWarning(false)
+    setWarning(false);
   }, [warning]);
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <MovieSelect
-          selectedTvShows={selectedTvShows}
-          setSelectedTvShows={setSelectedTvShows}
-          priorSelect={true}
-          addition={true}
-          setWarning={setWarning}
-        />
-        {sheetProps && (
-          <AlertSheet sheetProps={sheetProps} sheetRef={sheetRef} />
-        )}
-      </View>
-    </TouchableWithoutFeedback>
+    <View style={styles.container}>
+      <MovieSelect
+        selectedTvShows={selectedTvShows}
+        setSelectedTvShows={setSelectedTvShows}
+        priorSelect={true}
+        addition={true}
+        setWarning={setWarning}
+      />
+      {sheetProps && <AlertSheet sheetProps={sheetProps} sheetRef={sheetRef} />}
+    </View>
   );
 };
 

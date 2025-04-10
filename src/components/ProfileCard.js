@@ -6,7 +6,6 @@ import {
   StyleSheet,
   View,
   Image as Img,
-  FlatList,
   ActivityIndicator,
 } from "react-native";
 import ProggressBar from "./ProggressBar";
@@ -21,7 +20,8 @@ import { getUserAboutsById } from "../services/Matching/get-user-abouts-by-id";
 import { Image } from "expo-image";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { getUserTvShowsById } from "../services/Matching/get-user-tvshows-by-id";
-import Close from "../assets/svg/close-circle-wrong.svg"
+import Close from "../assets/svg/close-circle-wrong.svg";
+import { FlatList } from "react-native-gesture-handler";
 
 const { width, height } = Dimensions.get("window");
 
@@ -36,6 +36,8 @@ const ProfileCard = ({
   selectedAbouts,
   selectedInterests,
   message,
+  persentage,
+  showRate = true,
 }) => {
   const [step, setStep] = useState(1);
   const [userInfo, setUserInfo] = useState(null);
@@ -43,7 +45,7 @@ const ProfileCard = ({
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [messageVisible, setMessageVisible] = useState(true)
+  const [messageVisible, setMessageVisible] = useState(true);
   const screenWidth = Dimensions.get("window").width;
   const sheetRef = useRef(null);
 
@@ -111,6 +113,23 @@ const ProfileCard = ({
                 fromProfileCard
               />
             </View>
+            {showRate && (
+              <View style={styles.matchRate}>
+                <Image
+                  source={require("../assets/images/popcorn.jpeg")}
+                  style={styles.matchRateImg}
+                />
+                <View style={styles.matchRateTextWrapper}>
+                  <CustomText style={styles.matchRatePercentage}>
+                    %{persentage}
+                  </CustomText>
+                  <CustomText style={styles.matchRateText}>
+                    {t("MATCH")}
+                  </CustomText>
+                </View>
+              </View>
+            )}
+
             <Pressable onPress={handlePress}>
               <Image
                 source={{
@@ -120,14 +139,21 @@ const ProfileCard = ({
               />
             </Pressable>
             {message && messageVisible && (
-              <View style={[
-                styles.messageContainer,
-                { top: (height + insets.bottom) / 2.6 },
-              ]}>
-                <TouchableOpacity style={styles.messageClose} onPress={() => setMessageVisible(false)}>
+              <View
+                style={[
+                  styles.messageContainer,
+                  { top: (height + insets.bottom) / 2.6 },
+                ]}
+              >
+                <TouchableOpacity
+                  style={styles.messageClose}
+                  onPress={() => setMessageVisible(false)}
+                >
                   <Close />
                 </TouchableOpacity>
-                <CustomText style={styles.message} numberOfLines={2}>{message}</CustomText>
+                <CustomText style={styles.message} numberOfLines={2}>
+                  {message}
+                </CustomText>
               </View>
             )}
             <View
@@ -146,7 +172,11 @@ const ProfileCard = ({
                   </CustomText>
                 </View>
               </View>
-              <BlurView intensity={100} style={styles.blurContainer} experimentalBlurMethod="dimezisBlurView">
+              <BlurView
+                intensity={100}
+                style={styles.blurContainer}
+                experimentalBlurMethod="dimezisBlurView"
+              >
                 <CustomText style={styles.favoritesText}>
                   All time favorites
                 </CustomText>
@@ -343,6 +373,7 @@ const ProfileCard = ({
           <FlatList
             columnWrapperStyle={styles.movieContainer}
             data={userAllTvShows}
+            nestedScrollEnabled={true}
             renderItem={({ item }) => (
               <View style={styles.movieBox}>
                 <Image
@@ -375,6 +406,33 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignItems: "center",
   },
+  matchRate: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    position: "absolute",
+    top: 30,
+    right: 10,
+    zIndex: 2,
+    backgroundColor: "white",
+    borderRadius: 16,
+    padding: 8,
+    overflow: "hidden",
+  },
+  matchRateImg: {
+    width: 40,
+    height: 40,
+  },
+  matchRatePercentage: {
+    fontWeight: "700",
+    fontSize: 18,
+    color: "black",
+  },
+  matchRateText: {
+    fontWeight: "500",
+    fontSize: 12,
+    color: "black",
+  },
   img: {
     width: "100%",
     height: height / 1.54,
@@ -389,14 +447,14 @@ const styles = StyleSheet.create({
     left: 20,
     borderRadius: 16,
     borderBottomLeftRadius: 0,
-    maxWidth: "90%"
+    maxWidth: "90%",
   },
   messageClose: {
     position: "absolute",
     right: -10,
     top: -10,
     width: 30,
-    height:30
+    height: 30,
   },
   message: {
     fontWeight: "500",

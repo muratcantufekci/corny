@@ -4,19 +4,28 @@ import CustomText from "../../../components/CustomText";
 import Dots from "../../../assets/svg/dots-horizontal.svg";
 import Back from "../../../assets/svg/arrow-left.svg";
 
-const ChatHubHeader = ({ navigation, userImage, userName, sheetRef, pt }) => {
+const ChatHubHeader = ({ navigation, userImage, userName, userId, sheetRef, pt }) => {
+
+  const profilePressHandler = () => {
+      navigation.navigate("LikesDetail", {
+        userId,
+        tabIndex: 1,
+        showRate: false
+      });
+  }
+
   return (
     <View style={[styles.headerContainer, { paddingTop: pt }]}>
       <View style={styles.headerWrapper}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={{ padding: 10, paddingLeft: 0 }}>
           <Back width={30} height={30} />
         </TouchableOpacity>
-        <View style={styles.headerMid}>
+        <TouchableOpacity onPress={profilePressHandler} style={styles.headerMid}>
           <Image source={{ uri: userImage }} style={styles.headerImg} />
           <View style={styles.headerNameWrap}>
             <CustomText style={styles.headerName}>{userName}</CustomText>
           </View>
-        </View>
+        </TouchableOpacity>
       </View>
       <TouchableOpacity onPress={() => sheetRef.current?.present()}>
         <Dots width={32} height={32} />

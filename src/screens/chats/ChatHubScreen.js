@@ -60,7 +60,7 @@ const ChatHubScreen = ({ route }) => {
   const appUtils = useAppUtils();
   const navigation = useNavigation();
   const chatRoomsStore = useChatRoomsStore();
-  const { chatRoomId, otherUserConnectionId, otherUserImg } = route.params;
+  const { chatRoomId, otherUserConnectionId, otherUserId, otherUserImg } = route.params;
   const [message, setMessage] = useState("");
   const sheetRef = useRef(null);
   const likeSheetRef = useRef(null);
@@ -149,6 +149,7 @@ const ChatHubScreen = ({ route }) => {
           navigation={navigation}
           userImage={otherUserImg}
           userName={hubMessages.otherUserDisplayName}
+          userId={otherUserId}
           sheetRef={sheetRef}
           pt={insets.top + 16}
         />

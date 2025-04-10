@@ -405,6 +405,7 @@
     "AND": "ve",
     "ALERT": "Uyarı",
     "OK": "Tamam",
-    "PERMISSION_LOCATION": "Konum izni gerekli"
+    "PERMISSION_LOCATION": "Konum izni gerekli",
+    "MATCH": "Eşleşme"
   }
 }

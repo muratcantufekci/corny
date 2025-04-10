@@ -3,7 +3,6 @@ import {
   AppState,
   FlatList,
   Image,
-  ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -25,12 +24,13 @@ import Tabs from "../../components/Tabs";
 import { getDeviceInfo } from "../../helper/getDeviceInfo";
 import { postMarketingEvents } from "../../services/Event/send-marketing-event";
 
-const ChatsScreen = ({route}) => {
+const ChatsScreen = ({ route }) => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const appUtils = useAppUtils();
   const chatRoomsStore = useChatRoomsStore();
   const insets = useSafeAreaInsets();
+  const [refreshing, setRefreshing] = useState(false);
 
   const TABS_DATA = [
     {
@@ -255,15 +255,24 @@ const ChatsScreen = ({route}) => {
   const messageBoxPressHandler = (
     chatRoomId,
     otherUserConnectionId,
+    otherUserId,
     otherUserImg
   ) => {
     navigation.navigate("MessageHub", {
       chatRoomId,
       otherUserConnectionId,
+      otherUserId,
       otherUserImg,
     });
     appUtils.setBottomTabStyle("none");
   };
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    getChats();
+    setRefreshing(false);
+  };
+
   return (
     <View
       style={{
@@ -285,6 +294,8 @@ const ChatsScreen = ({route}) => {
         <FlatList
           data={chatRoomsStore.chatRooms}
           keyExtractor={(item) => item.chatRoomId.toString()}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
           renderItem={({ item }) => {
             const isIncome =
               item.messages[0]?.sender === item.otherUserConnectionId;
@@ -300,6 +311,7 @@ const ChatsScreen = ({route}) => {
                   messageBoxPressHandler(
                     item.chatRoomId,
                     item.otherUserConnectionId,
+                    item.otherUserId,
                     item.otherUserProfileImage.imageUrl
                   )
                 }

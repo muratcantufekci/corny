@@ -18,7 +18,6 @@ import Corny from "../../assets/svg/corny.svg";
 import Filter from "../../assets/svg/filter.svg";
 import ProfileCard from "../../components/ProfileCard";
 import Swiper from "react-native-deck-swiper";
-import { getPotentialMatches } from "../../services/Matching/get-potential-matches";
 import Like from "../../assets/svg/likes-passive.svg";
 import Cross from "../../assets/svg/cross.svg";
 import { getUserAbouts } from "../../services/User/get-user-abouts";
@@ -34,8 +33,14 @@ import MatchingSheet from "../../components/MatchingSheet";
 import * as SecureStore from "expo-secure-store";
 import WaitlistScreen from "../waitlist/WaitlistScreen";
 import AlertSheet from "../../components/AlertSheet";
+import { exploreProfiles } from "../../services/Matching/explore-profiles";
+import { getSwipeQuestion } from "../../services/Matching/get-swipe-question";
+import { getMatchRates } from "../../services/Matching/get-match-rates";
 
-const registerForPushNotificationsAsync = async (setAlertSheetProps, sheetRef) => {
+const registerForPushNotificationsAsync = async (
+  setAlertSheetProps,
+  sheetRef
+) => {
   let token;
 
   if (Platform.OS === "android") {
@@ -61,7 +66,7 @@ const registerForPushNotificationsAsync = async (setAlertSheetProps, sheetRef) =
         title: t("WARNING"),
         desc: t("PERMISSION_NOTIFICATION"),
         btnText: t("OPEN_SETTINGS"),
-        btnPress: openSettings
+        btnPress: openSettings,
       });
       sheetRef.current?.present();
       return;
@@ -110,6 +115,7 @@ const ExploreScreen = () => {
   const insets = useSafeAreaInsets();
   const [expoPushToken, setExpoPushToken] = useState("");
   const [matches, setMatches] = useState([]);
+  const [matchRates, setMatchRates] = useState([]);
   const [excludeIds, setExcludeIds] = useState([]);
   const [showMatches, setShowMatches] = useState(true);
   const [showQuiz, setShowQuiz] = useState(false);
@@ -128,16 +134,34 @@ const ExploreScreen = () => {
 
   useEffect(() => {
     const getMatches = async () => {
-      const response = await getPotentialMatches(page, excludeIds);
-      setMatches((prevData) => [...prevData, ...response.MatchUser.Contents]);
+      const data = {
+        size: 20,
+        skipIdList: excludeIds,
+        filter: {
+          applyFilter: false,
+          minimumAge: 18,
+          maximumAge: 65,
+          gender: "female",
+        },
+      };
+      const response = await exploreProfiles(data);
+      
+      setMatches((prevData) => [...prevData, ...response.profiles]);
+      if(page === 1) {
+        const userIds = response.profiles.slice(0, 5).map(item => item.userId);
+        const matchRateResponse = await getMatchRates(userIds)
+        setMatchRates(matchRateResponse.MatchRates)
+      }
     };
     getMatches();
   }, [page]);
 
   useEffect(() => {
-    registerForPushNotificationsAsync(setAlertSheetProps, alertSheetRef).then((token) => {
-      setExpoPushToken(token);
-    });
+    registerForPushNotificationsAsync(setAlertSheetProps, alertSheetRef).then(
+      (token) => {
+        setExpoPushToken(token);
+      }
+    );
     // const notificationListener = Notifications.addNotificationReceivedListener(notification => {
     //   console.log('Notification received:', notification);
     // });
@@ -175,7 +199,7 @@ const ExploreScreen = () => {
   useEffect(() => {
     const handlePostSwipe = async () => {
       const data = {
-        swipedUserId: matches[cardIndex].ProfileInfo.userId,
+        swipedUserId: matches[cardIndex].profileInfo.userId,
         isLike: true,
         superLikeUsed: false,
       };
@@ -212,13 +236,28 @@ const ExploreScreen = () => {
     }
   }, [quizAnswer]);
 
-  const handleOnSwiped = (cardIndex) => {
+  const handleOnSwiped = async (cardIndex) => {
     if (cardIndex === matches.length - 11) {
-      const lastTenIds = matches.slice(-10).map((match) => match.UserId);
+      const lastTenIds = matches.slice(-10).map((match) => match.userId);
       setExcludeIds(lastTenIds);
       setPage((prevPage) => prevPage + 1);
     } else if (cardIndex === matches.length - 1) {
       setShowMatches(false);
+    }
+
+    if (cardIndex % 5 === 3) {
+      const nextFiveCards = matches.slice(cardIndex + 2, cardIndex + 7);
+      const nextFiveIds = nextFiveCards.map(card => card.profileInfo.userId);
+  
+      if (nextFiveIds.length) {
+        try {
+          const response = await getMatchRates(nextFiveIds);
+          
+          setMatchRates((prevData) => [...prevData, ...response.MatchRates]);
+        } catch (err) {
+          console.error("Match rate servisine istek atılamadı:", err);
+        }
+      }
     }
   };
   const handleOnLeftSwipe = async (cardIndex) => {
@@ -227,7 +266,7 @@ const ExploreScreen = () => {
       setIsSwipingEnabled(false);
     }, 500);
     const data = {
-      swipedUserId: matches[cardIndex].ProfileInfo.userId,
+      swipedUserId: matches[cardIndex].profileInfo.userId,
       isLike: false,
       superLikeUsed: false,
     };
@@ -240,7 +279,11 @@ const ExploreScreen = () => {
     setTimeout(() => {
       setIsSwipingEnabled(false);
     }, 1000);
-    setQuizData(matches[cardIndex].CommonTvShowQuestion);
+
+    const response = await getSwipeQuestion(
+      matches[cardIndex].profileInfo.userId
+    );
+    setQuizData(response.question);
     setShowQuiz(true);
   };
 
@@ -289,26 +332,29 @@ const ExploreScreen = () => {
           <Corny />
           <Filter style={{ opacity: 0, pointerEvents: "none" }} />
         </View>
-        {showMatches && matches.length > 0 ? (
+        {showMatches && matches.length > 0 && matchRates.length > 0 ? (
           <>
             <Swiper
               cards={matches}
               ref={swiperRef}
               renderCard={(card) => (
                 <ProfileCard
-                  key={card?.ProfileInfo.userId}
-                  images={card?.ProfileInfo.images}
-                  name={card?.ProfileInfo.name}
-                  age={card?.ProfileInfo.age}
-                  distance={card?.ProfileInfo.distance}
-                  tvShows={card?.ProfileInfo.tvShows}
-                  id={card?.ProfileInfo.userId}
+                  key={card?.profileInfo.userId}
+                  images={card?.profileInfo.images}
+                  name={card?.profileInfo.name}
+                  age={card?.profileInfo.age}
+                  distance={card?.profileInfo.distance}
+                  tvShows={card?.profileInfo.tvShows}
+                  id={card?.profileInfo.userId}
                   insets={insets}
                   selectedAbouts={userStore.cardAbouts}
                   selectedInterests={userStore.cardInterests}
                   message={card?.SwipeMessage?.message}
+                  persentage={
+                    matchRates.find(m => m.UserId === card?.profileInfo.userId)?.MatchRate ?? null
+                  }
                 />
-              )}
+              )} 
               backgroundColor="none"
               cardVerticalMargin={40}
               showSecondCard={true}

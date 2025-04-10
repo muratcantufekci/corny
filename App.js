@@ -225,6 +225,11 @@ const MessagesStack = () => {
         headerBackTitleVisible: false,
         headerTitle: "",
         headerTintColor: "#045bb3",
+        headerBackImage: () => (
+          <View style={{ padding: 10}}>
+            <Back />
+          </View>
+        ),
       }}
     >
       <Stack.Screen
@@ -239,6 +244,13 @@ const MessagesStack = () => {
           headerTransparent: false,
           headerStyle: { backgroundColor: "#FEFCF5" },
           cardStyle: { backgroundColor: "#FEFCF5" },
+        }}
+      />
+      <Stack.Screen
+        name="LikesDetail"
+        component={LikesDetailScreen}
+        options={{
+          headerTransparent: false,
         }}
       />
     </Stack.Navigator>
@@ -290,6 +302,13 @@ const ProfileStack = () => {
         name="ProfileMain"
         component={ProfileScreen}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="LikesDetail"
+        component={LikesDetailScreen}
+        options={{
+          headerTransparent: false,
+        }}
       />
       <Stack.Screen
         name="EditProfile"

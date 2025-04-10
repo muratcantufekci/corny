@@ -405,6 +405,7 @@
     "AND": "and",
     "ALERT": "Alert",
     "OK": "Okay",
-    "PERMISSION_LOCATION": "Location permission required"
+    "PERMISSION_LOCATION": "Location permission required",
+    "MATCH": "Match"
   }
 }

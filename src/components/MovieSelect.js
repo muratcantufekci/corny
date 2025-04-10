@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 import SelectionBox from "./SelectionBox";
 import { getTvShowsByPopularity } from "../services/TvShow/get-tv-shows-by-popularity";
 import { searchTvShowsByText } from "../services/TvShow/search-tv-shows";
@@ -11,6 +11,7 @@ import { addUserTvShow } from "../services/TvShow/add-tv-show";
 import { removeUserTvShow } from "../services/TvShow/remove-tv-show";
 import { getDeviceInfo } from "../helper/getDeviceInfo";
 import { postMarketingEvents } from "../services/Event/send-marketing-event";
+import { FlatList } from "react-native-gesture-handler";
 
 const MovieSelect = ({
   selectedTvShows,

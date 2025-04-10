@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Modal, ScrollView, StyleSheet, View } from "react-native";
+import { Modal, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import CustomText from "../../components/CustomText";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Button from "../../components/Button";
@@ -74,6 +74,8 @@ const ProfileScreen = () => {
   useEffect(() => {
     const getUserInfo = async () => {
       const response = await getAccountDetails();
+      console.log("resp",response);
+      
 
       userStore.setUserAccountDetails({
         profilePicture: response.account.profileImage?.imageUrl,
@@ -81,6 +83,7 @@ const ProfileScreen = () => {
         age: response.account.age,
         email: response.account.email,
         phoneNumber: response.account.phoneNumber,
+        userId: response.account.userId
       });
     };
 
@@ -104,6 +107,14 @@ const ProfileScreen = () => {
     await Updates.reloadAsync();
   };
 
+  const profilePicturePressHandler = () => {
+    navigation.navigate("LikesDetail", {
+      userId : userStore.userAccountDetails?.userId,
+      tabIndex: 1,
+      showRate: false
+    });
+  }
+
   return (
     <>
       <ScrollView
@@ -119,10 +130,12 @@ const ProfileScreen = () => {
       >
         <View>
           <View style={styles.profileHead}>
-            <Image
-              source={{ uri: userStore.userAccountDetails?.profilePicture }}
-              style={styles.profil}
-            />
+            <TouchableOpacity onPress={profilePicturePressHandler}>
+              <Image
+                source={{ uri: userStore.userAccountDetails?.profilePicture }}
+                style={styles.profil}
+              />
+            </TouchableOpacity>
             <CustomText style={styles.name}>
               {userStore.userAccountDetails &&
                 `${userStore.userAccountDetails.name}, ${userStore.userAccountDetails.age}`}

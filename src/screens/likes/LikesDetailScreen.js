@@ -8,24 +8,32 @@ import useUserStore from "../../store/useUserStore";
 import Like from "../../assets/svg/likes-passive.svg";
 import Cross from "../../assets/svg/cross.svg";
 import { postSwipe } from "../../services/Matching/send-swiper";
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import MatchingSheet from "../../components/MatchingSheet";
 import { t } from "i18next";
+import { getMatchRates } from "../../services/Matching/get-match-rates";
+import useAppUtils from "../../store/useAppUtils";
 
 const LikesDetailScreen = ({ route }) => {
-  const { userId, tabIndex } = route.params;
+  const { userId, tabIndex, showRate } = route.params;
   const insets = useSafeAreaInsets();
   const [userData, setUserData] = useState(null);
+  const [userMatchRate, setUserMatchRate] = useState(null);
   const userStore = useUserStore();
   const navigation = useNavigation();
   const sheetRef = useRef(null);
   const [sheetProps, setSheetProps] = useState(null);
   const [messageSend, setMessageSend] = useState(false);
+  const isFocused = useIsFocused();
+  const appUtils = useAppUtils();
 
   useEffect(() => {
     const getProfileCardDetails = async () => {
       const response = await getSinglePotentialMatch(userId);
       setUserData(response.MatchUser.Contents[0]);
+
+      const matchRateResponse = await getMatchRates([userId]);
+      setUserMatchRate(matchRateResponse.MatchRates[0].MatchRate);
     };
     getProfileCardDetails();
   }, []);
@@ -35,6 +43,12 @@ const LikesDetailScreen = ({ route }) => {
       navigation.goBack();
     }
   }, [messageSend]);
+
+  useEffect(() => {
+    if (isFocused) {
+      appUtils.setBackgroundColor("#FFFFFF");
+    }
+  }, [isFocused]);
 
   const handleOnLeftSwipe = async () => {
     const data = {
@@ -78,6 +92,8 @@ const LikesDetailScreen = ({ route }) => {
           selectedAbouts={userStore.cardAbouts}
           selectedInterests={userStore.cardInterests}
           message={userData.SwipeMessage?.message}
+          persentage={userMatchRate}
+          showRate={showRate}
         />
       )}
       {tabIndex === 0 && (

@@ -36,6 +36,8 @@ import AlertSheet from "../../components/AlertSheet";
 import { exploreProfiles } from "../../services/Matching/explore-profiles";
 import { getSwipeQuestion } from "../../services/Matching/get-swipe-question";
 import { getMatchRates } from "../../services/Matching/get-match-rates";
+import * as Location from "expo-location";
+import { postUserLocation } from "../../services/User/send-location";
 
 const registerForPushNotificationsAsync = async (
   setAlertSheetProps,
@@ -147,10 +149,12 @@ const ExploreScreen = () => {
       const response = await exploreProfiles(data);
       
       setMatches((prevData) => [...prevData, ...response.profiles]);
-      if(page === 1) {
-        const userIds = response.profiles.slice(0, 5).map(item => item.userId);
-        const matchRateResponse = await getMatchRates(userIds)
-        setMatchRates(matchRateResponse.MatchRates)
+      if (page === 1) {
+        const userIds = response.profiles
+          .slice(0, 5)
+          .map((item) => item.userId);
+        const matchRateResponse = await getMatchRates(userIds);
+        setMatchRates(matchRateResponse.MatchRates);
       }
     };
     getMatches();
@@ -193,7 +197,37 @@ const ExploreScreen = () => {
       userStore.setcardAbouts(filteredDataForAbouts);
       userStore.setcardInterests(interestData.values);
     };
+
+    const getUserLocation = async () => {
+      const response = await Location.requestForegroundPermissionsAsync();
+
+      if (response.status === "granted") {
+        let location = await Location.getCurrentPositionAsync({});
+
+        let reverseGeocode = await Location.reverseGeocodeAsync({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        });
+        if (reverseGeocode.length > 0) {
+          const data = {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            city: reverseGeocode[0].region
+              ? reverseGeocode[0].region
+              : reverseGeocode[0].city,
+            isoCountryCode: reverseGeocode[0].isoCountryCode,
+          };
+          try {
+            const res = await postUserLocation(data);
+          } catch (error) {
+            console.error(error);
+          }
+        }
+      }
+    };
+
     getAboutMe();
+    getUserLocation();
   }, []);
 
   useEffect(() => {
@@ -247,8 +281,8 @@ const ExploreScreen = () => {
 
     if (cardIndex % 5 === 3) {
       const nextFiveCards = matches.slice(cardIndex + 2, cardIndex + 7);
-      const nextFiveIds = nextFiveCards.map(card => card.profileInfo.userId);
-  
+      const nextFiveIds = nextFiveCards.map((card) => card.profileInfo.userId);
+
       if (nextFiveIds.length) {
         try {
           const response = await getMatchRates(nextFiveIds);
@@ -351,10 +385,12 @@ const ExploreScreen = () => {
                   selectedInterests={userStore.cardInterests}
                   message={card?.SwipeMessage?.message}
                   persentage={
-                    matchRates.find(m => m.UserId === card?.profileInfo.userId)?.MatchRate ?? null
+                    matchRates.find(
+                      (m) => m.UserId === card?.profileInfo.userId
+                    )?.MatchRate ?? null
                   }
                 />
-              )} 
+              )}
               backgroundColor="none"
               cardVerticalMargin={40}
               showSecondCard={true}

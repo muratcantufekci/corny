@@ -89,6 +89,7 @@ import { getDeviceInfo } from "./src/helper/getDeviceInfo";
 import { postMarketingEvents } from "./src/services/Event/send-marketing-event";
 import { AppEventsLogger, Settings } from 'react-native-fbsdk-next';
 import {identifyDevice, vexo} from "vexo-analytics";
+import ReportUserScreen from "./src/screens/chats/ReportUserScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -249,6 +250,13 @@ const MessagesStack = () => {
       <Stack.Screen
         name="LikesDetail"
         component={LikesDetailScreen}
+        options={{
+          headerTransparent: false,
+        }}
+      />
+      <Stack.Screen
+        name="ReportUser"
+        component={ReportUserScreen}
         options={{
           headerTransparent: false,
         }}

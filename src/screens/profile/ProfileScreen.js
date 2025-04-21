@@ -74,8 +74,6 @@ const ProfileScreen = () => {
   useEffect(() => {
     const getUserInfo = async () => {
       const response = await getAccountDetails();
-      console.log("resp",response);
-      
 
       userStore.setUserAccountDetails({
         profilePicture: response.account.profileImage?.imageUrl,

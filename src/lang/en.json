@@ -406,6 +406,23 @@
     "ALERT": "Alert",
     "OK": "Okay",
     "PERMISSION_LOCATION": "Location permission required",
-    "MATCH": "Match"
+    "MATCH": "Match",
+    "REPORT_USER_TITLE": "User Report Form",
+    "REPORT_USER_DES": "Let us know what's bothering you! We'll follow up on the issue as soon as possible.",
+    "SUBJECT": "Subject",
+    "SUBJECT_REQUIRED": "Subject field is required!",
+    "HeightEmoji": "📐 ",
+    "WorkIndustryEmoji": "💼",
+    "LookingForEmoji": "👀",
+    "EatingHabitEmoji": "🍽️",
+    "ReligiousViewEmoji": "🛐",
+    "EducationEmoji": "🎓",
+    "SmokerEmoji": "🚬",
+    "ExerciseHabitEmoji": "💪",
+    "PoliticalViewEmoji": "⚖️",
+    "ZodiacEmoji": "🔮",
+    "RelationshipStyleEmoji": "🫂",
+    "WatchingHabitEmoji": "🎬",
+    "DrinkingHabitEmoji": "🍻"
   }
 }

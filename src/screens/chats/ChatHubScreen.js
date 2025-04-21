@@ -60,7 +60,8 @@ const ChatHubScreen = ({ route }) => {
   const appUtils = useAppUtils();
   const navigation = useNavigation();
   const chatRoomsStore = useChatRoomsStore();
-  const { chatRoomId, otherUserConnectionId, otherUserId, otherUserImg } = route.params;
+  const { chatRoomId, otherUserConnectionId, otherUserId, otherUserImg } =
+    route.params;
   const [message, setMessage] = useState("");
   const sheetRef = useRef(null);
   const likeSheetRef = useRef(null);
@@ -435,6 +436,13 @@ const ChatHubScreen = ({ route }) => {
     }
   };
 
+  const reportUserPressHandler = () => {
+    sheetRef.current?.close();
+    navigation.navigate("ReportUser", {
+      otherUserId,
+    });
+  };
+
   return (
     <>
       <KeyboardAvoidingView
@@ -543,7 +551,10 @@ const ChatHubScreen = ({ route }) => {
                 {t("BLOCK")}
               </CustomText>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.bottomSheetItem}>
+            <TouchableOpacity
+              style={styles.bottomSheetItem}
+              onPress={reportUserPressHandler}
+            >
               <CustomText style={styles.bottomSheetItemText}>
                 {t("REPORT")}
               </CustomText>

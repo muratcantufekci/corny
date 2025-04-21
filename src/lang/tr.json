@@ -327,7 +327,7 @@
     "EDIT_PHONE_TITLE": "Seni doğrulayalım",
     "EDIT_PHONE_DESC": "Lütfen aşağıya cep telefonu numaranızı gir, sana bir doğrulama kodu göndereceğiz",
     "SEND_VERIFICATION_CODE": "Doğrulama Kodunu Gönder",
-    "CONTACT_US_TITLE": "Bize Ulaşın Form",
+    "CONTACT_US_TITLE": "Bize Ulaşın Formu",
     "CONTACT_US_DESC": "Sizden haber almayı çok isteriz! Aşağıdaki formu doldurun, mümkün olan en kısa sürede size geri dönüş yapacağız.",
     "MY_GUILTYPLEASURE": "Gizli Zevki",
     "LAST_WATCHED_MOVIE": "Son İzlediği Film",
@@ -406,6 +406,23 @@
     "ALERT": "Uyarı",
     "OK": "Tamam",
     "PERMISSION_LOCATION": "Konum izni gerekli",
-    "MATCH": "Eşleşme"
+    "MATCH": "Eşleşme",
+    "REPORT_USER_TITLE": "Kullanıcı Rapor Formu",
+    "REPORT_USER_DES": "Seni rahatsız eden durumu bize bildir! Konunun en kısa sürede takipçisi olacağız.",
+    "SUBJECT": "Konu",
+    "SUBJECT_REQUIRED": "Konu alanı zorunludur!",
+    "HeightEmoji": "📐",
+    "WorkIndustryEmoji": "💼",
+    "LookingForEmoji": "👀",
+    "EatingHabitEmoji": "🍽️",
+    "ReligiousViewEmoji": "🛐",
+    "EducationEmoji": "🎓",
+    "SmokerEmoji": "🚬",
+    "ExerciseHabitEmoji": "💪",
+    "PoliticalViewEmoji": "⚖️",
+    "ZodiacEmoji": "🔮",
+    "RelationshipStyleEmoji": "🫂",
+    "WatchingHabitEmoji": "🎬",
+    "DrinkingHabitEmoji": "🍻"
   }
 }

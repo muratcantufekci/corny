@@ -229,7 +229,7 @@ const ProfileCard = ({
                     return userAbout.values.map((item) => (
                       <AboutBox
                         key={item}
-                        text={t(`${item}`)}
+                        text={t(`${userAbout.title}Emoji`) + " " + t(`${item}`)}
                         selectedBox={selectedAbouts}
                         keyName={item}
                         disabled={true}

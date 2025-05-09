@@ -49,6 +49,7 @@ const ChatsScreen = ({ route }) => {
 
   useEffect(() => {
     if (isFocused) {
+      getChats();
       appUtils.setBottomTabStyle("flex");
       appUtils.setBackgroundColor("#FFFFFF");
       appUtils.setPaddingHorizontal(16);
@@ -66,7 +67,6 @@ const ChatsScreen = ({ route }) => {
       };
       const viewContentRespone = await postMarketingEvents(viewContentData);
     };
-    getChats();
     postViewContent();
   }, []);
 

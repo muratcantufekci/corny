@@ -1,5 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Dimensions, Image, Linking, Platform, StyleSheet, Switch, View } from "react-native";
+import {
+  Dimensions,
+  Image,
+  Linking,
+  Platform,
+  StyleSheet,
+  Switch,
+  View,
+} from "react-native";
 import CustomText from "../../components/CustomText";
 import { getUserNotificationPreferences } from "../../services/User/get-user-notification-preferences";
 import { postUserNotificationPreferences } from "../../services/User/send-user-notification-preferences";
@@ -30,7 +38,13 @@ const menuItemData = [
   },
 ];
 
-const MenuItem = ({ name, notification }) => {
+const MenuItem = ({
+  name,
+  notification,
+  alertSheetRef,
+  setAlertSheetProps,
+  openSettings,
+}) => {
   const [isEnabled, setIsEnabled] = useState(notification?.isAllowed || false);
 
   useEffect(() => {
@@ -40,8 +54,24 @@ const MenuItem = ({ name, notification }) => {
   }, [notification]);
 
   const toggleSwitch = async () => {
-    setIsEnabled((previousState) => !previousState);
-    const response = await postUserNotificationPreferences(notification.type, !isEnabled);
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    if (existingStatus !== "granted") {
+      setAlertSheetProps({
+        img: require("../../assets/images/warning.png"),
+        title: t("WARNING"),
+        desc: t("PERMISSION_NOTIFICATION"),
+        btnText: t("OPEN_SETTINGS"),
+        btnPress: openSettings,
+      });
+      alertSheetRef.current?.present();
+    } else {
+      setIsEnabled((previousState) => !previousState);
+      const response = await postUserNotificationPreferences(
+        notification.type,
+        !isEnabled
+      );
+    }
   };
 
   return (
@@ -64,14 +94,15 @@ const EditNotificationPreferences = () => {
 
   useEffect(() => {
     const getNotifications = async () => {
-      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
       if (existingStatus !== "granted") {
         setAlertSheetProps({
           img: require("../../assets/images/warning.png"),
           title: t("WARNING"),
           desc: t("PERMISSION_NOTIFICATION"),
           btnText: t("OPEN_SETTINGS"),
-          btnPress: openSettings
+          btnPress: openSettings,
         });
         alertSheetRef.current?.present();
       }
@@ -111,6 +142,9 @@ const EditNotificationPreferences = () => {
             notification={userNotifications?.find(
               (notification) => notification.type === item.type
             )}
+            alertSheetRef={alertSheetRef}
+            setAlertSheetProps={setAlertSheetProps}
+            openSettings={openSettings}
           />
         ))}
       </View>
@@ -126,7 +160,7 @@ const { width } = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
   },
   notificationWrapper: {
     position: "relative",
@@ -154,7 +188,7 @@ const styles = StyleSheet.create({
     left: 0,
     opacity: 0.1,
     zIndex: 1,
-    width: width -32
+    width: width - 32,
   },
   menuItems: {
     marginTop: 16,

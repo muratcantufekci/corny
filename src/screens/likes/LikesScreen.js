@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Dimensions,
@@ -6,6 +6,7 @@ import {
   Image,
   StyleSheet,
   View,
+  TouchableOpacity,
 } from "react-native";
 import CustomText from "../../components/CustomText";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -15,9 +16,14 @@ import { t } from "i18next";
 import { getUserRecievedLikes } from "../../services/Matching/get-user-recieved-likes";
 import { getUserLikes } from "../../services/Matching/get-user-likes";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
-import { TouchableOpacity } from "react-native";
+import useUserStore from "../../store/useUserStore";
+import { BlurView } from "expo-blur";
+import PremiumAlertSheet from "../../components/PremiumAlertSheet";
+import PremiumSheet from "../../components/PremiumSheet";
 
 const LikesScreen = () => {
+  const sheetRef = useRef(null);
+  const premiumSheetRef = useRef(null);
   const insets = useSafeAreaInsets();
   const [tabContent, setTabContent] = useState([]);
   const [tabIndex, setTabIndex] = useState(0);
@@ -30,6 +36,7 @@ const LikesScreen = () => {
   const [loading, setLoading] = useState(false);
   const isFocused = useIsFocused();
   const navigation = useNavigation();
+  const userStore = useUserStore();
 
   const TABS_DATA = [
     {
@@ -44,24 +51,39 @@ const LikesScreen = () => {
     },
   ];
 
+  const sheetProps = {
+    img: require("../../assets/images/premium-likes.png"),
+    title: t("PREMIUM_SEE_LIKES"),
+    desc: t("PREMIUM_SEE_LIKES_DESC"),
+    btnText: t("DISCOVER"),
+  };
+
   const RenderItem = ({ item }) => {
     const itemPressHandler = async () => {
-      const userId = item.user.userId
+      const userId = item.user.userId;
       navigation.navigate("LikesDetail", {
         userId,
-        tabIndex
+        tabIndex,
       });
     };
+
+    const isBlurred = tabIndex === 0 && !userStore.isUserPremium;
+
     return (
       <TouchableOpacity
         style={styles.box}
         key={item.user.userId}
-        onPress={itemPressHandler}
+        {...(!isBlurred ? { onPress: itemPressHandler } : { onPress: () => sheetRef.current?.present()})}
       >
-        <Image
-          source={{ uri: item.user.profileImage?.imageUrl }}
-          style={styles.boxImg}
-        />
+        <View style={styles.imageWrapper}>
+          <Image
+            source={{ uri: item.user.profileImage?.imageUrl }}
+            style={styles.boxImg}
+          />
+          {isBlurred && (
+            <BlurView intensity={60} tint="light" style={styles.blurOverlay} />
+          )}
+        </View>
       </TouchableOpacity>
     );
   };
@@ -89,7 +111,6 @@ const LikesScreen = () => {
     const getRecievedLikes = async () => {
       setLoading(true);
       const response = await getUserRecievedLikes(recievedLikesPage);
-      // console.log("response", response.data.Contents);
 
       setRecievedLikes((prevLikes) => [
         ...prevLikes,
@@ -163,10 +184,15 @@ const LikesScreen = () => {
           </CustomText>
         </View>
       )}
-
-      {/* <View style={styles.btnContainer}>
-        <Button variant="primary" style={styles.btn}>Test</Button>
-      </View> */}
+      {tabIndex === 0 && !userStore.isUserPremium && (
+        <View style={styles.btnContainer}>
+          <Button variant="primary" style={styles.btn} onPress={() => sheetRef.current?.present()}>
+            {t("SEE_LIKES")}
+          </Button>
+        </View>
+      )}
+      <PremiumAlertSheet sheetProps={sheetProps} sheetRef={sheetRef} premiumSheetRef={premiumSheetRef} />
+      <PremiumSheet sheetRef={premiumSheetRef} />
     </View>
   );
 };
@@ -191,7 +217,7 @@ const styles = StyleSheet.create({
   btnContainer: {
     alignItems: "center",
     position: "absolute",
-    width: "100%",
+    width: Dimensions.get("window").width,
     bottom: 24,
   },
   btn: {
@@ -215,9 +241,20 @@ const styles = StyleSheet.create({
   menuWrapper: {
     flex: 1,
     justifyContent: "center",
-    // alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.8)",
     paddingHorizontal: 16,
+  },
+  blurOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: 12,
+    zIndex: 1,
+  },
+  imageWrapper: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 12,
+    overflow: "hidden",
+    position: "relative",
   },
 });
 

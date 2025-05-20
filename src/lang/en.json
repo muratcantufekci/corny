@@ -423,6 +423,16 @@
     "ZodiacEmoji": "🔮",
     "RelationshipStyleEmoji": "🫂",
     "WatchingHabitEmoji": "🎬",
-    "DrinkingHabitEmoji": "🍻"
+    "DrinkingHabitEmoji": "🍻",
+    "SEE_LIKES": "See who liked you",
+    "PREMIUM_SEE_LIKES": "See all your likes with Premium",
+    "PREMIUM_SEE_LIKES_DESC": "Get full access to everyone who likes you and get back to who you like.",
+    "PREMIUM": "Premium",
+    "PREMIUM_DESC": "Multiply your chances of being liked and get more attention!",
+    "BASIC": "Basic",
+    "PREMIUM_INFO_T1": "By clicking “Continue”, your payment will be made using your App Store account and your selected subscription will be activated for the period of time indicated.",
+    "PREMIUM_INFO_T2": "You will be charged the applicable subscription fee according to the plan you choose. Your subscription will automatically renew unless auto-renew is turned off at least 24 hours before the end of the current period. For more information about how we process your data, please see:",
+    "PREMIUM_INFO_T3": "If you have any questions or need assistance, please contact our support team.",
+    "MONTH": "MONTH"
   }
 }

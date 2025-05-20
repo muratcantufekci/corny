@@ -3,6 +3,7 @@ import { create } from "zustand";
 const useUserStore = create((set) => ({
   token: "",
   isUserLoggedIn: false,
+  isUserPremium: false,
   userAccountDetails: null,
   userAbouts: [],
   userTvShows: [],
@@ -13,6 +14,7 @@ const useUserStore = create((set) => ({
   waitListTarget: 500,
   setToken: (token) => set({ token }),
   setIsUserLoggedIn: (isUserLoggedIn) => set({ isUserLoggedIn }),
+  setIsUserPremium: (isUserPremium) => set({ isUserPremium }),
   setUserAccountDetails: (newDetails) =>
     set((state) => ({
       userAccountDetails: {

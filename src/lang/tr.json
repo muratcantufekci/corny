@@ -423,6 +423,16 @@
     "ZodiacEmoji": "🔮",
     "RelationshipStyleEmoji": "🫂",
     "WatchingHabitEmoji": "🎬",
-    "DrinkingHabitEmoji": "🍻"
+    "DrinkingHabitEmoji": "🍻",
+    "SEE_LIKES": "Seni kimlerin beğendiğini gör",
+    "PREMIUM_SEE_LIKES": "Premium ile tüm beğenilerinizi görün",
+    "PREMIUM_SEE_LIKES_DESC": "Sizi beğenen herkese tam erişim sağlayın ve sevdiğiniz kişiye karşılık verin.",
+    "PREMIUM": "Premium",
+    "PREMIUM_DESC": "Beğenilme şansınızı katlayın ve daha fazla ilgi çekin!",
+    "BASIC": "Temel",
+    "PREMIUM_INFO_T1": "“Devam Et”e tıkladığınızda, ödemeniz App Store hesabınız kullanılarak yapılacak ve seçtiğiniz abonelik belirtilen süre boyunca etkinleştirilecektir.",
+    "PREMIUM_INFO_T2": "Seçtiğiniz plana göre geçerli abonelik ücreti tahsil edilecektir. Aboneliğiniz, otomatik yenileme mevcut dönemin bitiminden en az 24 saat önce kapatılmadığı sürece otomatik olarak yenilenecektir. Verilerinizi nasıl işlediğimiz hakkında daha fazla bilgi için lütfen şurayı inceleyin:",
+    "PREMIUM_INFO_T3": "Herhangi bir sorunuz varsa veya yardıma ihtiyacınız varsa lütfen destek ekibimizle iletişime geçin.",
+    "MONTH": "AY"
   }
 }

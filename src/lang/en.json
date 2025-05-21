@@ -433,6 +433,11 @@
     "PREMIUM_INFO_T1": "By clicking “Continue”, your payment will be made using your App Store account and your selected subscription will be activated for the period of time indicated.",
     "PREMIUM_INFO_T2": "You will be charged the applicable subscription fee according to the plan you choose. Your subscription will automatically renew unless auto-renew is turned off at least 24 hours before the end of the current period. For more information about how we process your data, please see:",
     "PREMIUM_INFO_T3": "If you have any questions or need assistance, please contact our support team.",
-    "MONTH": "MONTH"
+    "MONTH": "MONTH",
+    "FILTERS": "Filters",
+    "RESET": "Reset",
+    "PREFERENCES": "Preferences",
+    "AGE": "Age",
+    "DISTANCE": "Distance"
   }
 }

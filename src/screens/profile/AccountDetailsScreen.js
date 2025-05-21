@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import CustomText from "../../components/CustomText";
-import MenuItem from "./components/MenuItem";
+import MenuItem from "../../components/MenuItem";
 import { t } from "i18next";
 import { Modal, StyleSheet, View } from "react-native";
 import useUserStore from "../../store/useUserStore";

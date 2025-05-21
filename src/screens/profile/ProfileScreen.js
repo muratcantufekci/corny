@@ -7,7 +7,7 @@ import Edit from "../../assets/svg/edit.svg";
 import { useNavigation } from "@react-navigation/native";
 import { getAccountDetails } from "../../services/User/get-user-account-detail";
 import useUserStore from "../../store/useUserStore";
-import MenuItem from "./components/MenuItem";
+import MenuItem from "../../components/MenuItem";
 import { t } from "i18next";
 import { Image } from "expo-image";
 import * as SecureStore from "expo-secure-store";

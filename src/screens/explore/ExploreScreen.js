@@ -38,6 +38,7 @@ import { getSwipeQuestion } from "../../services/Matching/get-swipe-question";
 import { getMatchRates } from "../../services/Matching/get-match-rates";
 import * as Location from "expo-location";
 import { postUserLocation } from "../../services/User/send-location";
+import { useNavigation } from "@react-navigation/native";
 
 const registerForPushNotificationsAsync = async (
   setAlertSheetProps,
@@ -133,6 +134,7 @@ const ExploreScreen = () => {
   const [sheetProps, setSheetProps] = useState(null);
   const [alertSheetProps, setAlertSheetProps] = useState(null);
   const userStore = useUserStore();
+  const navigation = useNavigation();
 
   useEffect(() => {
     const getMatches = async () => {
@@ -364,7 +366,9 @@ const ExploreScreen = () => {
             <Undo />
           </Pressable>
           <Corny />
-          <Filter style={{ opacity: 0, pointerEvents: "none" }} />
+          <Pressable onPress={() => navigation.navigate("Filter", { refresh: true })}>
+            <Filter/>
+          </Pressable>
         </View>
         {showMatches && matches.length > 0 && matchRates.length > 0 ? (
           <>

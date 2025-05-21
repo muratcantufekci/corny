@@ -433,6 +433,11 @@
     "PREMIUM_INFO_T1": "“Devam Et”e tıkladığınızda, ödemeniz App Store hesabınız kullanılarak yapılacak ve seçtiğiniz abonelik belirtilen süre boyunca etkinleştirilecektir.",
     "PREMIUM_INFO_T2": "Seçtiğiniz plana göre geçerli abonelik ücreti tahsil edilecektir. Aboneliğiniz, otomatik yenileme mevcut dönemin bitiminden en az 24 saat önce kapatılmadığı sürece otomatik olarak yenilenecektir. Verilerinizi nasıl işlediğimiz hakkında daha fazla bilgi için lütfen şurayı inceleyin:",
     "PREMIUM_INFO_T3": "Herhangi bir sorunuz varsa veya yardıma ihtiyacınız varsa lütfen destek ekibimizle iletişime geçin.",
-    "MONTH": "AY"
+    "MONTH": "AY",
+    "FILTERS": "Filtreler",
+    "RESET": "Sıfırla",
+    "PREFERENCES": "Tercihler",
+    "AGE": "Yaş",
+    "DISTANCE": "Mesafe"
   }
 }

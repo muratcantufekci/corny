@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
-import CustomText from "../../../components/CustomText";
-import Arrow from "../../../assets/svg/arrow-left.svg";
+import CustomText from "./CustomText";
+import Arrow from "../assets/svg/arrow-left.svg";
 
 const MenuItem = ({ name, onPress }) => {
   return (

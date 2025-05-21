@@ -87,14 +87,21 @@ import TermsAndConditionsScreen from "./src/screens/profile/TermsAndConditionsSc
 import PrivacyPolicyScreen from "./src/screens/profile/PrivacyPolicyScreen";
 import { getDeviceInfo } from "./src/helper/getDeviceInfo";
 import { postMarketingEvents } from "./src/services/Event/send-marketing-event";
-import { AppEventsLogger, Settings } from 'react-native-fbsdk-next';
-import {identifyDevice, vexo} from "vexo-analytics";
+import { AppEventsLogger, Settings } from "react-native-fbsdk-next";
+import { identifyDevice, vexo } from "vexo-analytics";
 import ReportUserScreen from "./src/screens/chats/ReportUserScreen";
+import FilterScreen from "./src/screens/explore/FilterScreen";
+import SetFilterLookingForsScreen from "./src/screens/explore/SetFilterLookingForsScreen";
+import SetFilterInterestsScreen from "./src/screens/explore/SetFilterInterestsScreen";
+import SetFilterDrinkingHabitScreen from "./src/screens/explore/SetFilterDrinkingHabitScreen";
+import SetFilterSmokerScreen from "./src/screens/explore/SetFilterSmokerScreen";
+import SetFilterZodiacScreen from "./src/screens/explore/SetFilterZodiacScreen";
+import SetFilterEducationScreen from "./src/screens/explore/SetFilterEducationScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-vexo('5f639c5e-4b27-4f55-83fa-aa2dca12df99');
+vexo("5f639c5e-4b27-4f55-83fa-aa2dca12df99");
 
 const AuthStack = () => (
   <Stack.Navigator
@@ -147,6 +154,140 @@ const AuthStack = () => (
     <Stack.Screen name="OnboardingEnd" component={OnboardingEndScreen} />
   </Stack.Navigator>
 );
+
+const ExploreStack = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        transitionSpec: {
+          open: {
+            animation: "timing",
+            config: {
+              duration: 100,
+            },
+          },
+          close: {
+            animation: "timing",
+            config: {
+              duration: 100,
+            },
+          },
+        },
+        headerBackImage: () => (
+          <View style={{ padding: 10, paddingLeft: 0 }}>
+            <Back />
+          </View>
+        ),
+        headerBackTitleVisible: false,
+        headerTitle: "",
+        headerTintColor: "#045bb3",
+        headerTransparent: false,
+        headerStyle: {
+          backgroundColor: "white",
+          shadowOpacity: 0,
+          elevation: 0,
+        },
+        headerLeftContainerStyle: {
+          paddingLeft: 16,
+        },
+        headerRightContainerStyle: {
+          paddingRight: 16,
+        },
+        cardStyle: { backgroundColor: "white" },
+      }}
+    >
+      <Stack.Screen
+        name="Explore"
+        component={ExploreScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Filter"
+        component={FilterScreen}
+        options={{
+          headerTransparent: false,
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("FILTERS")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="SetFilterInterests"
+        component={SetFilterInterestsScreen}
+        options={{
+          headerTransparent: false,
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("INTEREST")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="SetFilterLookingFors"
+        component={SetFilterLookingForsScreen}
+        options={{
+          headerTransparent: false,
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("INTEREST")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="SetFilterDrinkingHabits"
+        component={SetFilterDrinkingHabitScreen}
+        options={{
+          headerTransparent: false,
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("DRINKINGHABIT")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="SetFilterSmokerHabits"
+        component={SetFilterSmokerScreen}
+        options={{
+          headerTransparent: false,
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("SMOKER")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="SetFilterZodiac"
+        component={SetFilterZodiacScreen}
+        options={{
+          headerTransparent: false,
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("ZODIAC")}
+            </CustomText>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="SetFilterEducation"
+        component={SetFilterEducationScreen}
+        options={{
+          headerTransparent: false,
+          headerTitle: () => (
+            <CustomText style={styles.profileHeaderText}>
+              {t("EDUCATION")}
+            </CustomText>
+          ),
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
 
 const LikesStack = () => {
   return (
@@ -227,7 +368,7 @@ const MessagesStack = () => {
         headerTitle: "",
         headerTintColor: "#045bb3",
         headerBackImage: () => (
-          <View style={{ padding: 10}}>
+          <View style={{ padding: 10 }}>
             <Back />
           </View>
         ),
@@ -664,8 +805,8 @@ const AppTabs = () => {
       }}
     >
       <Tab.Screen
-        name="Explore"
-        component={ExploreScreen}
+        name="ExploreStack"
+        component={ExploreStack}
         options={{
           tabBarIcon: ({ focused }) =>
             focused ? (
@@ -895,7 +1036,7 @@ export default function App() {
           eventType: "AppInstall",
           fbc: "",
         };
-        
+
         const installRespone = await postMarketingEvents(installData, false);
         if (installRespone.isSuccess) {
           await SecureStore.setItemAsync("appInstallEvent", "true");
@@ -915,7 +1056,6 @@ export default function App() {
     setTimeout(() => {
       postEvent();
     }, 1000);
-    
   }, []);
 
   const renderBackdrop = useCallback(

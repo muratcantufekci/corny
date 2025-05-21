@@ -9,23 +9,31 @@ const AboutBox = ({
   setSelectedBox,
   keyName,
   disabled = false,
+  from = "",
 }) => {
   const isSelected = selectedBox?.includes(keyName);
   const handlePress = () => {
+    const isFilterMode = from === "filter";
+
     if (isSelected) {
-      if (selectedBox?.length > 1) {
-        setSelectedBox(selectedBox?.filter((item) => item !== keyName));
-      } else {
+      if (!isFilterMode && selectedBox?.length <= 1) {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+        return;
       }
-    } else {
-      setSelectedBox([...selectedBox, keyName]);
+      setSelectedBox(selectedBox?.filter((item) => item !== keyName));
+      return;
     }
+
+    setSelectedBox([...selectedBox, keyName]);
   };
 
   return (
     <Pressable
-      style={[styles.container, isSelected && styles.selected]}
+      style={[
+        styles.container,
+        isSelected &&
+          (from === "filter" ? styles.selectedFilter : styles.selected),
+      ]}
       disabled={disabled}
       onPress={handlePress}
     >
@@ -45,6 +53,9 @@ const styles = StyleSheet.create({
   },
   selected: {
     backgroundColor: "#FFB4B2",
+  },
+  selectedFilter: {
+    backgroundColor: "#FF524F",
   },
   text: {
     fontWeight: "500",

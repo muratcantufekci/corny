@@ -6,6 +6,7 @@ import { getProfileImages } from "../services/User/get-profile-images";
 import { selectImage } from "../helper/selectImage";
 import { postUserPhoto } from "../services/User/send-photo";
 import { deleteUserPhoto } from "../services/User/delete-photo";
+import useUserStore from "../store/useUserStore";
 
 const PhotoSelect = ({
   selectedImages,
@@ -15,6 +16,7 @@ const PhotoSelect = ({
 }) => {
   const [longPressedIndex, setLongPressesIndex] = useState("");
   const [isShaking, setIsShaking] = useState(false);
+  const userStore = useUserStore();
 
   useEffect(() => {
     const getProfilePictures = async () => {
@@ -40,12 +42,12 @@ const PhotoSelect = ({
   const selectImageHandler = async () => {
     const data = await selectImage();
     const response = await postUserPhoto(data.formData);
-      setSelectedImages([
-        ...selectedImages,
-        { id: response.imageId, uri: response.imageUrl },
-      ]);
-      setBtnVariant && setBtnVariant("primary");
-      setIsBtnDisaled && setIsBtnDisaled(false);
+    setSelectedImages([
+      ...selectedImages,
+      { id: response.imageId, uri: response.imageUrl },
+    ]);
+    setBtnVariant && setBtnVariant("primary");
+    setIsBtnDisaled && setIsBtnDisaled(false);
   };
 
   const orderImages = (index) => {
@@ -67,31 +69,36 @@ const PhotoSelect = ({
   };
   return (
     <View style={styles.boxes}>
-      {Array.from({ length: 6 }).map((_, index) => (
-        <SelectionBox
-          key={index}
-          selectFunc={() => {
-            if (longPressedIndex !== "" && selectedImages.length >= index + 1) {
-              orderImages(index);
-            } else {
-              selectImageHandler();
+      {Array.from({ length: userStore.isUserPremium ? 6 : 3 }).map(
+        (_, index) => (
+          <SelectionBox
+            key={index}
+            selectFunc={() => {
+              if (
+                longPressedIndex !== "" &&
+                selectedImages.length >= index + 1
+              ) {
+                orderImages(index);
+              } else {
+                selectImageHandler();
+              }
+            }}
+            deleteFunc={() => deleteImage(selectedImages[index].id)}
+            img={
+              selectedImages.length >= index + 1
+                ? selectedImages[index].uri
+                : null
             }
-          }}
-          deleteFunc={() => deleteImage(selectedImages[index].id)}
-          img={
-            selectedImages.length >= index + 1
-              ? selectedImages[index].uri
-              : null
-          }
-          selected={selectedImages.length >= index + 1 ? true : false}
-          availableDelete={selectedImages.length <= 1 ? false : true}
-          onLongPress={() => {
-            setLongPressesIndex(index);
-            setIsShaking(true);
-          }}
-          isShaking={isShaking}
-        />
-      ))}
+            selected={selectedImages.length >= index + 1 ? true : false}
+            availableDelete={selectedImages.length <= 1 ? false : true}
+            onLongPress={() => {
+              setLongPressesIndex(index);
+              setIsShaking(true);
+            }}
+            isShaking={isShaking}
+          />
+        )
+      )}
     </View>
   );
 };

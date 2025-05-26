@@ -953,7 +953,9 @@ export default function App() {
   useEffect(() => {
     const setUserLogin = async () => {
       // await SecureStore.deleteItemAsync("refresh_token"); // test amaçlı rekfresh token sıfırlayıcı
+      // await SecureStore.deleteItemAsync("filter_data"); // test amaçlı filtre datası sıfırlayıcı
       const refreshToken = await SecureStore.getItemAsync("refresh_token");
+      const filterData = JSON.parse(await SecureStore.getItemAsync("filter_data"));
       // let uuid = await SecureStore.getItemAsync("DEVICE_UUID_KEY");
       // const refreshToken = "63a2f537-cde3-4e9d-b0b4-80b586ccfd96";
       // const refreshToken = null;
@@ -1002,6 +1004,8 @@ export default function App() {
 
         return () => clearTimeout(timer);
       }
+
+      userStore.setFilters(null, filterData)
     };
 
     const checkVersion = async () => {

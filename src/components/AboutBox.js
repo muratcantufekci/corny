@@ -2,6 +2,7 @@ import React from "react";
 import { Pressable, StyleSheet } from "react-native";
 import CustomText from "./CustomText";
 import * as Haptics from "expo-haptics";
+import useUserStore from "../store/useUserStore";
 
 const AboutBox = ({
   text,
@@ -10,18 +11,28 @@ const AboutBox = ({
   keyName,
   disabled = false,
   from = "",
+  filterKey = "",
 }) => {
   const isSelected = selectedBox?.includes(keyName);
+  const userStore = useUserStore();
+
   const handlePress = () => {
     const isFilterMode = from === "filter";
 
     if (isSelected) {
-      if (!isFilterMode && selectedBox?.length <= 1) {
+      if (isFilterMode) {
+        userStore.setFilters(filterKey, keyName);
+      } else if (selectedBox?.length <= 1) {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
         return;
       }
+
       setSelectedBox(selectedBox?.filter((item) => item !== keyName));
       return;
+    }
+
+    if (isFilterMode) {
+      userStore.setFilters(filterKey, keyName);
     }
 
     setSelectedBox([...selectedBox, keyName]);

@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import CustomText from "../../components/CustomText";
 import { t } from "i18next";
 import AboutBox from "../../components/AboutBox";
+import useUserStore from "../../store/useUserStore";
 
 const smokerData = [
     {
@@ -18,7 +19,9 @@ const smokerData = [
   ];
 
 const SetFilterSmokerScreen = ({ navigation }) => {
-  const [selectedSmokerHabit, setSelectedSmokerHabit] = useState([]);
+  const userStore = useUserStore()
+  const [selectedSmokerHabit, setSelectedSmokerHabit] = useState(userStore?.filters?.Smoker || []);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -31,6 +34,7 @@ const SetFilterSmokerScreen = ({ navigation }) => {
 
   const resetBtnPressHandler = () => {
     setSelectedSmokerHabit([]);
+    userStore.setFilters("Smoker", []);
   };
 
   return (
@@ -44,6 +48,7 @@ const SetFilterSmokerScreen = ({ navigation }) => {
             setSelectedBox={setSelectedSmokerHabit}
             keyName={item.key}
             from="filter"
+            filterKey="Smoker"
           />
         ))}
       </View>

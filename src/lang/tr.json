@@ -438,6 +438,9 @@
     "RESET": "Sıfırla",
     "PREFERENCES": "Tercihler",
     "AGE": "Yaş",
-    "DISTANCE": "Mesafe"
+    "DISTANCE": "Mesafe",
+    "RESET_FILTER_TITLE": "Yeni uyguladığınız filtrelerinizi sıfırlamak istediğinizden emin misiniz?",
+    "RESET_FILTER_DESC": "Filtrelerinizi sıfırlamaya karar verirseniz, yeni uyguladığınız filtreler dikkate alınmayarak silinecektir.",
+    "RESET_MY_FILTER": "Yeni Filtrelerimi Sıfırla"
   }
 }

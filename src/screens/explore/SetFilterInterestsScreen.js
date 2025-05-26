@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import CustomText from "../../components/CustomText";
 import { t } from "i18next";
 import AboutBox from "../../components/AboutBox";
+import useUserStore from "../../store/useUserStore";
 
 const interestData = [
   {
@@ -243,7 +244,8 @@ const interestData = [
 ];
 
 const SetFilterInterestsScreen = ({ navigation }) => {
-  const [selectedInterest, setSelectedInterest] = useState([]);
+  const userStore = useUserStore()
+  const [selectedInterest, setSelectedInterest] = useState(userStore?.filters?.Interests || []);
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -256,6 +258,7 @@ const SetFilterInterestsScreen = ({ navigation }) => {
 
   const resetBtnPressHandler = () => {
     setSelectedInterest([])
+    userStore.setFilters("Interests", []);
   }
 
   return (
@@ -269,6 +272,7 @@ const SetFilterInterestsScreen = ({ navigation }) => {
             setSelectedBox={setSelectedInterest}
             keyName={item.key}
             from="filter"
+            filterKey="Interests"
           />
         ))}
       </View>

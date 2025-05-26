@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import CustomText from "../../components/CustomText";
 import { t } from "i18next";
 import AboutBox from "../../components/AboutBox";
+import useUserStore from "../../store/useUserStore";
 
 const educationData = [
   {
@@ -38,7 +39,11 @@ const educationData = [
 ];
 
 const SetFilterEducationScreen = ({ navigation }) => {
-  const [selectedEducation, setSelectedEducation] = useState([]);
+  const userStore = useUserStore();
+  const [selectedEducation, setSelectedEducation] = useState(
+    userStore?.filters?.Education || []
+  );
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -51,6 +56,7 @@ const SetFilterEducationScreen = ({ navigation }) => {
 
   const resetBtnPressHandler = () => {
     setSelectedEducation([]);
+    userStore.setFilters("Education", []);
   };
 
   return (
@@ -64,6 +70,7 @@ const SetFilterEducationScreen = ({ navigation }) => {
             setSelectedBox={setSelectedEducation}
             keyName={item.key}
             from="filter"
+            filterKey="Education"
           />
         ))}
       </View>

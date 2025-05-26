@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import CustomText from "../../components/CustomText";
 import { t } from "i18next";
 import AboutBox from "../../components/AboutBox";
+import useUserStore from "../../store/useUserStore";
 
 const drinkingHabitData = [
   {
@@ -38,7 +39,10 @@ const drinkingHabitData = [
 ];
 
 const SetFilterDrinkingHabitScreen = ({ navigation }) => {
-  const [selectedDrinkingHabit, setSelectedDrinkingHabit] = useState([]);
+  const userStore = useUserStore();
+  const [selectedDrinkingHabit, setSelectedDrinkingHabit] = useState(
+    userStore?.filters?.DrinkingHabit || []
+  );
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -51,6 +55,7 @@ const SetFilterDrinkingHabitScreen = ({ navigation }) => {
 
   const resetBtnPressHandler = () => {
     setSelectedDrinkingHabit([]);
+    userStore.setFilters("DrinkingHabit", []);
   };
 
   return (
@@ -64,6 +69,7 @@ const SetFilterDrinkingHabitScreen = ({ navigation }) => {
             setSelectedBox={setSelectedDrinkingHabit}
             keyName={item.key}
             from="filter"
+            filterKey="DrinkingHabit"
           />
         ))}
       </View>

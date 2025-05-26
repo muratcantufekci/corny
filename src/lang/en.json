@@ -438,6 +438,9 @@
     "RESET": "Reset",
     "PREFERENCES": "Preferences",
     "AGE": "Age",
-    "DISTANCE": "Distance"
+    "DISTANCE": "Distance",
+    "RESET_FILTER_TITLE": "Are you sure you want to reset your newly applied filters?",
+    "RESET_FILTER_DESC": "If you decide to reset your filters, any newly applied filters will be ignored and deleted.",
+    "RESET_MY_FILTER": "Reset My New Filters"
   }
 }

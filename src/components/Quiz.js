@@ -138,7 +138,7 @@ const Quiz = ({ quizOpen, setQuizOpen, quiz, setQuizAnswer, quizAnswer }) => {
                 <CustomText
                   style={[styles.hintText, hintUsed && styles.hintUsedText]}
                 >
-                  {t("HINT")}
+                  Joker
                 </CustomText>
               </Pressable>
               {quizAnswer === false && (

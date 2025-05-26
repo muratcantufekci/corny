@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-const useUserStore = create((set) => ({
+const useUserStore = create((set, get) => ({
   token: "",
   isUserLoggedIn: false,
   isUserPremium: false,
@@ -8,6 +8,7 @@ const useUserStore = create((set) => ({
   userAbouts: [],
   userTvShows: [],
   cardAbouts: [],
+  filters: {},
   cardInterests: [],
   waitListStatus: false,
   waitListCounter: 1,
@@ -39,12 +40,55 @@ const useUserStore = create((set) => ({
 
       return { userAbouts: updatedUserAbouts };
     }),
-    setUserTvShows: (userTvShows) => set({ userTvShows }),
-    setcardAbouts: (cardAbouts) => set({ cardAbouts }),
-    setcardInterests: (cardInterests) => set({ cardInterests }),
-    setWaitListStatus: (waitListStatus) => set({ waitListStatus }),
-    setWaitlistCounter: (waitListCounter) => set({waitListCounter}),
-    setWaitlistTarget: (waitListTarget) => set({waitListTarget}),
+  setUserTvShows: (userTvShows) => set({ userTvShows }),
+  setcardAbouts: (cardAbouts) => set({ cardAbouts }),
+  setFilters: (key, value) => {
+    const currentFilters = get().filters || {};
+    let updatedFilters;
+  
+    if (!key) {
+      console.log("burda mı");
+      
+      // Eğer key yoksa, gelen objeyi doğrudan yaz
+      updatedFilters = value;
+    } else if (key === "Age" || key === "Distance") {
+      updatedFilters = {
+        ...currentFilters,
+        [key]: value,
+      };
+    } else {
+      const currentValues = currentFilters[key] || [];
+      let updatedValues;
+  
+      if (currentValues.includes(value)) {
+        // Eğer değer zaten mevcutsa, onu çıkar (toggle mantığı)
+        updatedValues = currentValues.filter((item) => item !== value);
+      } else if (value.length === 0) {
+        updatedValues = [];
+      } else {
+        // Değer mevcut değilse, ekle
+        updatedValues = [...currentValues, value];
+      }
+  
+      // Eğer değerler boşsa anahtarı kaldır, aksi halde güncelle
+      updatedFilters =
+        updatedValues.length > 0
+          ? { ...currentFilters, [key]: updatedValues }
+          : Object.fromEntries(
+              Object.entries(currentFilters).filter(([k]) => k !== key)
+            );
+    }
+  
+    console.log("currentFilters", currentFilters);
+    console.log("updatedFilters", updatedFilters);
+  
+    set({ filters: updatedFilters });
+  },  
+  resetFilters: () => set({ filters: {} }),
+  setcardInterests: (cardInterests) => set({ cardInterests }),
+  setWaitListStatus: (waitListStatus) => set({ waitListStatus }),
+  setWaitlistCounter: (waitListCounter) => set({ waitListCounter }),
+  setWaitlistTarget: (waitListTarget) => set({ waitListTarget }),
 }));
 
 export default useUserStore;

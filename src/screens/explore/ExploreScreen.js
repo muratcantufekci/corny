@@ -20,6 +20,7 @@ import ProfileCard from "../../components/ProfileCard";
 import Swiper from "react-native-deck-swiper";
 import Like from "../../assets/svg/likes-passive.svg";
 import Cross from "../../assets/svg/cross.svg";
+import Star from "../../assets/svg/star-purple.svg";
 import { getUserAbouts } from "../../services/User/get-user-abouts";
 import { Image } from "expo-image";
 import CustomText from "../../components/CustomText";
@@ -149,7 +150,7 @@ const ExploreScreen = () => {
         },
       };
       const response = await exploreProfiles(data);
-      
+
       setMatches((prevData) => [...prevData, ...response.profiles]);
       if (page === 1) {
         const userIds = response.profiles
@@ -288,7 +289,7 @@ const ExploreScreen = () => {
       if (nextFiveIds.length) {
         try {
           const response = await getMatchRates(nextFiveIds);
-          
+
           setMatchRates((prevData) => [...prevData, ...response.MatchRates]);
         } catch (err) {
           console.error("Match rate servisine istek atılamadı:", err);
@@ -366,8 +367,10 @@ const ExploreScreen = () => {
             <Undo />
           </Pressable>
           <Corny />
-          <Pressable onPress={() => navigation.navigate("Filter", { refresh: true })}>
-            <Filter/>
+          <Pressable
+            onPress={() => navigation.navigate("Filter", { refresh: true })}
+          >
+            <Filter />
           </Pressable>
         </View>
         {showMatches && matches.length > 0 && matchRates.length > 0 ? (
@@ -457,6 +460,9 @@ const ExploreScreen = () => {
                 disabled={isButtonDisabled}
               >
                 <Like style={{ color: "#FF524F" }} />
+              </Pressable>
+              <Pressable style={styles.actionBox} >
+                <Star />
               </Pressable>
             </View>
           </>

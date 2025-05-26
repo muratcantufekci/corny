@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import CustomText from "../../components/CustomText";
 import { t } from "i18next";
 import AboutBox from "../../components/AboutBox";
+import useUserStore from "../../store/useUserStore";
 
 const zodiacData = [
   {
@@ -68,7 +69,10 @@ const zodiacData = [
 ];
 
 const SetFilterZodiacScreen = ({ navigation }) => {
-  const [selectedZodiac, setSelectedZodiac] = useState([]);
+  const userStore = useUserStore();
+  const [selectedZodiac, setSelectedZodiac] = useState(
+    userStore?.filters?.Zodiac || []
+  );
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -81,6 +85,7 @@ const SetFilterZodiacScreen = ({ navigation }) => {
 
   const resetBtnPressHandler = () => {
     setSelectedZodiac([]);
+    userStore.setFilters("Zodiac", []);
   };
 
   return (
@@ -94,6 +99,7 @@ const SetFilterZodiacScreen = ({ navigation }) => {
             setSelectedBox={setSelectedZodiac}
             keyName={item.key}
             from="filter"
+            filterKey="Zodiac"
           />
         ))}
       </View>

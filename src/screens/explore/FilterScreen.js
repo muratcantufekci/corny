@@ -17,6 +17,7 @@ import PremiumSheet from "../../components/PremiumSheet";
 import Back from "../../assets/svg/arrow-left.svg";
 import * as SecureStore from "expo-secure-store";
 import Button from "../../components/Button";
+import { createMatchFilter } from "../../services/Matching/create-match-filter";
 
 const CustomMarker = ({ enabled, pressed }) => {
   return (
@@ -52,43 +53,43 @@ const FilterScreen = ({ navigation }) => {
       id: "1",
       name: t("INTEREST"),
       screen: "SetFilterInterests",
-      key: "Interests"
+      key: "Interest",
     },
     {
       id: "2",
       name: t("LOOKINGFOR"),
       screen: "SetFilterLookingFors",
-      key: "LookingFors"
+      key: "LookingFor",
     },
     {
       id: "3",
       name: t("HEIGHT"),
       screen: "",
-      key: ""
+      key: "",
     },
     {
       id: "4",
       name: t("DRINKINGHABIT"),
       screen: "SetFilterDrinkingHabits",
-      key: "DrinkingHabit"
+      key: "DrinkingHabit",
     },
     {
       id: "5",
       name: t("SMOKER"),
       screen: "SetFilterSmokerHabits",
-      key: "Smoker"
+      key: "Smoker",
     },
     {
       id: "6",
       name: t("ZODIAC"),
       screen: "SetFilterZodiac",
-      key: "Zodiac"
+      key: "Zodiac",
     },
     {
       id: "7",
       name: t("EDUCATION"),
       screen: "SetFilterEducation",
-      key: "Education"
+      key: "Education",
     },
   ];
 
@@ -115,9 +116,6 @@ const FilterScreen = ({ navigation }) => {
   }, [navigation, userStore.filters, ageRange, distance]);
 
   const hasDifference = (storedObject, newObject) => {
-    console.log("storedObject", storedObject);
-    console.log("newObject", newObject);
-
     if (storedObject === null && Object.keys(newObject).length > 0) return true;
 
     for (const key in storedObject) {
@@ -149,16 +147,15 @@ const FilterScreen = ({ navigation }) => {
     return false; // Hiçbir fark bulunmadı.
   };
 
-  const resetFilterPressHandler = () => {
+  const resetFilterPressHandler = async () => {
     userStore.resetFilters();
+    await SecureStore.setItemAsync("filter_data", JSON.stringify({}));
+    await SecureStore.setItemAsync("filter_identifier", "");
     setModalVisible(false);
-    navigation.goBack();
+    navigation.navigate('Explore', { updated: true });
   };
 
   const backBtnPressHandler = async () => {
-    console.log("storedObject", typeof storedObject);
-    console.log("userStore.filters", typeof userStore.filters);
-
     const hasDiff = hasDifference(storedObject, userStore.filters);
 
     if (hasDiff) {
@@ -170,11 +167,31 @@ const FilterScreen = ({ navigation }) => {
 
   const saveBtnPressHandler = async () => {
     if (userStore.isUserPremium) {
+      const data = {
+        minimumAge: userStore.filters.Age
+          ? userStore.filters.Age[0]
+          : ageRange[0],
+        maximumAge: userStore.filters.Age
+          ? userStore.filters.Age[1]
+          : ageRange[1],
+        gender: "",
+        distance: userStore.filters.Distance || distance,
+        additionalFilters: Object.keys(userStore.filters)
+          .filter((key) => key !== "Age" && key !== "Distance")
+          .map((key) => ({
+            filterType: key,
+            values: userStore.filters[key],
+          })),
+      };
+
+      const response = await createMatchFilter(data);
+
       await SecureStore.setItemAsync(
         "filter_data",
         JSON.stringify(userStore.filters)
       );
-      navigation.goBack();
+      await SecureStore.setItemAsync("filter_identifier", response.identifier);
+      navigation.navigate('Explore', { updated: true });
     } else {
       sheetRef.current?.present();
     }
@@ -200,7 +217,7 @@ const FilterScreen = ({ navigation }) => {
   return (
     <>
       <ScrollView style={styles.container}>
-        <CustomText style={styles.sectionTitle}>{`${t("BASIC")} ${t(
+        <CustomText style={styles.sectionTitle}>{`${t("PREMIUM")} ${t(
           "PREFERENCES"
         )}`}</CustomText>
         <View style={styles.filterSection}>
@@ -252,9 +269,6 @@ const FilterScreen = ({ navigation }) => {
             </View>
           </View>
         </View>
-        <CustomText style={styles.sectionTitle}>{`${t("PREMIUM")} ${t(
-          "PREFERENCES"
-        )}`}</CustomText>
         <View style={styles.menuItems}>
           {menuData.map((item) => (
             <MenuItem

@@ -46,7 +46,7 @@ const lookingForData = [
 const SetFilterLookingForsScreen = ({ navigation }) => {
   const userStore = useUserStore();
   const [selectedLookingFor, setSelectedLookingFor] = useState(
-    userStore?.filters?.LookingFors || []
+    userStore?.filters?.LookingFor || []
   );
 
   useLayoutEffect(() => {
@@ -61,7 +61,7 @@ const SetFilterLookingForsScreen = ({ navigation }) => {
 
   const resetBtnPressHandler = () => {
     setSelectedLookingFor([]);
-    userStore.setFilters("LookingFors", []);
+    userStore.setFilters("LookingFor", []);
   };
 
   return (
@@ -75,7 +75,7 @@ const SetFilterLookingForsScreen = ({ navigation }) => {
             setSelectedBox={setSelectedLookingFor}
             keyName={item.key}
             from="filter"
-            filterKey="LookingFors"
+            filterKey="LookingFor"
           />
         ))}
       </View>

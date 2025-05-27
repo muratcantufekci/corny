@@ -245,7 +245,7 @@ const interestData = [
 
 const SetFilterInterestsScreen = ({ navigation }) => {
   const userStore = useUserStore()
-  const [selectedInterest, setSelectedInterest] = useState(userStore?.filters?.Interests || []);
+  const [selectedInterest, setSelectedInterest] = useState(userStore?.filters?.Interest || []);
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -258,7 +258,7 @@ const SetFilterInterestsScreen = ({ navigation }) => {
 
   const resetBtnPressHandler = () => {
     setSelectedInterest([])
-    userStore.setFilters("Interests", []);
+    userStore.setFilters("Interest", []);
   }
 
   return (
@@ -272,7 +272,7 @@ const SetFilterInterestsScreen = ({ navigation }) => {
             setSelectedBox={setSelectedInterest}
             keyName={item.key}
             from="filter"
-            filterKey="Interests"
+            filterKey="Interest"
           />
         ))}
       </View>

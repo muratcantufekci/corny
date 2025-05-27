@@ -47,8 +47,6 @@ const useUserStore = create((set, get) => ({
     let updatedFilters;
   
     if (!key) {
-      console.log("burda mı");
-      
       // Eğer key yoksa, gelen objeyi doğrudan yaz
       updatedFilters = value;
     } else if (key === "Age" || key === "Distance") {
@@ -78,10 +76,6 @@ const useUserStore = create((set, get) => ({
               Object.entries(currentFilters).filter(([k]) => k !== key)
             );
     }
-  
-    console.log("currentFilters", currentFilters);
-    console.log("updatedFilters", updatedFilters);
-  
     set({ filters: updatedFilters });
   },  
   resetFilters: () => set({ filters: {} }),

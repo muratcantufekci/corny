@@ -39,7 +39,7 @@ import { getSwipeQuestion } from "../../services/Matching/get-swipe-question";
 import { getMatchRates } from "../../services/Matching/get-match-rates";
 import * as Location from "expo-location";
 import { postUserLocation } from "../../services/User/send-location";
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 
 const registerForPushNotificationsAsync = async (
   setAlertSheetProps,
@@ -115,7 +115,7 @@ const openSettings = () => {
   }
 };
 
-const ExploreScreen = () => {
+const ExploreScreen = ({ route }) => {
   const insets = useSafeAreaInsets();
   const [expoPushToken, setExpoPushToken] = useState("");
   const [matches, setMatches] = useState([]);
@@ -136,32 +136,18 @@ const ExploreScreen = () => {
   const [alertSheetProps, setAlertSheetProps] = useState(null);
   const userStore = useUserStore();
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    const getMatches = async () => {
-      const data = {
-        size: 20,
-        skipIdList: excludeIds,
-        filter: {
-          applyFilter: false,
-          minimumAge: 18,
-          maximumAge: 65,
-          gender: "female",
-        },
-      };
-      const response = await exploreProfiles(data);
-
-      setMatches((prevData) => [...prevData, ...response.profiles]);
-      if (page === 1) {
-        const userIds = response.profiles
-          .slice(0, 5)
-          .map((item) => item.userId);
-        const matchRateResponse = await getMatchRates(userIds);
-        setMatchRates(matchRateResponse.MatchRates);
-      }
-    };
     getMatches();
   }, [page]);
+
+  useEffect(() => {
+    if (route.params?.updated) {
+      getMatches();
+      navigation.setParams({ updated: undefined });
+    }
+  }, [isFocused]);
 
   useEffect(() => {
     registerForPushNotificationsAsync(setAlertSheetProps, alertSheetRef).then(
@@ -272,6 +258,30 @@ const ExploreScreen = () => {
       handlePostSwipe();
     }
   }, [quizAnswer]);
+
+  const getMatches = async () => {
+    const data = {
+      size: 20,
+      skipIdList: excludeIds,
+      filterIdentifier: await SecureStore.getItemAsync("filter_identifier"),
+    };
+
+    const response = await exploreProfiles(data);
+    if (page === 1 || route.params?.updated) {
+      const userIds = response.profiles.slice(0, 5).map((item) => item.userId);
+      const matchRateResponse = await getMatchRates(userIds);
+      setMatchRates(matchRateResponse.MatchRates);
+    }
+
+    if (route.params?.updated) {
+      setMatches(response.profiles);
+      swiperRef.current?.jumpToCardIndex(0);
+      setPage(1);
+      setCardIndex(0);
+    } else {
+      setMatches((prevData) => [...prevData, ...response.profiles]);
+    }
+  };
 
   const handleOnSwiped = async (cardIndex) => {
     if (cardIndex === matches.length - 11) {
@@ -451,7 +461,10 @@ const ExploreScreen = () => {
               }}
             />
             <View style={styles.actionWrapper}>
-              <Pressable style={styles.actionBox} onPress={handleLeftPress}>
+              <Pressable
+                style={styles.actionBoxLittle}
+                onPress={handleLeftPress}
+              >
                 <Cross style={{ color: "#FFAC24" }} />
               </Pressable>
               <Pressable
@@ -461,7 +474,7 @@ const ExploreScreen = () => {
               >
                 <Like style={{ color: "#FF524F" }} />
               </Pressable>
-              <Pressable style={styles.actionBox} >
+              <Pressable style={styles.actionBoxLittle}>
                 <Star />
               </Pressable>
             </View>
@@ -517,6 +530,14 @@ const styles = StyleSheet.create({
   actionBox: {
     width: height / 13.3,
     height: height / 13.3,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#000000",
+  },
+  actionBoxLittle: {
+    width: height / 15.3,
+    height: height / 15.3,
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",

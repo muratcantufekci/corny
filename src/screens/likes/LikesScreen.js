@@ -116,7 +116,6 @@ const LikesScreen = () => {
         ...prevLikes,
         ...response.data.Contents,
       ]);
-      console.log("response",response.data);
       
       setRecievedLikesResponse(response.data);
       setLoading(false);

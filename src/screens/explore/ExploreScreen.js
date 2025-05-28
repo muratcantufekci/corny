@@ -3,6 +3,7 @@ import {
   Alert,
   Dimensions,
   Linking,
+  Modal,
   Platform,
   Pressable,
   StyleSheet,
@@ -40,6 +41,9 @@ import { getMatchRates } from "../../services/Matching/get-match-rates";
 import * as Location from "expo-location";
 import { postUserLocation } from "../../services/User/send-location";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { getUserSwipeCount } from "../../services/Matching/get-user-daily-swipe-count";
+import Button from "../../components/Button";
+import PremiumSheet from "../../components/PremiumSheet";
 
 const registerForPushNotificationsAsync = async (
   setAlertSheetProps,
@@ -117,6 +121,7 @@ const openSettings = () => {
 
 const ExploreScreen = ({ route }) => {
   const insets = useSafeAreaInsets();
+  const userStore = useUserStore();
   const [expoPushToken, setExpoPushToken] = useState("");
   const [matches, setMatches] = useState([]);
   const [matchRates, setMatchRates] = useState([]);
@@ -125,7 +130,11 @@ const ExploreScreen = ({ route }) => {
   const [showQuiz, setShowQuiz] = useState(false);
   const [quizData, setQuizData] = useState(null);
   const [quizAnswer, setQuizAnswer] = useState(null);
-  const [isSwipingEnabled, setIsSwipingEnabled] = useState(false);
+  const [isSwipingEnabled, setIsSwipingEnabled] = useState(
+    userStore.swipeUsage + 1 >= userStore.swipeLimit && !userStore.isUserPremium
+      ? true
+      : false
+  );
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [page, setPage] = useState(1);
   const [cardIndex, setCardIndex] = useState(0);
@@ -134,9 +143,10 @@ const ExploreScreen = ({ route }) => {
   const alertSheetRef = useRef(null);
   const [sheetProps, setSheetProps] = useState(null);
   const [alertSheetProps, setAlertSheetProps] = useState(null);
-  const userStore = useUserStore();
+  const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
   const isFocused = useIsFocused();
+  const premiumSheetRef = useRef(null);
 
   useEffect(() => {
     getMatches();
@@ -215,12 +225,27 @@ const ExploreScreen = ({ route }) => {
       }
     };
 
+    const getUserDailySwipeCount = async () => {
+      const response = await getUserSwipeCount();
+      console.log("respDDD", response);
+      userStore.setSwipeLimit(response.Limit);
+      userStore.setSwipeUsage(response.Usage);
+    };
+
     getAboutMe();
+    getUserDailySwipeCount();
     getUserLocation();
   }, []);
 
   useEffect(() => {
     const handlePostSwipe = async () => {
+      userStore.setSwipeUsage(userStore.swipeUsage + 1);
+      if (
+        userStore.swipeUsage + 1 >= userStore.swipeLimit &&
+        !userStore.isUserPremium
+      ) {
+        setIsSwipingEnabled(true);
+      }
       const data = {
         swipedUserId: matches[cardIndex].profileInfo.userId,
         isLike: true,
@@ -334,6 +359,20 @@ const ExploreScreen = ({ route }) => {
     setShowQuiz(true);
   };
 
+  const handleOnAbortedSwipe = () => {
+    if (
+      userStore.swipeUsage >= userStore.swipeLimit &&
+      !userStore.isUserPremium
+    ) {
+      setModalVisible(true);
+    }
+  };
+
+  const getPremiumPressHandler = () => {
+    setModalVisible(false)
+    premiumSheetRef.current?.present();
+  };
+
   const handleLeftPress = () => {
     if (isSwipingEnabled) return;
 
@@ -419,6 +458,7 @@ const ExploreScreen = ({ route }) => {
               onSwipedRight={handleOnRightSwipe}
               disableRightSwipe={isSwipingEnabled}
               disableLeftSwipe={isSwipingEnabled}
+              onSwipedAborted={handleOnAbortedSwipe}
               overlayLabels={{
                 left: {
                   title: "NOPE",
@@ -504,6 +544,27 @@ const ExploreScreen = ({ route }) => {
       {alertSheetProps && (
         <AlertSheet sheetRef={alertSheetRef} sheetProps={alertSheetProps} />
       )}
+      <Modal transparent={true} animationType="slide" visible={modalVisible}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modal}>
+            <CustomText style={styles.modalTitle}>
+              {t("OUT_OF_LIKES")}
+            </CustomText>
+            <CustomText style={styles.modalDesc}>
+              {t("LIKE_LIMIT_DESC")}
+            </CustomText>
+            <View style={styles.btns}>
+              <Button variant="primary" onPress={getPremiumPressHandler}>
+                {t("GET_PREMIUM")}
+              </Button>
+              <Button variant="ghost" onPress={() => setModalVisible(false)}>
+                {t("CANCEL")}
+              </Button>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      <PremiumSheet sheetRef={premiumSheetRef} />
     </>
   );
 };
@@ -557,6 +618,38 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 25,
     color: "#ACACAC",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    paddingHorizontal: 22,
+  },
+  modal: {
+    backgroundColor: "#FFFFFF",
+    paddingHorizontal: 16,
+    paddingVertical: 24,
+    borderRadius: 10,
+  },
+  modalTitle: {
+    fontWeight: "600",
+    fontSize: 18,
+    lineHeight: 24,
+    color: "#000000",
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  modalDesc: {
+    fontWeight: "400",
+    fontSize: 16,
+    lineHeight: 24,
+    color: "#51525C",
+    textAlign: "center",
+  },
+  btns: {
+    marginTop: 32,
+    gap: 8,
   },
 });
 

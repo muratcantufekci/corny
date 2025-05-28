@@ -4,6 +4,8 @@ const useUserStore = create((set, get) => ({
   token: "",
   isUserLoggedIn: false,
   isUserPremium: false,
+  swipeLimit: 0,
+  swipeUsage: 0,
   userAccountDetails: null,
   userAbouts: [],
   userTvShows: [],
@@ -16,6 +18,8 @@ const useUserStore = create((set, get) => ({
   setToken: (token) => set({ token }),
   setIsUserLoggedIn: (isUserLoggedIn) => set({ isUserLoggedIn }),
   setIsUserPremium: (isUserPremium) => set({ isUserPremium }),
+  setSwipeLimit: (swipeLimit) => set({ swipeLimit }),
+  setSwipeUsage: (swipeUsage) => set({ swipeUsage }),
   setUserAccountDetails: (newDetails) =>
     set((state) => ({
       userAccountDetails: {

@@ -3,9 +3,11 @@ import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import CustomText from "./CustomText";
 import Button from "./Button";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
+import { t } from "i18next";
 import Cross from "../assets/svg/cross.svg";
+import SubscriptionBoxes from "./SubscriptionBoxes";
 
-const PremiumAlertSheet = ({ sheetProps, sheetRef, premiumSheetRef }) => {
+const UtilitySheet = ({ sheetProps, sheetRef }) => {
   const renderBackdrop = useCallback(
     (props) => (
       <BottomSheetBackdrop
@@ -16,31 +18,44 @@ const PremiumAlertSheet = ({ sheetProps, sheetRef, premiumSheetRef }) => {
     ),
     []
   );
-
-  const btnPressHandler = () => {
-    sheetRef.current?.dismiss()
-    premiumSheetRef.current?.present()
-  }
-
   return (
     <BottomSheetModal
       ref={sheetRef}
-      snapPoints={["90%"]}
+      snapPoints={["93%"]}
       index={0}
       enablePanDownToClose={true}
       backdropComponent={renderBackdrop}
+      backgroundStyle={{ backgroundColor: sheetProps.backgroundColor }}
     >
       <View style={styles.container}>
         <View style={styles.wrapper}>
-            <TouchableOpacity style={styles.close} onPress={() => sheetRef.current?.close()}>
-                <Cross style={styles.cross} width={18} />
-            </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.close}
+            onPress={() => sheetRef.current?.dismiss()}
+          >
+            <Cross style={styles.cross} width={18} />
+          </TouchableOpacity>
         </View>
         <Image source={sheetProps.img} style={styles.img} />
         <CustomText style={styles.title}>{sheetProps.title}</CustomText>
         <CustomText style={styles.desc}>{sheetProps.desc}</CustomText>
-        <Button variant="primary" style={styles.btn} onPress={btnPressHandler}>
-          {sheetProps.btnText}
+        <SubscriptionBoxes
+          subscriptionData={sheetProps.subscriptionData}
+          colors={{
+            boxBorderColor: sheetProps.boxBorderColor,
+            selectedBoxColor: sheetProps.selectedBoxColor,
+            unselectedBoxColor: sheetProps.unselectedBoxColor,
+            selectedTextColor: "#000",
+            selectedPerMonthTextColor: "#000",
+          }}
+          text={sheetProps.text}
+        />
+        <Button
+          variant="primary"
+          onPress={sheetProps.btnPress}
+          style={styles.btn}
+        >
+          {t("CONTİNUE")}
         </Button>
       </View>
     </BottomSheetModal>
@@ -49,13 +64,15 @@ const PremiumAlertSheet = ({ sheetProps, sheetRef, premiumSheetRef }) => {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     paddingHorizontal: 16,
+    paddingVertical: 32,
     alignItems: "center",
   },
   img: {
-    width: 316,
-    height: 380,
-    marginBottom: 24,
+    width: 160,
+    height: 160,
+    marginBottom: 16,
   },
   title: {
     fontWeight: "500",
@@ -71,14 +88,14 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: "#51525C",
     textAlign: "center",
+    marginBottom: 32,
   },
   btn: {
-    marginTop: 30,
+    marginTop: 80,
   },
   wrapper: {
     width: "100%",
     alignItems: "flex-end",
-    marginBottom: 30
   },
   close: {
     alignItems: "center",
@@ -86,11 +103,11 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: "#EFEFF1"
+    backgroundColor: "#FFFFFF",
   },
   cross: {
-    color: "#51525C"
-  }
+    color: "#51525C",
+  },
 });
 
-export default PremiumAlertSheet;
+export default UtilitySheet;

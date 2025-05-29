@@ -44,6 +44,7 @@ import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { getUserSwipeCount } from "../../services/Matching/get-user-daily-swipe-count";
 import Button from "../../components/Button";
 import PremiumSheet from "../../components/PremiumSheet";
+import PremiumAlertSheet from "../../components/PremiumAlertSheet";
 
 const registerForPushNotificationsAsync = async (
   setAlertSheetProps,
@@ -130,14 +131,13 @@ const ExploreScreen = ({ route }) => {
   const [showQuiz, setShowQuiz] = useState(false);
   const [quizData, setQuizData] = useState(null);
   const [quizAnswer, setQuizAnswer] = useState(null);
-  const [isSwipingEnabled, setIsSwipingEnabled] = useState(
-    userStore.swipeUsage + 1 >= userStore.swipeLimit && !userStore.isUserPremium
-      ? true
-      : false
-  );
+  const [isSwipingEnabled, setIsSwipingEnabled] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [page, setPage] = useState(1);
   const [cardIndex, setCardIndex] = useState(0);
+  const [swipeLimit, setSwipeLimit] = useState(0);
+  const [swipeUsage, setSwipeUsage] = useState(0);
+  const [swipeCount, setSwipeCount] = useState(0);
   const swiperRef = useRef(null);
   const sheetRef = useRef(null);
   const alertSheetRef = useRef(null);
@@ -147,6 +147,14 @@ const ExploreScreen = ({ route }) => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const premiumSheetRef = useRef(null);
+  const premiumAlertSheetRef = useRef(null);
+
+  const premiumAletSheetProps = {
+    img: require("../../assets/images/corny-chair.png"),
+    title: t("SHARE_PASSION"),
+    desc: t("SHARE_PASSION_DESC"),
+    btnText: t("GET_PREMIUM"),
+  };
 
   useEffect(() => {
     getMatches();
@@ -227,23 +235,37 @@ const ExploreScreen = ({ route }) => {
 
     const getUserDailySwipeCount = async () => {
       const response = await getUserSwipeCount();
-      console.log("respDDD", response);
-      userStore.setSwipeLimit(response.Limit);
-      userStore.setSwipeUsage(response.Usage);
+      setSwipeLimit(response.Limit);
+      setSwipeUsage(response.Usage);
+      setIsSwipingEnabled(
+        response.Usage >= response.Limit && !userStore.isUserPremium
+          ? true
+          : false
+      );
+    };
+
+    const loadTodaysSwipeCount = async () => {
+      const today = new Date().toISOString().split("T")[0];
+      const stored = await SecureStore.getItemAsync("dailySwipes");
+
+      if (stored) {
+        const { date, count } = JSON.parse(stored);
+        setSwipeCount(date === today ? count : 0);
+      }
     };
 
     getAboutMe();
     getUserDailySwipeCount();
     getUserLocation();
+    if (!userStore.isUserPremium) {
+      loadTodaysSwipeCount();
+    }
   }, []);
 
   useEffect(() => {
     const handlePostSwipe = async () => {
-      userStore.setSwipeUsage(userStore.swipeUsage + 1);
-      if (
-        userStore.swipeUsage + 1 >= userStore.swipeLimit &&
-        !userStore.isUserPremium
-      ) {
+      setSwipeUsage(swipeUsage + 1);
+      if (swipeUsage + 1 >= swipeLimit && !userStore.isUserPremium) {
         setIsSwipingEnabled(true);
       }
       const data = {
@@ -283,6 +305,12 @@ const ExploreScreen = ({ route }) => {
       handlePostSwipe();
     }
   }, [quizAnswer]);
+
+  useEffect(() => {
+    if (!userStore.isUserPremium && swipeCount > 0 && swipeCount % 20 === 0) {
+      premiumAlertSheetRef.current?.present();
+    }
+  }, [swipeCount]);
 
   const getMatches = async () => {
     const data = {
@@ -331,6 +359,17 @@ const ExploreScreen = ({ route }) => {
         }
       }
     }
+
+    if (!userStore.isUserPremium) {
+      const newCount = swipeCount + 1;
+      setSwipeCount(newCount);
+
+      const today = new Date().toISOString().split("T")[0];
+      await SecureStore.setItemAsync(
+        "dailySwipes",
+        JSON.stringify({ date: today, count: newCount })
+      );
+    }
   };
   const handleOnLeftSwipe = async (cardIndex) => {
     setIsSwipingEnabled(true);
@@ -360,16 +399,13 @@ const ExploreScreen = ({ route }) => {
   };
 
   const handleOnAbortedSwipe = () => {
-    if (
-      userStore.swipeUsage >= userStore.swipeLimit &&
-      !userStore.isUserPremium
-    ) {
+    if (swipeUsage >= swipeLimit && !userStore.isUserPremium) {
       setModalVisible(true);
     }
   };
 
   const getPremiumPressHandler = () => {
-    setModalVisible(false)
+    setModalVisible(false);
     premiumSheetRef.current?.present();
   };
 
@@ -564,6 +600,11 @@ const ExploreScreen = ({ route }) => {
           </View>
         </View>
       </Modal>
+      <PremiumAlertSheet
+        sheetProps={premiumAletSheetProps}
+        sheetRef={premiumAlertSheetRef}
+        premiumSheetRef={premiumSheetRef}
+      />
       <PremiumSheet sheetRef={premiumSheetRef} />
     </>
   );

@@ -4,8 +4,8 @@ const useUserStore = create((set, get) => ({
   token: "",
   isUserLoggedIn: false,
   isUserPremium: false,
-  swipeLimit: 0,
-  swipeUsage: 0,
+  jokerCount: 5,
+  superlikeCount: 10,
   userAccountDetails: null,
   userAbouts: [],
   userTvShows: [],
@@ -18,8 +18,8 @@ const useUserStore = create((set, get) => ({
   setToken: (token) => set({ token }),
   setIsUserLoggedIn: (isUserLoggedIn) => set({ isUserLoggedIn }),
   setIsUserPremium: (isUserPremium) => set({ isUserPremium }),
-  setSwipeLimit: (swipeLimit) => set({ swipeLimit }),
-  setSwipeUsage: (swipeUsage) => set({ swipeUsage }),
+  setJokerCount: (jokerCount) => set({ jokerCount }),
+  setSuperlikeCount: (superlikeCount) => set({ superlikeCount }),
   setUserAccountDetails: (newDetails) =>
     set((state) => ({
       userAccountDetails: {
@@ -52,7 +52,7 @@ const useUserStore = create((set, get) => ({
   
     if (!key) {
       // Eğer key yoksa, gelen objeyi doğrudan yaz
-      updatedFilters = value;
+      updatedFilters = {};
     } else if (key === "Age" || key === "Distance") {
       updatedFilters = {
         ...currentFilters,

@@ -439,11 +439,16 @@
     "PREFERENCES": "Tercihler",
     "AGE": "Yaş",
     "DISTANCE": "Mesafe",
-    "RESET_FILTER_TITLE": "Yeni uyguladığınız filtrelerinizi sıfırlamak istediğinizden emin misiniz?",
-    "RESET_FILTER_DESC": "Filtrelerinizi sıfırlamaya karar verirseniz, yeni uyguladığınız filtreler dikkate alınmayarak silinecektir.",
-    "RESET_MY_FILTER": "Yeni Filtrelerimi Sıfırla",
+    "RESET_FILTER_TITLE": "Uyguladığınız filtrelerinizi sıfırlamak istediğinizden emin misiniz?",
+    "RESET_FILTER_DESC": "Filtrelerinizi sıfırlamaya karar verirseniz, uyguladığınız filtreler dikkate alınmayarak silinecektir.",
+    "RESET_MY_FILTER": "Filtrelerimi Sıfırla",
     "OUT_OF_LIKES": "Beğenilerin tükendi",
     "LIKE_LIMIT_DESC": "Beğeni sınırları özenli kaydırmayı teşvik eder. Yakında beğeni hakların yenilenecek. Daha fazlasını elde etmek için hemen yükseltebilirsin.",
-    "GET_PREMIUM": "Premium Edin"
+    "GET_PREMIUM": "Premium Edin",
+    "SUBSCRIPTION": "Abonelik",
+    "SUPERLIKE_SHEET_DESC": "Beğenilme şansını katla ve daha fazla ilgi çek!",
+    "JOKER_SHEET_DESC": "Joker kullanarak soruları cevapla ve eşleşme ihtimalini katla!",
+    "SHARE_PASSION": "Tutkunu Paylaş!",
+    "SHARE_PASSION_DESC": "Dizi ve filmlere olan tutkunuzu paylaşan kişilerle sonsuz bağlantıların ve buluşmaların kilidini açın!"
   }
 }

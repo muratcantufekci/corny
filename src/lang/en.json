@@ -439,11 +439,16 @@
     "PREFERENCES": "Preferences",
     "AGE": "Age",
     "DISTANCE": "Distance",
-    "RESET_FILTER_TITLE": "Are you sure you want to reset your newly applied filters?",
-    "RESET_FILTER_DESC": "If you decide to reset your filters, any newly applied filters will be ignored and deleted.",
-    "RESET_MY_FILTER": "Reset My New Filters",
+    "RESET_FILTER_TITLE": "Are you sure you want to reset your applied filters?",
+    "RESET_FILTER_DESC": "If you decide to reset your filters, any applied filters will be ignored and deleted.",
+    "RESET_MY_FILTER": "Reset My Filters",
     "OUT_OF_LIKES": "You are all out of likes",
     "LIKE_LIMIT_DESC": "Like limits encourage careful scrolling. Your likes will be renewed soon. Upgrade now to get more.",
-    "GET_PREMIUM": "Get Premium"
+    "GET_PREMIUM": "Get Premium",
+    "SUBSCRIPTION": "Subscription",
+    "SUPERLIKE_SHEET_DESC": "Multiply your chances of being liked and get more attention!",
+    "JOKER_SHEET_DESC": "Answer the questions using the joker and increase your chances of matching!",
+    "SHARE_PASSION": "Share your passion!",
+    "SHARE_PASSION_DESC": "Unlock endless connections and dates with people that share your passions for tv series and movies !"
   }
 }

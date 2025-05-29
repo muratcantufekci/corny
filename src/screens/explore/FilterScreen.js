@@ -155,6 +155,12 @@ const FilterScreen = ({ navigation }) => {
     navigation.navigate('Explore', { updated: true });
   };
 
+  const resetFilterBtnPressHandler = async () => {
+    userStore.resetFilters();
+    await SecureStore.setItemAsync("filter_data", JSON.stringify({}));
+    await SecureStore.setItemAsync("filter_identifier", "");
+  }
+
   const backBtnPressHandler = async () => {
     const hasDiff = hasDifference(storedObject, userStore.filters);
 
@@ -275,9 +281,12 @@ const FilterScreen = ({ navigation }) => {
               key={item.id}
               name={item.name}
               onPress={() => menuItemPressHandler(item.screen)}
-              selectedCount={userStore.filters[item.key]?.length}
+              selectedCount={userStore.filters?.[item.key]?.length || null}
             />
           ))}
+        </View>
+        <View style={styles.btnWrapper}>
+          <Button variant="danger" onPress={resetFilterBtnPressHandler}>{t("RESET_MY_FILTER")}</Button>
         </View>
       </ScrollView>
       <PremiumAlertSheet
@@ -390,6 +399,9 @@ const styles = StyleSheet.create({
     marginTop: 32,
     gap: 8,
   },
+  btnWrapper: {
+    marginBottom: 48
+  }
 });
 
 export default FilterScreen;

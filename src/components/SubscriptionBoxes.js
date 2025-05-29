@@ -1,32 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import CustomText from "./CustomText";
-import { t } from "i18next";
 
-const SubscriptionBoxes = () => {
-  const subscriptionData = [
-    {
-      id: 1,
-      duration: "1",
-      price: "US$ 20.99",
-      pricePerMonth: "",
-      label: "",
-    },
-    {
-      id: 2,
-      duration: "3",
-      price: "US$ 50.00",
-      pricePerMonth: "US$ 16.67/m",
-      label: "POPULAR",
-    },
-    {
-      id: 3,
-      duration: "6",
-      price: "US$ 70.00",
-      pricePerMonth: "US$ 11.67/m",
-      label: "-80%",
-    },
-  ];
+const SubscriptionBoxes = ({ subscriptionData, colors, text }) => {
   const [selectedBox, setSelectedBox] = useState(2);
 
   return (
@@ -36,7 +12,15 @@ const SubscriptionBoxes = () => {
           key={item.id}
           style={[
             styles.box,
-            selectedBox === item.id ? styles.selectedBox : styles.unselectedBox,
+            selectedBox === item.id
+              ? {
+                  backgroundColor: colors?.selectedBoxColor,
+                  borderColor: colors?.boxBorderColor,
+                }
+              : {
+                  backgroundColor: colors?.unselectedBoxColor,
+                  borderColor: "#FFFFFF",
+                },
           ]}
           onPress={() => setSelectedBox(item.id)}
         >
@@ -51,13 +35,17 @@ const SubscriptionBoxes = () => {
             >
               <CustomText style={styles.labelText}>{item.label}</CustomText>
             </View>
-          ) : null}
+          ) : (
+            <View style={[styles.labelContainer]}>
+              <CustomText style={styles.labelText}>{item.label}</CustomText>
+            </View>
+          )}
           <CustomText
             style={[
               styles.durationText,
               selectedBox === item.id
-                ? styles.selectedText
-                : styles.unselectedText,
+                ? { color: colors?.selectedTextColor }
+                : { color: "#000" },
             ]}
           >
             {item.duration}
@@ -66,30 +54,34 @@ const SubscriptionBoxes = () => {
             style={[
               styles.months,
               selectedBox === item.id
-                ? styles.selectedText
-                : styles.unselectedText,
+                ? { color: colors?.selectedTextColor }
+                : { color: "#000" },
             ]}
           >
-            {t("MONTH")}
+            {text}
           </CustomText>
           {item.pricePerMonth ? (
             <CustomText
               style={[
                 styles.pricePerMonthText,
                 selectedBox === item.id
-                  ? styles.selectedPerMonthText
-                  : styles.unselectedText,
+                  ? { color: colors?.selectedPerMonthTextColor }
+                  : { color: "#000" },
               ]}
             >
               {item.pricePerMonth}
             </CustomText>
-          ) : null}
+          ) : (
+            <CustomText style={[styles.pricePerMonthText]}>
+              {item.pricePerMonth}
+            </CustomText>
+          )}
           <CustomText
             style={[
               styles.priceText,
               selectedBox === item.id
-                ? styles.selectedText
-                : styles.unselectedText,
+                ? { color: colors?.selectedTextColor }
+                : { color: "#000" },
             ]}
           >
             {item.price}
@@ -114,13 +106,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 16,
     borderWidth: 1,
-    borderColor: "#FFFFFF",
-  },
-  selectedBox: {
-    backgroundColor: "#000",
-  },
-  unselectedBox: {
-    backgroundColor: "#F5F5F5",
   },
   labelContainer: {
     paddingHorizontal: 8,
@@ -145,14 +130,14 @@ const styles = StyleSheet.create({
     lineHeight: 40,
     color: "#000000",
     marginBottom: 8,
-    marginTop: 16
+    marginTop: 16,
   },
   months: {
     fontWeight: "500",
     fontSize: 14,
     lineHeight: 20,
     color: "#000000",
-    marginBottom: 16
+    marginBottom: 16,
   },
   priceText: {
     fontWeight: "500",
@@ -162,14 +147,14 @@ const styles = StyleSheet.create({
   },
   pricePerMonthText: {
     fontWeight: "400",
-    fontSize: 12,
-    lineHeight: 20
+    fontSize: 10,
+    lineHeight: 20,
   },
   selectedText: {
     color: "#FFF",
   },
   selectedPerMonthText: {
-    color: "#FF524F"
+    color: "#FF524F",
   },
   unselectedText: {
     color: "#000",

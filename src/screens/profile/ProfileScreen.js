@@ -1,5 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { Modal, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  Dimensions,
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import CustomText from "../../components/CustomText";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Button from "../../components/Button";
@@ -14,6 +22,10 @@ import * as SecureStore from "expo-secure-store";
 import * as Updates from "expo-updates";
 import { getDeviceInfo } from "../../helper/getDeviceInfo";
 import { postMarketingEvents } from "../../services/Event/send-marketing-event";
+import UtilitySheet from "../../components/UtilitySheet";
+import PremiumSheet from "../../components/PremiumSheet";
+
+const { width } = Dimensions.get("window");
 
 const menuData = [
   {
@@ -56,12 +68,63 @@ const menuData = [
     screen: "Logout",
   },
 ];
+const jokerSubscriptionData = [
+  {
+    id: 1,
+    duration: "1",
+    price: "US$ 20.99",
+    pricePerMonth: "US$ 11.67/each",
+    label: "",
+  },
+  {
+    id: 2,
+    duration: "3",
+    price: "US$ 50.00",
+    pricePerMonth: "US$ 16.67/each",
+    label: "POPULAR",
+  },
+  {
+    id: 3,
+    duration: "6",
+    price: "US$ 70.00",
+    pricePerMonth: "US$ 11.67/each",
+    label: "-80%",
+  },
+];
+
+const superlikeSubscriptionData = [
+  {
+    id: 1,
+    duration: "1",
+    price: "US$ 10.99",
+    pricePerMonth: "US$ 10.00/each",
+    label: "",
+  },
+  {
+    id: 2,
+    duration: "3",
+    price: "US$ 20.00",
+    pricePerMonth: "US$ 16.67/each",
+    label: "POPULAR",
+  },
+  {
+    id: 3,
+    duration: "6",
+    price: "US$ 30.00",
+    pricePerMonth: "US$ 11.67/each",
+    label: "-80%",
+  },
+];
 
 const ProfileScreen = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const userStore = useUserStore();
   const [modalVisible, setModalVisible] = useState(false);
+  const [sheetProps, setSheetProps] = useState(null);
+  const [shouldOpenSheet, setShouldOpenSheet] = useState(false);
+  const sheetRef = useRef(null);
+  const premiumSheetRef = useRef(null);
 
   const menuItemPressHandler = (screen) => {
     if (screen === "Logout") {
@@ -81,7 +144,7 @@ const ProfileScreen = () => {
         age: response.account.age,
         email: response.account.email,
         phoneNumber: response.account.phoneNumber,
-        userId: response.account.userId
+        userId: response.account.userId,
       });
     };
 
@@ -100,6 +163,13 @@ const ProfileScreen = () => {
     postViewContent();
   }, []);
 
+  useEffect(() => {
+    if (shouldOpenSheet && sheetProps) {
+      sheetRef.current?.present();
+      setShouldOpenSheet(false);
+    }
+  }, [sheetProps, shouldOpenSheet]);
+
   const logoutHandler = async () => {
     await SecureStore.deleteItemAsync("refresh_token");
     await Updates.reloadAsync();
@@ -107,11 +177,41 @@ const ProfileScreen = () => {
 
   const profilePicturePressHandler = () => {
     navigation.navigate("LikesDetail", {
-      userId : userStore.userAccountDetails?.userId,
+      userId: userStore.userAccountDetails?.userId,
       tabIndex: 1,
-      showRate: false
+      showRate: false,
     });
-  }
+  };
+
+  const utilsPressHandler = (from) => {
+    if (from === "joker") {
+      setSheetProps({
+        img: require("../../assets/images/boost.png"),
+        title: "Joker",
+        desc: t("JOKER_SHEET_DESC"),
+        backgroundColor: "#FFE6E5",
+        subscriptionData: jokerSubscriptionData,
+        boxBorderColor: "#FF0A00",
+        selectedBoxColor: "#FFB5B2",
+        unselectedBoxColor: "#FFFFFF",
+        text: "JOKER",
+      });
+    } else {
+      setSheetProps({
+        img: require("../../assets/images/superlike.png"),
+        title: "Superlike",
+        desc: t("SUPERLIKE_SHEET_DESC"),
+        backgroundColor: "#FFF0D7",
+        subscriptionData: superlikeSubscriptionData,
+        boxBorderColor: "#FF9F00",
+        selectedBoxColor: "#FFCF80",
+        unselectedBoxColor: "#FFFFFF",
+        text: "SUPERLIKE",
+      });
+    }
+
+    setShouldOpenSheet(true);
+  };
 
   return (
     <>
@@ -147,6 +247,64 @@ const ProfileScreen = () => {
               {t("EDIT_PROFILE")}
             </Button>
           </View>
+          <View style={styles.subscription}>
+            <Pressable
+              style={styles.subscriptionItem}
+              onPress={() => utilsPressHandler("joker")}
+            >
+              <Image
+                source={require("../../assets/images/boost.png")}
+                style={styles.subscriptionItemImg}
+              />
+              <View style={styles.subscriptionItemText}>
+                <CustomText style={styles.subscriptionItemTitle}>
+                  Joker
+                </CustomText>
+                <CustomText style={styles.subscriptionItemCount}>
+                  {userStore.jokerCount}
+                </CustomText>
+              </View>
+            </Pressable>
+            <Pressable
+              style={[
+                styles.subscriptionItem,
+                styles.subscriptionItemPackage,
+                userStore.isUserPremium
+                  ? styles.subscriptionItemPackagePremium
+                  : styles.subscriptionItemPackageBasic,
+              ]}
+              onPress={() => !userStore.isUserPremium && premiumSheetRef.current?.present()}
+            >
+              <Image
+                source={require("../../assets/images/noise.png")}
+                style={styles.boxNoise}
+                contentFit="cover"
+              />
+              <CustomText style={styles.subscriptionItemTitle}>
+                {t("SUBSCRIPTION")}
+              </CustomText>
+              <CustomText style={styles.subscriptionItemCount}>
+                {userStore.isUserPremium ? t("PREMIUM") : t("BASIC")}
+              </CustomText>
+            </Pressable>
+            <Pressable
+              style={styles.subscriptionItem}
+              onPress={() => utilsPressHandler("superlike")}
+            >
+              <Image
+                source={require("../../assets/images/superlike.png")}
+                style={styles.subscriptionItemImg}
+              />
+              <View style={styles.subscriptionItemText}>
+                <CustomText style={styles.subscriptionItemTitle}>
+                  Superlike
+                </CustomText>
+                <CustomText style={styles.subscriptionItemCount}>
+                  {userStore.superlikeCount}
+                </CustomText>
+              </View>
+            </Pressable>
+          </View>
         </View>
         <View style={styles.menu}>
           {menuData.map((item) => (
@@ -178,6 +336,10 @@ const ProfileScreen = () => {
           </View>
         </View>
       </Modal>
+      {sheetProps && (
+        <UtilitySheet sheetProps={sheetProps} sheetRef={sheetRef} />
+      )}
+      <PremiumSheet sheetRef={premiumSheetRef} />
     </>
   );
 };
@@ -233,6 +395,61 @@ const styles = StyleSheet.create({
   btns: {
     marginTop: 32,
     gap: 8,
+  },
+  subscription: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 16,
+    marginTop: 24,
+  },
+  subscriptionItem: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 4,
+    overflow: "hidden",
+  },
+  subscriptionItemPackage: {
+    height: 120,
+    borderRadius: 12,
+  },
+  subscriptionItemPackageBasic: {
+    borderWidth: 1,
+    borderBlockColor: "#000000",
+    backgroundColor: "#E4E4E7",
+  },
+  subscriptionItemPackagePremium: {
+    backgroundColor: "#FFAC24",
+  },
+  subscriptionItemImg: {
+    width: 72,
+    height: 72,
+  },
+  subscriptionItemText: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  subscriptionItemTitle: {
+    fontWeight: "400",
+    fontSize: 14,
+    lineHeight: 20,
+    color: "#000000",
+  },
+  subscriptionItemCount: {
+    fontWeight: "500",
+    fontSize: 20,
+    lineHeight: 24,
+    color: "#000000",
+  },
+  boxNoise: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    opacity: 0.3,
+    zIndex: 1,
+    width: (width - 52) / 3,
+    height: 120,
   },
 });
 

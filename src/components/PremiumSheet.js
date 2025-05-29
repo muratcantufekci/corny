@@ -1,14 +1,12 @@
 import React, { useCallback } from "react";
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, TouchableOpacity, View, Linking } from "react-native";
 import CustomText from "./CustomText";
 import Button from "./Button";
-import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetScrollView,
+} from "@gorhom/bottom-sheet";
 import Minus from "../assets/svg/minus-negative.svg";
 import Check from "../assets/svg/check.svg";
 import Cross from "../assets/svg/cross.svg";
@@ -29,6 +27,30 @@ const PremiumSheet = ({ sheetRef }) => {
     { feature: "Views", basic: true, premium: false },
   ];
 
+  const subscriptionData = [
+    {
+      id: 1,
+      duration: "1",
+      price: "US$ 20.99",
+      pricePerMonth: "",
+      label: "",
+    },
+    {
+      id: 2,
+      duration: "3",
+      price: "US$ 50.00",
+      pricePerMonth: "US$ 16.67/m",
+      label: "POPULAR",
+    },
+    {
+      id: 3,
+      duration: "6",
+      price: "US$ 70.00",
+      pricePerMonth: "US$ 11.67/m",
+      label: "-80%",
+    },
+  ];
+
   const handleLinkPress = async (url) => {
     const supported = await Linking.canOpenURL(url);
     if (supported) {
@@ -46,6 +68,7 @@ const PremiumSheet = ({ sheetRef }) => {
     ),
     []
   );
+
   return (
     <BottomSheetModal
       ref={sheetRef}
@@ -55,11 +78,15 @@ const PremiumSheet = ({ sheetRef }) => {
       backdropComponent={renderBackdrop}
       backgroundStyle={{ backgroundColor: "#FF524F" }}
     >
-      <ScrollView contentContainerStyle={styles.container}>
+      <BottomSheetScrollView
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+        nestedScrollEnabled={true}
+      >
         <View style={styles.wrapper}>
           <TouchableOpacity
             style={styles.close}
-            onPress={() => sheetRef.current?.close()}
+            onPress={() => sheetRef.current?.dismiss()}
           >
             <Cross style={styles.cross} width={18} />
           </TouchableOpacity>
@@ -105,7 +132,17 @@ const PremiumSheet = ({ sheetRef }) => {
             </View>
           ))}
         </View>
-        <SubscriptionBoxes />
+        <SubscriptionBoxes
+          subscriptionData={subscriptionData}
+          colors={{
+            boxBorderColor: "#FFFFFF",
+            selectedBoxColor: "#000",
+            unselectedBoxColor: "#F5F5F5",
+            selectedTextColor: "#FFFFFF",
+            selectedPerMonthTextColor: "#FF524F"
+          }}
+          text={t("MONTH")}
+        />
         <View style={styles.info}>
           <CustomText style={styles.infoText}>
             {t("PREMIUM_INFO_T1")}
@@ -147,7 +184,7 @@ const PremiumSheet = ({ sheetRef }) => {
         <Button variant="primary" style={styles.btn}>
           {t("CONTİNUE")}
         </Button>
-      </ScrollView>
+      </BottomSheetScrollView>
     </BottomSheetModal>
   );
 };

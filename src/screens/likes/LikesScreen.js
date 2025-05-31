@@ -20,6 +20,7 @@ import useUserStore from "../../store/useUserStore";
 import { BlurView } from "expo-blur";
 import PremiumAlertSheet from "../../components/PremiumAlertSheet";
 import PremiumSheet from "../../components/PremiumSheet";
+import Star from "../../assets/svg/star-purple.svg";
 
 const LikesScreen = () => {
   const sheetRef = useRef(null);
@@ -73,7 +74,9 @@ const LikesScreen = () => {
       <TouchableOpacity
         style={styles.box}
         key={item.user.userId}
-        {...(!isBlurred ? { onPress: itemPressHandler } : { onPress: () => sheetRef.current?.present()})}
+        {...(!isBlurred
+          ? { onPress: itemPressHandler }
+          : { onPress: () => sheetRef.current?.present() })}
       >
         <View style={styles.imageWrapper}>
           <Image
@@ -82,6 +85,11 @@ const LikesScreen = () => {
           />
           {isBlurred && (
             <BlurView intensity={60} tint="light" style={styles.blurOverlay} />
+          )}
+          {item.superLike && !isBlurred &&  (
+            <View style={styles.badge}>
+              <Star />
+            </View>
           )}
         </View>
       </TouchableOpacity>
@@ -116,7 +124,7 @@ const LikesScreen = () => {
         ...prevLikes,
         ...response.data.Contents,
       ]);
-      
+
       setRecievedLikesResponse(response.data);
       setLoading(false);
     };
@@ -187,12 +195,20 @@ const LikesScreen = () => {
       )}
       {tabIndex === 0 && !userStore.isUserPremium && (
         <View style={styles.btnContainer}>
-          <Button variant="primary" style={styles.btn} onPress={() => sheetRef.current?.present()}>
+          <Button
+            variant="primary"
+            style={styles.btn}
+            onPress={() => sheetRef.current?.present()}
+          >
             {t("SEE_LIKES")}
           </Button>
         </View>
       )}
-      <PremiumAlertSheet sheetProps={sheetProps} sheetRef={sheetRef} premiumSheetRef={premiumSheetRef} />
+      <PremiumAlertSheet
+        sheetProps={sheetProps}
+        sheetRef={sheetRef}
+        premiumSheetRef={premiumSheetRef}
+      />
       <PremiumSheet sheetRef={premiumSheetRef} />
     </View>
   );
@@ -256,6 +272,14 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: "hidden",
     position: "relative",
+  },
+  badge: {
+    position: "absolute",
+    right: 5,
+    bottom: 10,
+    backgroundColor: "#FFFF",
+    padding: 6,
+    borderRadius: 99,
   },
 });
 

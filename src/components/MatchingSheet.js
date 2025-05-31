@@ -82,8 +82,8 @@ const MatchingSheet = ({ sheetRef, sheetProps, setMessageSend }) => {
             style={styles.close}
             onPress={() => {
               sheetRef.current?.close()
-              navigation.goBack();
-            }}
+              navigation.canGoBack() && navigation.goBack();
+             }}
           >
             <Cross style={{ color: "#51525C" }} />
           </TouchableOpacity>

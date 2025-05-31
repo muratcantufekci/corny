@@ -45,6 +45,7 @@ import { getUserSwipeCount } from "../../services/Matching/get-user-daily-swipe-
 import Button from "../../components/Button";
 import PremiumSheet from "../../components/PremiumSheet";
 import PremiumAlertSheet from "../../components/PremiumAlertSheet";
+import UtilitySheet from "../../components/UtilitySheet";
 
 const registerForPushNotificationsAsync = async (
   setAlertSheetProps,
@@ -132,6 +133,7 @@ const ExploreScreen = ({ route }) => {
   const [quizData, setQuizData] = useState(null);
   const [quizAnswer, setQuizAnswer] = useState(null);
   const [isSwipingEnabled, setIsSwipingEnabled] = useState(false);
+  const [isRightSwipingEnabled, setIsRightSwipingEnabled] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [page, setPage] = useState(1);
   const [cardIndex, setCardIndex] = useState(0);
@@ -142,12 +144,15 @@ const ExploreScreen = ({ route }) => {
   const sheetRef = useRef(null);
   const alertSheetRef = useRef(null);
   const [sheetProps, setSheetProps] = useState(null);
+  const [utilitySheetProps, setUtilitySheetProps] = useState(null);
   const [alertSheetProps, setAlertSheetProps] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [shouldOpenUtilitySheet, setShouldOpenUtilitySheet] = useState(false);
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const premiumSheetRef = useRef(null);
   const premiumAlertSheetRef = useRef(null);
+  const utilitySheetRef = useRef(null);
 
   const premiumAletSheetProps = {
     img: require("../../assets/images/corny-chair.png"),
@@ -155,6 +160,30 @@ const ExploreScreen = ({ route }) => {
     desc: t("SHARE_PASSION_DESC"),
     btnText: t("GET_PREMIUM"),
   };
+
+  const superlikeSubscriptionData = [
+    {
+      id: 1,
+      duration: "1",
+      price: "US$ 10.99",
+      pricePerMonth: "US$ 10.00/each",
+      label: "",
+    },
+    {
+      id: 2,
+      duration: "3",
+      price: "US$ 20.00",
+      pricePerMonth: "US$ 16.67/each",
+      label: "POPULAR",
+    },
+    {
+      id: 3,
+      duration: "6",
+      price: "US$ 30.00",
+      pricePerMonth: "US$ 11.67/each",
+      label: "-80%",
+    },
+  ];
 
   useEffect(() => {
     getMatches();
@@ -237,7 +266,7 @@ const ExploreScreen = ({ route }) => {
       const response = await getUserSwipeCount();
       setSwipeLimit(response.Limit);
       setSwipeUsage(response.Usage);
-      setIsSwipingEnabled(
+      setIsRightSwipingEnabled(
         response.Usage >= response.Limit && !userStore.isUserPremium
           ? true
           : false
@@ -263,46 +292,8 @@ const ExploreScreen = ({ route }) => {
   }, []);
 
   useEffect(() => {
-    const handlePostSwipe = async () => {
-      setSwipeUsage(swipeUsage + 1);
-      if (swipeUsage + 1 >= swipeLimit && !userStore.isUserPremium) {
-        setIsSwipingEnabled(true);
-      }
-      const data = {
-        swipedUserId: matches[cardIndex].profileInfo.userId,
-        isLike: true,
-        superLikeUsed: false,
-      };
-
-      try {
-        const response = await postSwipe(data);
-
-        if (response.isMatch) {
-          sheetRef.current?.present();
-          setSheetProps({
-            title: t("MATCH_TITLE"),
-            desc: t("MATCH_DESC"),
-            myImg: response.myUser.profileImage.imageUrl,
-            otherUserImg: response.swipedUser.profileImage.imageUrl,
-            swipedUserId: response.swipedUser.userId,
-          });
-        } else {
-          sheetRef.current?.present();
-          setSheetProps({
-            title: t("LIKE_TITLE"),
-            desc: t("LIKE_DESC"),
-            myImg: response.myUser.profileImage.imageUrl,
-            otherUserImg: response.swipedUser.profileImage.imageUrl,
-            swipedUserId: response.swipedUser.userId,
-          });
-        }
-      } catch (error) {
-        console.error("Swipe işlemi başarısız", error);
-      }
-    };
-
-    if (quizAnswer === true) {
-      handlePostSwipe();
+    if (quizAnswer?.answer === true) {
+      handlePostSwipe(quizAnswer?.isSuperlike, quizAnswer?.isSuperlike && cardIndex);
     }
   }, [quizAnswer]);
 
@@ -311,6 +302,13 @@ const ExploreScreen = ({ route }) => {
       premiumAlertSheetRef.current?.present();
     }
   }, [swipeCount]);
+
+  useEffect(() => {
+    if (shouldOpenUtilitySheet && utilitySheetProps) {
+      utilitySheetRef.current?.present();
+      setShouldOpenUtilitySheet(false);
+    }
+  }, [utilitySheetProps, shouldOpenUtilitySheet]);
 
   const getMatches = async () => {
     const data = {
@@ -333,6 +331,48 @@ const ExploreScreen = ({ route }) => {
       setCardIndex(0);
     } else {
       setMatches((prevData) => [...prevData, ...response.profiles]);
+    }
+  };
+
+  const handlePostSwipe = async (isSuperlike = false, swipeCardIndex) => {
+    setSwipeUsage(swipeUsage + 1);
+    if (swipeUsage + 1 >= swipeLimit && !userStore.isUserPremium) {
+      setIsRightSwipingEnabled(true);
+    }
+
+    const data = {
+      swipedUserId:
+        matches[isSuperlike ? swipeCardIndex : cardIndex].profileInfo.userId,
+      isLike: true,
+      superLikeUsed: isSuperlike,
+    };
+
+    try {
+      const response = await postSwipe(data);
+
+      if (response.isMatch) {
+        sheetRef.current?.present();
+        setSheetProps({
+          title: t("MATCH_TITLE"),
+          desc: t("MATCH_DESC"),
+          myImg: response.myUser.profileImage.imageUrl,
+          otherUserImg: response.swipedUser.profileImage.imageUrl,
+          swipedUserId: response.swipedUser.userId,
+        });
+      } else {
+        sheetRef.current?.present();
+        setSheetProps({
+          title: t("LIKE_TITLE"),
+          desc: t("LIKE_DESC"),
+          myImg: response.myUser.profileImage.imageUrl,
+          otherUserImg: response.swipedUser.profileImage.imageUrl,
+          swipedUserId: response.swipedUser.userId,
+        });
+      }
+
+      isSuperlike && userStore.setSuperlikeCount(userStore.superlikeCount - 1);
+    } catch (error) {
+      console.error("Swipe işlemi başarısız", error);
     }
   };
 
@@ -398,6 +438,11 @@ const ExploreScreen = ({ route }) => {
     setShowQuiz(true);
   };
 
+  const handleOnTopSwipe = async (cardIndex) => {
+    setCardIndex(cardIndex);
+    handlePostSwipe(true, cardIndex);
+  };
+
   const handleOnAbortedSwipe = () => {
     if (swipeUsage >= swipeLimit && !userStore.isUserPremium) {
       setModalVisible(true);
@@ -410,7 +455,10 @@ const ExploreScreen = ({ route }) => {
   };
 
   const handleLeftPress = () => {
-    if (isSwipingEnabled) return;
+    if (isSwipingEnabled) {
+      setModalVisible(true);
+      return;
+    }
 
     swiperRef.current.swipeLeft();
 
@@ -421,10 +469,41 @@ const ExploreScreen = ({ route }) => {
   };
 
   const handleRightPress = () => {
-    if (isSwipingEnabled) return;
+    if (isSwipingEnabled || isRightSwipingEnabled) {
+      setModalVisible(true);
+      return;
+    }
 
     swiperRef.current.swipeRight();
 
+    setIsButtonDisabled(true);
+    setTimeout(() => {
+      setIsButtonDisabled(false);
+    }, 1000);
+  };
+
+  const handleSuperlikePress = () => {
+    if (isSwipingEnabled || isRightSwipingEnabled) {
+      setModalVisible(true);
+      return;
+    }
+
+    if (userStore.superlikeCount > 0) {
+      swiperRef.current.swipeTop();
+    } else {
+      setUtilitySheetProps({
+        img: require("../../assets/images/superlike.png"),
+        title: "Superlike",
+        desc: t("SUPERLIKE_SHEET_DESC"),
+        backgroundColor: "#FFF0D7",
+        subscriptionData: superlikeSubscriptionData,
+        boxBorderColor: "#FF9F00",
+        selectedBoxColor: "#FFCF80",
+        unselectedBoxColor: "#FFFFFF",
+        text: "SUPERLIKE",
+      });
+      setShouldOpenUtilitySheet(true);
+    }
     setIsButtonDisabled(true);
     setTimeout(() => {
       setIsButtonDisabled(false);
@@ -492,8 +571,10 @@ const ExploreScreen = ({ route }) => {
               onSwiped={handleOnSwiped}
               onSwipedLeft={handleOnLeftSwipe}
               onSwipedRight={handleOnRightSwipe}
-              disableRightSwipe={isSwipingEnabled}
+              onSwipedTop={handleOnTopSwipe}
+              disableRightSwipe={isSwipingEnabled || isRightSwipingEnabled}
               disableLeftSwipe={isSwipingEnabled}
+              disableTopSwipe={true}
               onSwipedAborted={handleOnAbortedSwipe}
               overlayLabels={{
                 left: {
@@ -550,7 +631,11 @@ const ExploreScreen = ({ route }) => {
               >
                 <Like style={{ color: "#FF524F" }} />
               </Pressable>
-              <Pressable style={styles.actionBoxLittle}>
+              <Pressable
+                style={styles.actionBoxLittle}
+                onPress={handleSuperlikePress}
+                disabled={isButtonDisabled}
+              >
                 <Star />
               </Pressable>
             </View>
@@ -573,6 +658,8 @@ const ExploreScreen = ({ route }) => {
             quiz={quizData}
             setQuizAnswer={setQuizAnswer}
             quizAnswer={quizAnswer}
+            setShouldOpenUtilitySheet={setShouldOpenUtilitySheet}
+            setUtilitySheetProps={setUtilitySheetProps}
           />
         )}
       </View>
@@ -606,6 +693,12 @@ const ExploreScreen = ({ route }) => {
         premiumSheetRef={premiumSheetRef}
       />
       <PremiumSheet sheetRef={premiumSheetRef} />
+      {utilitySheetProps && (
+        <UtilitySheet
+          sheetRef={utilitySheetRef}
+          sheetProps={utilitySheetProps}
+        />
+      )}
     </>
   );
 };

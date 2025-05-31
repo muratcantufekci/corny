@@ -5,7 +5,7 @@ const useUserStore = create((set, get) => ({
   isUserLoggedIn: false,
   isUserPremium: false,
   jokerCount: 5,
-  superlikeCount: 10,
+  superlikeCount: 5,
   userAccountDetails: null,
   userAbouts: [],
   userTvShows: [],

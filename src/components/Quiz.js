@@ -5,6 +5,7 @@ import {
   Modal,
   TouchableWithoutFeedback,
   Pressable,
+  Image,
 } from "react-native";
 import CustomText from "./CustomText";
 import { BlurView } from "expo-blur";
@@ -13,15 +14,25 @@ import { AnimatedCircularProgress } from "react-native-circular-progress";
 import LightBulb from "../assets/svg/light-bulb.svg";
 import ConfettiCannon from "react-native-confetti-cannon";
 import { t } from "i18next";
+import useUserStore from "../store/useUserStore";
 
-const Quiz = ({ quizOpen, setQuizOpen, quiz, setQuizAnswer, quizAnswer }) => {
+const Quiz = ({
+  quizOpen,
+  setQuizOpen,
+  quiz,
+  setQuizAnswer,
+  quizAnswer,
+  setShouldOpenUtilitySheet,
+  setUtilitySheetProps,
+}) => {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [timeLeft, setTimeLeft] = useState(12);
   const [showConfetti, setShowConfetti] = useState(false);
   const [btnDisable, setBtnDisable] = useState(false);
-  const [hintUsed, setHintUsed] = useState(false);
-  const [disabledOption, setDisabledOption] = useState(null);
+  const [hintCount, setHintCount] = useState(0);
+  const [disabledOptions, setDisabledOptions] = useState([]);
   const [wrongAnswerText, setWrongAnswerText] = useState("");
+  const userStore = useUserStore();
 
   const options = [
     {
@@ -44,12 +55,60 @@ const Quiz = ({ quizOpen, setQuizOpen, quiz, setQuizAnswer, quizAnswer }) => {
     },
   ];
 
+  const superlikeSubscriptionData = [
+    {
+      id: 1,
+      duration: "1",
+      price: "US$ 10.99",
+      pricePerMonth: "US$ 10.00/each",
+      label: "",
+    },
+    {
+      id: 2,
+      duration: "3",
+      price: "US$ 20.00",
+      pricePerMonth: "US$ 16.67/each",
+      label: "POPULAR",
+    },
+    {
+      id: 3,
+      duration: "6",
+      price: "US$ 30.00",
+      pricePerMonth: "US$ 11.67/each",
+      label: "-80%",
+    },
+  ];
+
+  const jokerSubscriptionData = [
+    {
+      id: 1,
+      duration: "1",
+      price: "US$ 20.99",
+      pricePerMonth: "US$ 11.67/each",
+      label: "",
+    },
+    {
+      id: 2,
+      duration: "3",
+      price: "US$ 50.00",
+      pricePerMonth: "US$ 16.67/each",
+      label: "POPULAR",
+    },
+    {
+      id: 3,
+      duration: "6",
+      price: "US$ 70.00",
+      pricePerMonth: "US$ 11.67/each",
+      label: "-80%",
+    },
+  ];
+
   useEffect(() => {
     if (timeLeft === 0) {
       setTimeout(() => {
         setBtnDisable(true);
-        setWrongAnswerText("QUIZ_TIMEOUT")
-        setQuizAnswer(false);
+        setWrongAnswerText("QUIZ_TIMEOUT");
+        setQuizAnswer({ answer: false });
       }, 600);
       setTimeout(() => {
         setQuizOpen(false);
@@ -71,30 +130,79 @@ const Quiz = ({ quizOpen, setQuizOpen, quiz, setQuizAnswer, quizAnswer }) => {
     setSelectedAnswer(answer.code);
     if (answer.isCorrect) {
       setShowConfetti(true);
-      setQuizAnswer(true);
+      setQuizAnswer({ answer: true, isSuperlike: false });
     } else {
       setWrongAnswerText("QUIZ_WRONG");
-      setQuizAnswer(false);
+      setQuizAnswer({ answer: false });
     }
     setTimeout(() => {
       setQuizOpen(false);
       setQuizAnswer(null);
-    }, 2000);
+    }, 4000);
   };
 
   const handleHint = () => {
-    if (hintUsed) return;
-    const incorrectOptions = options.filter((option) => !option.isCorrect);
-    const randomWrongOption =
-      incorrectOptions[Math.floor(Math.random() * incorrectOptions.length)];
-    setDisabledOption(randomWrongOption.code);
-    setHintUsed(true);
+    if (hintCount >= 2) return;
+
+    if (userStore.jokerCount > 0) {
+      const incorrectOptions = options.filter(
+        (option) => !option.isCorrect && !disabledOptions.includes(option.code)
+      );
+
+      if (incorrectOptions.length === 0) return;
+
+      const randomWrongOption =
+        incorrectOptions[Math.floor(Math.random() * incorrectOptions.length)];
+
+      setDisabledOptions((prev) => [...prev, randomWrongOption.code]);
+      setHintCount((prev) => prev + 1);
+      userStore.setJokerCount(userStore.jokerCount - 1);
+    } else {
+      setUtilitySheetProps({
+        img: require("../assets/images/boost.png"),
+        title: "Joker",
+        desc: t("JOKER_SHEET_DESC"),
+        backgroundColor: "#FFE6E5",
+        subscriptionData: jokerSubscriptionData,
+        boxBorderColor: "#FF0A00",
+        selectedBoxColor: "#FFB5B2",
+        unselectedBoxColor: "#FFFFFF",
+        text: "JOKER",
+      });
+      setShouldOpenUtilitySheet(true);
+    }
+  };
+
+  const useSuperlikePressHandler = () => {
+    if (userStore.superlikeCount > 0) {
+      setShowConfetti(true);
+      setQuizAnswer({ answer: true, isSuperlike: true });
+    } else {
+      setUtilitySheetProps({
+        img: require("../assets/images/superlike.png"),
+        title: "Superlike",
+        desc: t("SUPERLIKE_SHEET_DESC"),
+        backgroundColor: "#FFF0D7",
+        subscriptionData: superlikeSubscriptionData,
+        boxBorderColor: "#FF9F00",
+        selectedBoxColor: "#FFCF80",
+        unselectedBoxColor: "#FFFFFF",
+        text: "SUPERLIKE",
+      });
+      setShouldOpenUtilitySheet(true);
+      setQuizOpen(false);
+      setQuizAnswer(null);
+    }
   };
 
   return (
     <Modal transparent={true} visible={quizOpen} animationType="fade">
       <TouchableWithoutFeedback>
-        <BlurView intensity={70} style={StyleSheet.absoluteFill} experimentalBlurMethod="dimezisBlurView">
+        <BlurView
+          intensity={70}
+          style={StyleSheet.absoluteFill}
+          experimentalBlurMethod="dimezisBlurView"
+        >
           <View style={styles.container}>
             <View style={styles.questionCard}>
               <CustomText style={styles.questionTitle}>
@@ -123,25 +231,48 @@ const Quiz = ({ quizOpen, setQuizOpen, quiz, setQuizAnswer, quizAnswer }) => {
                     text={option.text}
                     selectedItemIdSetter={() => handleAnswerSelection(option)}
                     selected={option.text === selectedAnswer}
-                    disable={btnDisable || option.code === disabledOption}
+                    disable={
+                      btnDisable || disabledOptions.includes(option.code)
+                    }
                   />
                 ))}
               </View>
-              <Pressable
-                style={styles.hint}
-                onPress={handleHint}
-                disabled={hintUsed}
-              >
-                <LightBulb
-                  style={{ color: hintUsed ? "#70707B" : "#FF524F" }}
-                />
-                <CustomText
-                  style={[styles.hintText, hintUsed && styles.hintUsedText]}
+              {quizAnswer?.answer === false && (
+                <View style={styles.superlikeWrapper}>
+                  <Pressable
+                    style={styles.superlike}
+                    onPress={useSuperlikePressHandler}
+                  >
+                    <Image
+                      source={require("../assets/images/superlike.png")}
+                      style={styles.superlikeImg}
+                    />
+                    <CustomText style={styles.superlikeText}>
+                      ( {userStore.superlikeCount} )
+                    </CustomText>
+                  </Pressable>
+                </View>
+              )}
+              {quizAnswer?.answer !== false && (
+                <Pressable
+                  style={styles.hint}
+                  onPress={handleHint}
+                  disabled={hintCount >= 2}
                 >
-                  Joker
-                </CustomText>
-              </Pressable>
-              {quizAnswer === false && (
+                  <LightBulb
+                    style={{ color: hintCount >= 2 ? "#70707B" : "#FF524F" }}
+                  />
+                  <CustomText
+                    style={[
+                      styles.hintText,
+                      hintCount >= 2 && styles.hintUsedText,
+                    ]}
+                  >
+                    Joker ( {userStore.jokerCount} )
+                  </CustomText>
+                </Pressable>
+              )}
+              {quizAnswer?.answer === false && (
                 <CustomText style={styles.wrongAnswerText}>
                   {t(wrongAnswerText)}
                 </CustomText>
@@ -215,6 +346,30 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     color: "#000000",
     textAlign: "center",
+  },
+  superlikeWrapper: {
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 12,
+    gap: 8,
+  },
+  superlike: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    padding: 8,
+    backgroundColor: "#6862bf",
+    borderRadius: 8,
+  },
+  superlikeImg: {
+    width: 24,
+    height: 24,
+  },
+  superlikeText: {
+    fontWeight: "500",
+    fontSize: 18,
+    lineHeight: 24,
+    color: "white",
   },
   hint: {
     flexDirection: "row",

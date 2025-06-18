@@ -15,6 +15,7 @@ import LightBulb from "../assets/svg/light-bulb.svg";
 import ConfettiCannon from "react-native-confetti-cannon";
 import { t } from "i18next";
 import useUserStore from "../store/useUserStore";
+import { useConsumable } from "../services/Consumable/use-consumable";
 
 const Quiz = ({
   quizOpen,
@@ -141,7 +142,7 @@ const Quiz = ({
     }, 4000);
   };
 
-  const handleHint = () => {
+  const handleHint = async () => {
     if (hintCount >= 2) return;
 
     if (userStore.jokerCount > 0) {
@@ -157,6 +158,9 @@ const Quiz = ({
       setDisabledOptions((prev) => [...prev, randomWrongOption.code]);
       setHintCount((prev) => prev + 1);
       userStore.setJokerCount(userStore.jokerCount - 1);
+      const response = await useConsumable({consumableType: "Hint"})
+      console.log("responseHint", response);
+      
     } else {
       setUtilitySheetProps({
         img: require("../assets/images/boost.png"),

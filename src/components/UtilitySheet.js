@@ -1,13 +1,18 @@
-import React, { useCallback } from "react";
-import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import React, { useCallback, useState } from "react";
+import { Alert, Image, Platform, StyleSheet, TouchableOpacity, View } from "react-native";
 import CustomText from "./CustomText";
 import Button from "./Button";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { t } from "i18next";
 import Cross from "../assets/svg/cross.svg";
 import SubscriptionBoxes from "./SubscriptionBoxes";
+import Purchases from "react-native-purchases";
+import { purchaseConsumable } from "../services/Consumable/purchase-consumable";
 
 const UtilitySheet = ({ sheetProps, sheetRef }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState(null);
+
   const renderBackdrop = useCallback(
     (props) => (
       <BottomSheetBackdrop
@@ -18,6 +23,140 @@ const UtilitySheet = ({ sheetProps, sheetRef }) => {
     ),
     []
   );
+
+  const getQuantity = (productId, packageData) => {
+    // Yazı ile yazılmış sayıları sayıya çevirme
+    // Örnek: "five_hint_pack" -> 5, "ten_coin_pack" -> 10
+    
+    const textToNumber = {
+      'five': 5,
+      'ten': 10,
+      'fifteen': 15,
+    };
+    
+    // Product ID'yi küçük harflere çevir ve kelimeler halinde ayır
+    const words = productId.toLowerCase().split(/[_\-\s]+/);
+    
+    // Sayı karşılığı olan kelimeleri bul
+    for (const word of words) {
+      if (textToNumber[word]) {
+        return textToNumber[word];
+      }
+    }
+    
+    // Eğer yazı bulunamazsa, orijinal regex ile sayısal değer arama
+    const match = productId.match(/(\d+)/);
+    if (match) {
+      return parseInt(match[1]);
+    }
+    
+    // Varsayılan 1
+    return 1;
+  };
+
+  // Satın alma işlemi
+  const handlePurchase = async () => {
+    if (!selectedPackage) {
+      Alert.alert("Hata", "Lütfen bir paket seçin");
+      return;
+    }
+  
+    setIsLoading(true);
+  
+    try {
+      const packageData = selectedPackage.originalData;
+      const product = packageData.product;
+      
+      // Revenue Cat ile satın alma işlemi
+      const purchaserInfo = await Purchases.purchasePackage(packageData);
+      
+      console.log("Purchase successful:", purchaserInfo);
+      
+      // Consumable ürünlerde entitlements kontrolü yapmıyoruz
+      // Direkt satın alma başarısını kontrol ediyoruz
+      if (purchaserInfo && purchaserInfo.customerInfo) {
+        // Non-consumable transactions kontrol et
+        const nonConsumableTransactions = purchaserInfo.customerInfo.nonSubscriptionTransactions;
+        
+        // Son satın alınan ürünü kontrol et
+        const latestTransaction = nonConsumableTransactions && nonConsumableTransactions.length > 0 
+          ? nonConsumableTransactions[nonConsumableTransactions.length - 1] 
+          : null;
+        
+        if (latestTransaction && latestTransaction.productId === packageData.product.identifier) {
+          Alert.alert(
+            "Başarılı!",
+            "Satın alma işleminiz başarıyla tamamlandı!",
+            [
+              {
+                text: "Tamam",
+                onPress: () => {
+                  sheetRef.current?.dismiss();
+                  // Başarılı satın alma sonrası işlemler
+                  sheetProps.onPurchaseSuccess &&
+                    sheetProps.onPurchaseSuccess(purchaserInfo, latestTransaction);
+                },
+              },
+            ]
+          );
+        } else {
+          // Alternatif: Sadece purchaserInfo varsa başarılı kabul et
+          Alert.alert(
+            "Başarılı!",
+            "Satın alma işleminiz başarıyla tamamlandı!",
+            [
+              {
+                text: "Tamam",
+                onPress: () => {
+                  sheetRef.current?.dismiss();
+                  // Consumable ürün satın alındı
+                  sheetProps.onPurchaseSuccess &&
+                    sheetProps.onPurchaseSuccess(purchaserInfo);
+                },
+              },
+            ]
+          );
+        }
+        const data = {
+          consumableType: sheetProps.title === "Joker" ? "Hint" : "SuperLike",
+          paymentChannel: Platform.OS === 'ios' ? 'AppleIap' : 'GoogleIap',
+          currency: product.currencyCode || 'USD',
+          quantity: getQuantity(product.identifier, packageData),
+          totalPrice: parseFloat(product.price),
+          unitPrice: parseFloat(product.price) / getQuantity(product.identifier, packageData),
+          purchaseSuccessful: true,
+          errorMessage: null,
+        };
+
+        const consumableResponse = await purchaseConsumable(data)
+
+        console.log("consumableResponseData",data);
+        console.log("consumableResponse",consumableResponse);
+        
+      }
+    } catch (error) {
+      console.log("Purchase Error:", error);
+      
+      // Hata durumları
+      if (error.code === "PURCHASE_CANCELLED") {
+        // Kullanıcı satın almayı iptal etti
+        Alert.alert("İptal", "Satın alma işlemi iptal edildi");
+      } else if (error.code === "PRODUCT_NOT_AVAILABLE") {
+        Alert.alert("Hata", "Bu ürün şu anda mevcut değil");
+      } else if (error.code === "PAYMENT_PENDING") {
+        Alert.alert("Beklemede", "Ödemeniz işlem görüyor, lütfen bekleyin");
+      } else if (error.code === "STORE_PROBLEM") {
+        Alert.alert("Mağaza Hatası", "App Store ile bağlantı sorunu yaşanıyor");
+      } else if (error.code === "NETWORK_ERROR") {
+        Alert.alert("Bağlantı Hatası", "İnternet bağlantınızı kontrol edin");
+      } else {
+        Alert.alert("Hata", "Satın alma işlemi sırasında bir hata oluştu");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <BottomSheetModal
       ref={sheetRef}
@@ -49,11 +188,13 @@ const UtilitySheet = ({ sheetProps, sheetRef }) => {
             selectedPerMonthTextColor: "#000",
           }}
           text={sheetProps.text}
+          onPackageSelect={setSelectedPackage}
         />
         <Button
           variant="primary"
-          onPress={sheetProps.btnPress}
+          onPress={handlePurchase}
           style={styles.btn}
+          // disabled={isLoading || !selectedPackage}
         >
           {t("CONTİNUE")}
         </Button>

@@ -97,6 +97,10 @@ import SetFilterDrinkingHabitScreen from "./src/screens/explore/SetFilterDrinkin
 import SetFilterSmokerScreen from "./src/screens/explore/SetFilterSmokerScreen";
 import SetFilterZodiacScreen from "./src/screens/explore/SetFilterZodiacScreen";
 import SetFilterEducationScreen from "./src/screens/explore/SetFilterEducationScreen";
+import Purchases, { LOG_LEVEL } from "react-native-purchases";
+import usePremiumPackagesStore from "./src/store/usePremiumPackagesStore";
+import { setUserCustomerId } from "./src/services/Premium/set-user-customer-id";
+import { getConsumables } from "./src/services/Consumable/get-consumables";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -911,6 +915,7 @@ export default function App() {
   const [appState, setAppState] = useState(AppState.currentState);
   const [lastInactiveTime, setLastInactiveTime] = useState(null);
   const userStore = useUserStore();
+  const premiumStore = usePremiumPackagesStore();
   const appUtils = useAppUtils();
   const sheetRef = useRef(null);
   const [marketLink, setMarketLink] = useState(null);
@@ -924,6 +929,99 @@ export default function App() {
     "RethinkSans-Bold": require("./src/assets/fonts/RethinkSans-Bold.ttf"),
     "RethinkSans-ExtraBold": require("./src/assets/fonts/RethinkSans-ExtraBold.ttf"),
   });
+
+  useEffect(() => {
+    // RevenueCat yapılandırması
+    initializePurchases();
+
+    // Kullanıcı bilgilerini al
+    getCustomerInfo();
+
+    // Mevcut teklifleri al
+    getOfferings();
+
+    getConsumablesInfo();
+  }, []);
+
+  const initializePurchases = async () => {
+    Purchases.setLogLevel(LOG_LEVEL.VERBOSE);
+
+    if (Platform.OS === "ios") {
+      Purchases.configure({ apiKey: "appl_AueBTUQgxPAAkIxBZtFGQBTocuA" });
+    } else if (Platform.OS === "android") {
+      try {
+        Purchases.configure({ apiKey: "goog_LcbhlKZdNLcuGNwFTlPaAGskvXq" });
+      } catch (error) {
+        console.log("erorrrrr", error);
+      }
+    }
+  };
+
+  // Mevcut teklifleri getir
+  const getOfferings = async () => {
+    try {
+      const offerings = await Purchases.getOfferings();
+      const allAvailableProducts = offerings.current?.availablePackages || [];
+      console.log("allAvailableProducts", allAvailableProducts);
+      
+      const jokerProducts = allAvailableProducts.filter((product) =>
+        product.identifier.includes("joker")
+      );
+
+      const superLikeProducts = allAvailableProducts.filter((product) =>
+        product.identifier.includes("superlike") || 
+        product.product.identifier.includes("superlike")
+      );
+
+      const premiumPackages = allAvailableProducts.filter((product) =>
+        product.product.productType === "AUTO_RENEWABLE_SUBSCRIPTION"
+      );
+
+      console.log("premiumPackages", premiumPackages);
+
+      premiumStore.setPremiumPackages(premiumPackages);
+      premiumStore.setJokerPackages(jokerProducts);
+      premiumStore.setSuperlikePackages(superLikeProducts);
+      // setOfferings(offerings);
+      // console.log("Mevcut teklifler:", jokerProducts);
+    } catch (e) {
+      console.error("Teklifler alınırken hata:", e);
+    }
+  };
+
+  // Kullanıcı bilgilerini getir (subscription durumu için)
+  const getCustomerInfo = async () => {
+    try {
+      const customerInfo = await Purchases.getCustomerInfo();
+      const response = await setUserCustomerId({
+        customerId: customerInfo.originalAppUserId,
+        provider: "RevenueCat",
+      });
+
+      userStore.setIsUserPremium(customerInfo.activeSubscriptions.length > 0 ? true : false)
+
+      // setCustomerInfo(customerInfo);
+      // console.log("Kullanıcı bilgileri:", customerInfo);
+    } catch (e) {
+      console.error("Kullanıcı bilgileri alınırken hata:", e);
+    }
+  };
+
+  const getConsumablesInfo = async () => {
+    const response = await getConsumables()
+    console.log("responseee", response); 
+    
+    // Response başarılı ise consumables bilgilerini store'lara kaydet
+    if (response.isSuccess && response.consumables) {
+      response.consumables.forEach(consumable => {
+        if (consumable.consumableType === "SuperLike") {
+          userStore.setSuperlikeCount(consumable.amount);
+        } else if (consumable.consumableType === "Hint") {
+          userStore.setJokerCount(consumable.amount);
+        }
+      });
+    }
+  }
 
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (nextAppState) => {
@@ -956,7 +1054,9 @@ export default function App() {
       // await SecureStore.deleteItemAsync("filter_data"); // test amaçlı filtre datası sıfırlayıcı
       // await SecureStore.deleteItemAsync("filter_identifier"); // test amaçlı filtre datası sıfırlayıcı
       const refreshToken = await SecureStore.getItemAsync("refresh_token");
-      const filterData = JSON.parse(await SecureStore.getItemAsync("filter_data"));
+      const filterData = JSON.parse(
+        await SecureStore.getItemAsync("filter_data")
+      );
       // let uuid = await SecureStore.getItemAsync("DEVICE_UUID_KEY");
       // const refreshToken = "63a2f537-cde3-4e9d-b0b4-80b586ccfd96";
       // const refreshToken = null;
@@ -1006,7 +1106,7 @@ export default function App() {
         return () => clearTimeout(timer);
       }
 
-      userStore.setFilters(null, filterData)
+      userStore.setFilters(null, filterData);
     };
 
     const checkVersion = async () => {

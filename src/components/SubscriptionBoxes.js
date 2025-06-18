@@ -1,9 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import CustomText from "./CustomText";
 
-const SubscriptionBoxes = ({ subscriptionData, colors, text }) => {
+const SubscriptionBoxes = ({
+  subscriptionData,
+  colors,
+  text,
+  onPackageSelect,
+}) => {
   const [selectedBox, setSelectedBox] = useState(2);
+
+  // İlk yüklemede varsayılan seçili paketi parent'a bildir
+  useEffect(() => {
+    if (subscriptionData && subscriptionData.length > 0) {
+      const defaultSelected =
+        subscriptionData.find((item) => item.id === selectedBox) ||
+        subscriptionData[0];
+      onPackageSelect && onPackageSelect(defaultSelected);
+    }
+  }, [subscriptionData?.length, selectedBox]); // Sadece length ve selectedBox'ı takip et
+
+  const handleBoxSelect = useCallback(
+    (item) => {
+      setSelectedBox(item.id);
+      // Seçilen paketi parent component'e gönder
+      onPackageSelect && onPackageSelect(item);
+    },
+    [onPackageSelect]
+  );
 
   return (
     <View style={styles.container}>
@@ -22,7 +46,7 @@ const SubscriptionBoxes = ({ subscriptionData, colors, text }) => {
                   borderColor: "#FFFFFF",
                 },
           ]}
-          onPress={() => setSelectedBox(item.id)}
+          onPress={() => handleBoxSelect(item)}
         >
           {item.label ? (
             <View

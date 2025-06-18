@@ -24,6 +24,7 @@ import { getDeviceInfo } from "../../helper/getDeviceInfo";
 import { postMarketingEvents } from "../../services/Event/send-marketing-event";
 import UtilitySheet from "../../components/UtilitySheet";
 import PremiumSheet from "../../components/PremiumSheet";
+import usePremiumPackagesStore from "../../store/usePremiumPackagesStore";
 
 const { width } = Dimensions.get("window");
 
@@ -68,63 +69,50 @@ const menuData = [
     screen: "Logout",
   },
 ];
-const jokerSubscriptionData = [
-  {
-    id: 1,
-    duration: "1",
-    price: "US$ 20.99",
-    pricePerMonth: "US$ 11.67/each",
-    label: "",
-  },
-  {
-    id: 2,
-    duration: "3",
-    price: "US$ 50.00",
-    pricePerMonth: "US$ 16.67/each",
-    label: "POPULAR",
-  },
-  {
-    id: 3,
-    duration: "6",
-    price: "US$ 70.00",
-    pricePerMonth: "US$ 11.67/each",
-    label: "-80%",
-  },
-];
 
-const superlikeSubscriptionData = [
-  {
-    id: 1,
-    duration: "1",
-    price: "US$ 10.99",
-    pricePerMonth: "US$ 10.00/each",
-    label: "",
-  },
-  {
-    id: 2,
-    duration: "3",
-    price: "US$ 20.00",
-    pricePerMonth: "US$ 16.67/each",
-    label: "POPULAR",
-  },
-  {
-    id: 3,
-    duration: "6",
-    price: "US$ 30.00",
-    pricePerMonth: "US$ 11.67/each",
-    label: "-80%",
-  },
-];
+const mapJokerDataToStaticFormat = (revenueCatJokers) => {
+  return revenueCatJokers.map((joker, index) => {
+    // Joker sayısını title'dan çıkar (örn: "Corny Joker x5" -> "5")
+    const jokerCount = joker.product.title.match(/x(\d+)/)?.[1] || "1";
+    
+    // Her joker başına fiyat hesapla
+    const totalPrice = joker.product.price;
+    const pricePerJoker = (totalPrice / parseInt(jokerCount)).toFixed(2);
+    
+    // Label belirleme - en popüler paketi veya indirimi göster
+    let label = "";
+    if (index === 1) { // İkinci paket genelde popüler
+      label = "POPULAR";
+    } else if (jokerCount === "15") { // En büyük paket için indirim
+      label = "-20%"; // Örnek indirim yüzdesi
+    }
+    
+    return {
+      id: index + 1,
+      duration: jokerCount, // Joker sayısı
+      price: joker.product.priceString, // "$0.99" formatında
+      pricePerMonth: `$${pricePerJoker}/each`, // Her joker başına fiyat
+      label: label,
+      // Orijinal Revenue Cat datasını da saklayalım satın alma için
+      originalData: joker
+    };
+  });
+};
 
 const ProfileScreen = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const userStore = useUserStore();
+  const premiumStore = usePremiumPackagesStore();
   const [modalVisible, setModalVisible] = useState(false);
   const [sheetProps, setSheetProps] = useState(null);
   const [shouldOpenSheet, setShouldOpenSheet] = useState(false);
   const sheetRef = useRef(null);
   const premiumSheetRef = useRef(null);
+  const jokerSubscriptionData = mapJokerDataToStaticFormat(premiumStore.jokerPackages)
+  const superlikeSubscriptionData = mapJokerDataToStaticFormat(premiumStore.superlikePackages)
+  console.log("superlikeSubscriptionData",premiumStore.superlikePackages);
+  
 
   const menuItemPressHandler = (screen) => {
     if (screen === "Logout") {
@@ -169,7 +157,7 @@ const ProfileScreen = () => {
       setShouldOpenSheet(false);
     }
   }, [sheetProps, shouldOpenSheet]);
-
+ 
   const logoutHandler = async () => {
     await SecureStore.deleteItemAsync("refresh_token");
     await Updates.reloadAsync();

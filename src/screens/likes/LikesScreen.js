@@ -84,7 +84,7 @@ const LikesScreen = () => {
             style={styles.boxImg}
           />
           {isBlurred && (
-            <BlurView intensity={60} tint="light" style={styles.blurOverlay} />
+            <BlurView intensity={60} tint="light" style={styles.blurOverlay} experimentalBlurMethod="dimezisBlurView" />
           )}
           {item.superLike && !isBlurred &&  (
             <View style={styles.badge}>

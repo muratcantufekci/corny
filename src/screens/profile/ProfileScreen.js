@@ -25,6 +25,7 @@ import { postMarketingEvents } from "../../services/Event/send-marketing-event";
 import UtilitySheet from "../../components/UtilitySheet";
 import PremiumSheet from "../../components/PremiumSheet";
 import usePremiumPackagesStore from "../../store/usePremiumPackagesStore";
+import { mapRevenueCatDataToStaticFormat } from "../../helper/rcDataToStatic";
 
 const { width } = Dimensions.get("window");
 
@@ -70,35 +71,6 @@ const menuData = [
   },
 ];
 
-const mapJokerDataToStaticFormat = (revenueCatJokers) => {
-  return revenueCatJokers.map((joker, index) => {
-    // Joker sayısını title'dan çıkar (örn: "Corny Joker x5" -> "5")
-    const jokerCount = joker.product.title.match(/x(\d+)/)?.[1] || "1";
-    
-    // Her joker başına fiyat hesapla
-    const totalPrice = joker.product.price;
-    const pricePerJoker = (totalPrice / parseInt(jokerCount)).toFixed(2);
-    
-    // Label belirleme - en popüler paketi veya indirimi göster
-    let label = "";
-    if (index === 1) { // İkinci paket genelde popüler
-      label = "POPULAR";
-    } else if (jokerCount === "15") { // En büyük paket için indirim
-      label = "-20%"; // Örnek indirim yüzdesi
-    }
-    
-    return {
-      id: index + 1,
-      duration: jokerCount, // Joker sayısı
-      price: joker.product.priceString, // "$0.99" formatında
-      pricePerMonth: `$${pricePerJoker}/each`, // Her joker başına fiyat
-      label: label,
-      // Orijinal Revenue Cat datasını da saklayalım satın alma için
-      originalData: joker
-    };
-  });
-};
-
 const ProfileScreen = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
@@ -109,9 +81,8 @@ const ProfileScreen = () => {
   const [shouldOpenSheet, setShouldOpenSheet] = useState(false);
   const sheetRef = useRef(null);
   const premiumSheetRef = useRef(null);
-  const jokerSubscriptionData = mapJokerDataToStaticFormat(premiumStore.jokerPackages)
-  const superlikeSubscriptionData = mapJokerDataToStaticFormat(premiumStore.superlikePackages)
-  console.log("superlikeSubscriptionData",premiumStore.superlikePackages);
+  const jokerSubscriptionData = mapRevenueCatDataToStaticFormat(premiumStore.jokerPackages, 'joker')
+  const superlikeSubscriptionData = mapRevenueCatDataToStaticFormat(premiumStore.superlikePackages, 'superlike')
   
 
   const menuItemPressHandler = (screen) => {

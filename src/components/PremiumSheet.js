@@ -1,5 +1,12 @@
 import React, { useCallback, useState } from "react";
-import { StyleSheet, TouchableOpacity, View, Linking, Platform, Alert } from "react-native";
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Linking,
+  Platform,
+  Alert,
+} from "react-native";
 import CustomText from "./CustomText";
 import Button from "./Button";
 import {
@@ -15,11 +22,14 @@ import { t } from "i18next";
 import usePremiumPackagesStore from "../store/usePremiumPackagesStore";
 import Purchases from "react-native-purchases";
 import { purchasePremium } from "../services/Premium/purchase-premium";
+import { mapRevenueCatDataToStaticFormat } from "../helper/rcDataToStatic";
+import useUserStore from "../store/useUserStore";
 
 const PremiumSheet = ({ sheetRef }) => {
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const premiumStore = usePremiumPackagesStore();
+  const userStore = useUserStore();
   const data = [
     { feature: "Premium filters", basic: true, premium: true },
     { feature: "See who likes you", basic: false, premium: true },
@@ -33,74 +43,9 @@ const PremiumSheet = ({ sheetRef }) => {
     { feature: "Views", basic: true, premium: false },
   ];
 
-  const mapSubscriptionDataToStaticFormat = (revenueCatSubscriptions) => {
-    return revenueCatSubscriptions.map((subscription, index) => {
-      // Subscription süresini packageType'dan belirle
-      let duration = "";
-      let durationText = "";
-
-      switch (subscription.packageType) {
-        case "MONTHLY":
-          duration = "1";
-          durationText = "Month";
-          break;
-        case "THREE_MONTH":
-          duration = "3";
-          durationText = "Months";
-          break;
-        case "SIX_MONTH":
-          duration = "6";
-          durationText = "Months";
-          break;
-        case "ANNUAL":
-          duration = "12";
-          durationText = "Months";
-          break;
-        default:
-          // Eğer packageType'dan belirlenemezse title'dan çıkarmaya çalış
-          const titleMatch = subscription.product.title.match(
-            /(\d+)\s*(Aylık|Month)/i
-          );
-          duration = titleMatch ? titleMatch[1] : "1";
-          durationText = duration === "1" ? "Month" : "Months";
-      }
-
-      // Label belirleme - hangi paket popüler veya indirimli
-      let label = "";
-
-      if (subscription.packageType === "THREE_MONTH") {
-        label = "POPULAR";
-      } else if (subscription.packageType === "SIX_MONTH") {
-        // 6 aylık pakette indirim hesapla (aylık fiyata göre)
-        const monthlyPrice =
-          revenueCatSubscriptions.find((s) => s.packageType === "MONTHLY")
-            ?.product?.price || 0;
-        if (monthlyPrice > 0) {
-          const discount = Math.round(
-            (1 - subscription.product.pricePerMonth / monthlyPrice) * 100
-          );
-          if (discount > 0) {
-            label = `-${discount}%`;
-          }
-        }
-      }
-
-      return {
-        id: index + 1,
-        duration: duration, // "1", "3", "6" gibi
-        price: subscription.product.priceString, // "₺49,99" formatında
-        pricePerMonth:
-          subscription.product.pricePerMonthString ||
-          `${subscription.product.priceString}/month`, // Aylık fiyat
-        label: label, // "POPULAR", "-20%" vs
-        // Orijinal Revenue Cat datasını da saklayalım satın alma için
-        originalData: subscription,
-      };
-    });
-  };
-
-  const subscriptionData = mapSubscriptionDataToStaticFormat(
-    premiumStore.premiumPackages
+  const subscriptionData = mapRevenueCatDataToStaticFormat(
+    premiumStore.premiumPackages,
+    "subscription"
   );
 
   const getQuantity = (productId, packageData) => {
@@ -202,19 +147,21 @@ const PremiumSheet = ({ sheetRef }) => {
           );
         }
         const data = {
-          paymentChannel: Platform.OS === 'ios' ? 'AppleIap' : 'GoogleIap',
-          currency: product.currencyCode || 'USD',
+          paymentChannel: Platform.OS === "ios" ? "AppleIap" : "GoogleIap",
+          currency: product.currencyCode || "USD",
           durationInMonths: getQuantity(product.identifier, packageData),
           totalPrice: parseFloat(product.price),
-          unitPrice: parseFloat(product.price) / getQuantity(product.identifier, packageData),
+          unitPrice:
+            parseFloat(product.price) /
+            getQuantity(product.identifier, packageData),
           purchaseSuccessful: true,
           errorMessage: null,
         };
 
-        const premiumResponse = await purchasePremium(data)
-
-        console.log("premiumData",data);
-        console.log("premiumResponse",premiumResponse);
+        const premiumResponse = await purchasePremium(data);
+        if(premiumResponse.isSuccess) {
+          userStore.setIsUserPremium(true)
+        }
       }
     } catch (error) {
       console.log("Purchase Error:", error);

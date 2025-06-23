@@ -8,10 +8,12 @@ import Cross from "../assets/svg/cross.svg";
 import SubscriptionBoxes from "./SubscriptionBoxes";
 import Purchases from "react-native-purchases";
 import { purchaseConsumable } from "../services/Consumable/purchase-consumable";
+import useUserStore from "../store/useUserStore";
 
 const UtilitySheet = ({ sheetProps, sheetRef }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState(null);
+  const userStore = useUserStore();
 
   const renderBackdrop = useCallback(
     (props) => (
@@ -129,10 +131,14 @@ const UtilitySheet = ({ sheetProps, sheetRef }) => {
         };
 
         const consumableResponse = await purchaseConsumable(data)
-
-        console.log("consumableResponseData",data);
-        console.log("consumableResponse",consumableResponse);
         
+        if( consumableResponse.isSuccess) {
+          if(sheetProps.title === "Joker") {
+            userStore.setJokerCount(current => current + data.quantity)
+          } else {
+            userStore.setSuperlikeCount(current => current + data.quantity)
+          }
+        }
       }
     } catch (error) {
       console.log("Purchase Error:", error);

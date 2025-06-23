@@ -18,8 +18,12 @@ const useUserStore = create((set, get) => ({
   setToken: (token) => set({ token }),
   setIsUserLoggedIn: (isUserLoggedIn) => set({ isUserLoggedIn }),
   setIsUserPremium: (isUserPremium) => set({ isUserPremium }),
-  setJokerCount: (jokerCount) => set({ jokerCount }),
-  setSuperlikeCount: (superlikeCount) => set({ superlikeCount }),
+  setJokerCount: (value) => set((state) => ({
+    jokerCount: typeof value === 'function' ? value(state.jokerCount) : value
+  })),
+  setSuperlikeCount: (value) => set((state) => ({
+    superlikeCount: typeof value === 'function' ? value(state.superlikeCount) : value
+  })),
   setUserAccountDetails: (newDetails) =>
     set((state) => ({
       userAccountDetails: {

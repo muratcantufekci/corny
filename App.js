@@ -919,6 +919,7 @@ export default function App() {
   const appUtils = useAppUtils();
   const sheetRef = useRef(null);
   const [marketLink, setMarketLink] = useState(null);
+  const [revenueCatCustomer, setRevenueCatCustomer] = useState(null);
 
   Settings.initializeSDK();
 
@@ -939,12 +940,10 @@ export default function App() {
 
     // Mevcut teklifleri al
     getOfferings();
-
-    getConsumablesInfo();
   }, []);
 
   const initializePurchases = async () => {
-    Purchases.setLogLevel(LOG_LEVEL.VERBOSE);
+    // Purchases.setLogLevel(LOG_LEVEL.VERBOSE);
 
     if (Platform.OS === "ios") {
       Purchases.configure({ apiKey: "appl_AueBTUQgxPAAkIxBZtFGQBTocuA" });
@@ -962,22 +961,24 @@ export default function App() {
     try {
       const offerings = await Purchases.getOfferings();
       const allAvailableProducts = offerings.current?.availablePackages || [];
-      console.log("allAvailableProducts", allAvailableProducts);
-      
+      // console.log("allAvailableProducts", allAvailableProducts);
+
       const jokerProducts = allAvailableProducts.filter((product) =>
         product.identifier.includes("joker")
       );
 
-      const superLikeProducts = allAvailableProducts.filter((product) =>
-        product.identifier.includes("superlike") || 
-        product.product.identifier.includes("superlike")
+      const superLikeProducts = allAvailableProducts.filter(
+        (product) =>
+          product.identifier.includes("superlike") ||
+          product.product.identifier.includes("superlike")
       );
 
-      const premiumPackages = allAvailableProducts.filter((product) =>
-        product.product.productType === "AUTO_RENEWABLE_SUBSCRIPTION"
+      const premiumPackages = allAvailableProducts.filter(
+        (product) =>
+          product.product.productType === "AUTO_RENEWABLE_SUBSCRIPTION"
       );
 
-      console.log("premiumPackages", premiumPackages);
+      // console.log("premiumPackages", premiumPackages);
 
       premiumStore.setPremiumPackages(premiumPackages);
       premiumStore.setJokerPackages(jokerProducts);
@@ -993,12 +994,7 @@ export default function App() {
   const getCustomerInfo = async () => {
     try {
       const customerInfo = await Purchases.getCustomerInfo();
-      const response = await setUserCustomerId({
-        customerId: customerInfo.originalAppUserId,
-        provider: "RevenueCat",
-      });
-
-      userStore.setIsUserPremium(customerInfo.activeSubscriptions.length > 0 ? true : false)
+      setRevenueCatCustomer(customerInfo);
 
       // setCustomerInfo(customerInfo);
       // console.log("Kullanıcı bilgileri:", customerInfo);
@@ -1008,20 +1004,23 @@ export default function App() {
   };
 
   const getConsumablesInfo = async () => {
-    const response = await getConsumables()
-    console.log("responseee", response); 
-    
-    // Response başarılı ise consumables bilgilerini store'lara kaydet
-    if (response.isSuccess && response.consumables) {
-      response.consumables.forEach(consumable => {
-        if (consumable.consumableType === "SuperLike") {
-          userStore.setSuperlikeCount(consumable.amount);
-        } else if (consumable.consumableType === "Hint") {
-          userStore.setJokerCount(consumable.amount);
-        }
-      });
+    try {
+      const response = await getConsumables();
+
+      // Response başarılı ise consumables bilgilerini store'lara kaydet
+      if (response.isSuccess && response.consumables) {
+        response.consumables.forEach((consumable) => {
+          if (consumable.consumableType === "SuperLike") {
+            userStore.setSuperlikeCount(consumable.amount);
+          } else if (consumable.consumableType === "Hint") {
+            userStore.setJokerCount(consumable.amount);
+          }
+        });
+      }
+    } catch (error) {
+      console.error("err",error)
     }
-  }
+  };
 
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (nextAppState) => {
@@ -1162,6 +1161,24 @@ export default function App() {
       postEvent();
     }, 1000);
   }, []);
+
+  useEffect(() => {
+    const setRevenueCatId = async () => {
+      const response = await setUserCustomerId({
+        customerId: revenueCatCustomer.originalAppUserId,
+        provider: "RevenueCat",
+      });
+
+      userStore.setIsUserPremium(
+        revenueCatCustomer.activeSubscriptions.length > 0 ? true : false
+      );
+    };
+    if (revenueCatCustomer && userStore.token) {
+      setRevenueCatId();
+      getConsumablesInfo();
+    }
+    
+  }, [revenueCatCustomer, userStore.token]);
 
   const renderBackdrop = useCallback(
     (props) => (

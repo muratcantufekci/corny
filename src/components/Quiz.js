@@ -16,6 +16,8 @@ import ConfettiCannon from "react-native-confetti-cannon";
 import { t } from "i18next";
 import useUserStore from "../store/useUserStore";
 import { useConsumable } from "../services/Consumable/use-consumable";
+import usePremiumPackagesStore from "../store/usePremiumPackagesStore";
+import { mapRevenueCatDataToStaticFormat } from "../helper/rcDataToStatic";
 
 const Quiz = ({
   quizOpen,
@@ -34,6 +36,15 @@ const Quiz = ({
   const [disabledOptions, setDisabledOptions] = useState([]);
   const [wrongAnswerText, setWrongAnswerText] = useState("");
   const userStore = useUserStore();
+  const premiumStore = usePremiumPackagesStore();
+  const superlikeSubscriptionData = mapRevenueCatDataToStaticFormat(
+    premiumStore.superlikePackages,
+    "superlike"
+  );
+  const jokerSubscriptionData = mapRevenueCatDataToStaticFormat(
+    premiumStore.jokerPackages,
+    "joker"
+  );
 
   const options = [
     {
@@ -53,54 +64,6 @@ const Quiz = ({
       code: quiz.Option_C,
       text: quiz.Option_C,
       isCorrect: quiz.CorrectAnswer === quiz.Option_C,
-    },
-  ];
-
-  const superlikeSubscriptionData = [
-    {
-      id: 1,
-      duration: "1",
-      price: "US$ 10.99",
-      pricePerMonth: "US$ 10.00/each",
-      label: "",
-    },
-    {
-      id: 2,
-      duration: "3",
-      price: "US$ 20.00",
-      pricePerMonth: "US$ 16.67/each",
-      label: "POPULAR",
-    },
-    {
-      id: 3,
-      duration: "6",
-      price: "US$ 30.00",
-      pricePerMonth: "US$ 11.67/each",
-      label: "-80%",
-    },
-  ];
-
-  const jokerSubscriptionData = [
-    {
-      id: 1,
-      duration: "1",
-      price: "US$ 20.99",
-      pricePerMonth: "US$ 11.67/each",
-      label: "",
-    },
-    {
-      id: 2,
-      duration: "3",
-      price: "US$ 50.00",
-      pricePerMonth: "US$ 16.67/each",
-      label: "POPULAR",
-    },
-    {
-      id: 3,
-      duration: "6",
-      price: "US$ 70.00",
-      pricePerMonth: "US$ 11.67/each",
-      label: "-80%",
     },
   ];
 
@@ -158,9 +121,7 @@ const Quiz = ({
       setDisabledOptions((prev) => [...prev, randomWrongOption.code]);
       setHintCount((prev) => prev + 1);
       userStore.setJokerCount(userStore.jokerCount - 1);
-      const response = await useConsumable({consumableType: "Hint"})
-      console.log("responseHint", response);
-      
+      const response = await useConsumable({ consumableType: "Hint" });
     } else {
       setUtilitySheetProps({
         img: require("../assets/images/boost.png"),

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import CustomText from "./CustomText";
+import { t } from "i18next";
 
 const SubscriptionBoxes = ({
   subscriptionData,
@@ -52,7 +53,7 @@ const SubscriptionBoxes = ({
             <View
               style={[
                 styles.labelContainer,
-                item.label === "POPULAR"
+                item.label === t("POPULAR")
                   ? styles.popularLabel
                   : styles.discountLabel,
               ]}

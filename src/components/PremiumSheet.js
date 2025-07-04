@@ -24,6 +24,7 @@ import Purchases from "react-native-purchases";
 import { purchasePremium } from "../services/Premium/purchase-premium";
 import { mapRevenueCatDataToStaticFormat } from "../helper/rcDataToStatic";
 import useUserStore from "../store/useUserStore";
+import * as Updates from "expo-updates";
 
 const PremiumSheet = ({ sheetRef }) => {
   const [selectedPackage, setSelectedPackage] = useState(null);
@@ -31,16 +32,13 @@ const PremiumSheet = ({ sheetRef }) => {
   const premiumStore = usePremiumPackagesStore();
   const userStore = useUserStore();
   const data = [
-    { feature: "Premium filters", basic: true, premium: true },
-    { feature: "See who likes you", basic: false, premium: true },
-    { feature: "No ads", basic: false, premium: true },
-    { feature: "Change location", basic: false, premium: true },
-    { feature: "Blurry profile", basic: true, premium: false },
-    { feature: "Rewind profile", basic: false, premium: true },
-    { feature: "Unlimited swipes", basic: true, premium: true },
-    { feature: "1 Boost/month", basic: false, premium: true },
-    { feature: "Nearby", basic: false, premium: true },
-    { feature: "Views", basic: true, premium: false },
+    { feature: t("UNLIMITED_MATCHES"), basic: false, premium: true },
+    { feature: t("MORE_VISIBILITY"), basic: false, premium: true },
+    { feature: t("PREMIUM_FILTERS"), basic: false, premium: true },
+    { feature: t("SEE_LIKES"), basic: false, premium: true },
+    { feature: t("EXTRA_PHOTO"), basic: false, premium: true },
+    { feature: t("MONTHLY_JOKER"), basic: false, premium: true },
+    { feature: t("MONTHLY_SUPERLIKE"), basic: false, premium: true },
   ];
 
   const subscriptionData = mapRevenueCatDataToStaticFormat(
@@ -81,7 +79,7 @@ const PremiumSheet = ({ sheetRef }) => {
   // Satın alma işlemi
   const handlePurchase = async () => {
     if (!selectedPackage) {
-      Alert.alert("Hata", "Lütfen bir paket seçin");
+      Alert.alert("Error", "Please choose a package");
       return;
     }
 
@@ -93,8 +91,6 @@ const PremiumSheet = ({ sheetRef }) => {
 
       // Revenue Cat ile satın alma işlemi
       const purchaserInfo = await Purchases.purchasePackage(packageData);
-
-      console.log("Purchase successful:", purchaserInfo);
 
       // Consumable ürünlerde entitlements kontrolü yapmıyoruz
       // Direkt satın alma başarısını kontrol ediyoruz
@@ -114,11 +110,11 @@ const PremiumSheet = ({ sheetRef }) => {
           latestTransaction.productId === packageData.product.identifier
         ) {
           Alert.alert(
-            "Başarılı!",
-            "Satın alma işleminiz başarıyla tamamlandı!",
+            "Successful!",
+            "Your purchase has been completed successfully!",
             [
               {
-                text: "Tamam",
+                text: "Okey",
                 onPress: () => {
                   sheetRef.current?.dismiss();
                   // Başarılı satın alma sonrası işlemler
@@ -134,11 +130,11 @@ const PremiumSheet = ({ sheetRef }) => {
         } else {
           // Alternatif: Sadece purchaserInfo varsa başarılı kabul et
           Alert.alert(
-            "Başarılı!",
-            "Satın alma işleminiz başarıyla tamamlandı!",
+            "Successful!",
+            "Your purchase has been completed successfully!",
             [
               {
-                text: "Tamam",
+                text: "Okey",
                 onPress: () => {
                   sheetRef.current?.dismiss();
                 },
@@ -159,8 +155,9 @@ const PremiumSheet = ({ sheetRef }) => {
         };
 
         const premiumResponse = await purchasePremium(data);
-        if(premiumResponse.isSuccess) {
-          userStore.setIsUserPremium(true)
+        if (premiumResponse.isSuccess) {
+          userStore.setIsUserPremium(true);
+          await Updates.reloadAsync();
         }
       }
     } catch (error) {
@@ -169,17 +166,17 @@ const PremiumSheet = ({ sheetRef }) => {
       // Hata durumları
       if (error.code === "PURCHASE_CANCELLED") {
         // Kullanıcı satın almayı iptal etti
-        Alert.alert("İptal", "Satın alma işlemi iptal edildi");
+        Alert.alert("Cancel", "Purchase cancelled");
       } else if (error.code === "PRODUCT_NOT_AVAILABLE") {
-        Alert.alert("Hata", "Bu ürün şu anda mevcut değil");
+        Alert.alert("Error", "This product is currently unavailable");
       } else if (error.code === "PAYMENT_PENDING") {
-        Alert.alert("Beklemede", "Ödemeniz işlem görüyor, lütfen bekleyin");
+        Alert.alert("Pending", "Your payment is being processed, please wait");
       } else if (error.code === "STORE_PROBLEM") {
-        Alert.alert("Mağaza Hatası", "App Store ile bağlantı sorunu yaşanıyor");
+        Alert.alert("Store Error", "There is a connection problem");
       } else if (error.code === "NETWORK_ERROR") {
-        Alert.alert("Bağlantı Hatası", "İnternet bağlantınızı kontrol edin");
+        Alert.alert("Connection Error", "Check your internet connection");
       } else {
-        Alert.alert("Hata", "Satın alma işlemi sırasında bir hata oluştu");
+        Alert.alert("Error", "An error occurred during the purchase process");
       }
     } finally {
       setIsLoading(false);
@@ -305,7 +302,7 @@ const PremiumSheet = ({ sheetRef }) => {
             <CustomText style={styles.infoText}> {t("AND")} </CustomText>
             <TouchableOpacity
               onPress={() =>
-                handleLinkPress("https://cornyapp.com/kullanim-kosullari/")
+                handleLinkPress("https://cornyapp.com/sartlar-ve-kosullar/")
               }
             >
               <CustomText style={[styles.infoText, styles.policy]}>

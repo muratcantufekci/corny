@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
+  Alert,
   Dimensions,
   Modal,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -26,6 +28,8 @@ import UtilitySheet from "../../components/UtilitySheet";
 import PremiumSheet from "../../components/PremiumSheet";
 import usePremiumPackagesStore from "../../store/usePremiumPackagesStore";
 import { mapRevenueCatDataToStaticFormat } from "../../helper/rcDataToStatic";
+import Purchases from "react-native-purchases";
+import { purchasePremium } from "../../services/Premium/purchase-premium";
 
 const { width } = Dimensions.get("window");
 
@@ -50,10 +54,11 @@ const menuData = [
     name: t("CONTACT_US"),
     screen: "ContactUs",
   },
-  // {
-  //   id: "5",
-  //   name: t("RESTORE_PURCHASE"),
-  // },
+  {
+    id: "5",
+    name: t("RESTORE_PURCHASE"),
+    screen: "RestorePurchase",
+  },
   {
     id: "6",
     name: t("TERM_AND_CONDITIONS"),
@@ -81,13 +86,20 @@ const ProfileScreen = () => {
   const [shouldOpenSheet, setShouldOpenSheet] = useState(false);
   const sheetRef = useRef(null);
   const premiumSheetRef = useRef(null);
-  const jokerSubscriptionData = mapRevenueCatDataToStaticFormat(premiumStore.jokerPackages, 'joker')
-  const superlikeSubscriptionData = mapRevenueCatDataToStaticFormat(premiumStore.superlikePackages, 'superlike')
-  
+  const jokerSubscriptionData = mapRevenueCatDataToStaticFormat(
+    premiumStore.jokerPackages,
+    "joker"
+  );
+  const superlikeSubscriptionData = mapRevenueCatDataToStaticFormat(
+    premiumStore.superlikePackages,
+    "superlike"
+  );
 
   const menuItemPressHandler = (screen) => {
     if (screen === "Logout") {
       setModalVisible(true);
+    } else if (screen === "RestorePurchase") {
+      restorePurchases();
     } else {
       navigation.navigate(`${screen}`);
     }
@@ -128,7 +140,7 @@ const ProfileScreen = () => {
       setShouldOpenSheet(false);
     }
   }, [sheetProps, shouldOpenSheet]);
- 
+
   const logoutHandler = async () => {
     await SecureStore.deleteItemAsync("refresh_token");
     await Updates.reloadAsync();
@@ -170,6 +182,70 @@ const ProfileScreen = () => {
     }
 
     setShouldOpenSheet(true);
+  };
+
+  const getQuantity = (productId) => {
+    const textToNumber = {
+      one: 1,
+      three: 3,
+      six: 6,
+    };
+
+    const words = productId.toLowerCase().split(/[_\-\s]+/);
+
+    for (const word of words) {
+      if (textToNumber[word]) {
+        return textToNumber[word];
+      }
+    }
+
+    const match = productId.match(/(\d+)/);
+    if (match) {
+      return parseInt(match[1]);
+    }
+
+    return 1;
+  };
+
+  const restorePurchases = async () => {
+    try {
+      const restore = await Purchases.restorePurchases();
+
+      const activeSubscriptions = restore.activeSubscriptions;
+
+      if (activeSubscriptions.length > 0) {
+        // İlk aktif subscription'ı al
+        const activeSubscription = activeSubscriptions[0];
+
+        // Subscription detaylarını al
+        const subscriptionDetails =
+          restore.subscriptionsByProductIdentifier[activeSubscription];
+        // Premium durumunu güncelle
+        // updateUserPremiumStatus(activeSubscription, subscriptionDetails);
+
+        const data = {
+          paymentChannel: "AppleIap",
+          currency: subscriptionDetails.price.currency || "USD",
+          durationInMonths: getQuantity(subscriptionDetails.productIdentifier),
+          totalPrice: parseFloat(subscriptionDetails.price.amount),
+          unitPrice: parseFloat(subscriptionDetails.price.amount),
+          purchaseSuccessful: true,
+          errorMessage: null,
+        };
+
+        const premiumResponse = await purchasePremium(data);
+        if (premiumResponse.isSuccess) {
+          userStore.setIsUserPremium(true);
+          // await Updates.reloadAsync();
+        }
+        Alert.alert("Successful!", `Your subscription has been restored!`);
+      } else {
+        Alert.alert("Information", "No subscription found to load data.");
+      }
+    } catch (error) {
+      console.error("Restore error:", error);
+      Alert.alert("Error", "An error occurred while restoring purchases.");
+    }
   };
 
   return (
@@ -232,7 +308,9 @@ const ProfileScreen = () => {
                   ? styles.subscriptionItemPackagePremium
                   : styles.subscriptionItemPackageBasic,
               ]}
-              onPress={() => !userStore.isUserPremium && premiumSheetRef.current?.present()}
+              onPress={() =>
+                !userStore.isUserPremium && premiumSheetRef.current?.present()
+              }
             >
               <Image
                 source={require("../../assets/images/noise.png")}
@@ -266,13 +344,22 @@ const ProfileScreen = () => {
           </View>
         </View>
         <View style={styles.menu}>
-          {menuData.map((item) => (
-            <MenuItem
-              key={item.id}
-              name={item.name}
-              onPress={() => menuItemPressHandler(item.screen)}
-            />
-          ))}
+          {menuData.map((item) => {
+            if (
+              Platform.OS === "android" &&
+              item.screen === "RestorePurchase"
+            ) {
+              return null;
+            }
+
+            return (
+              <MenuItem
+                key={item.id}
+                name={item.name}
+                onPress={() => menuItemPressHandler(item.screen)}
+              />
+            );
+          })}
         </View>
       </ScrollView>
       <Modal transparent={true} animationType="slide" visible={modalVisible}>

@@ -59,7 +59,7 @@ const UtilitySheet = ({ sheetProps, sheetRef }) => {
   // Satın alma işlemi
   const handlePurchase = async () => {
     if (!selectedPackage) {
-      Alert.alert("Hata", "Lütfen bir paket seçin");
+      Alert.alert("Error", "Please choose a package");
       return;
     }
   
@@ -71,8 +71,6 @@ const UtilitySheet = ({ sheetProps, sheetRef }) => {
       
       // Revenue Cat ile satın alma işlemi
       const purchaserInfo = await Purchases.purchasePackage(packageData);
-      
-      console.log("Purchase successful:", purchaserInfo);
       
       // Consumable ürünlerde entitlements kontrolü yapmıyoruz
       // Direkt satın alma başarısını kontrol ediyoruz
@@ -87,11 +85,11 @@ const UtilitySheet = ({ sheetProps, sheetRef }) => {
         
         if (latestTransaction && latestTransaction.productId === packageData.product.identifier) {
           Alert.alert(
-            "Başarılı!",
-            "Satın alma işleminiz başarıyla tamamlandı!",
+            "Successful!",
+            "Your purchase has been completed successfully!",
             [
               {
-                text: "Tamam",
+                text: "Okey",
                 onPress: () => {
                   sheetRef.current?.dismiss();
                   // Başarılı satın alma sonrası işlemler
@@ -104,11 +102,11 @@ const UtilitySheet = ({ sheetProps, sheetRef }) => {
         } else {
           // Alternatif: Sadece purchaserInfo varsa başarılı kabul et
           Alert.alert(
-            "Başarılı!",
-            "Satın alma işleminiz başarıyla tamamlandı!",
+            "Successful!",
+            "Your purchase has been completed successfully!",
             [
               {
-                text: "Tamam",
+                text: "Okey",
                 onPress: () => {
                   sheetRef.current?.dismiss();
                   // Consumable ürün satın alındı
@@ -146,17 +144,17 @@ const UtilitySheet = ({ sheetProps, sheetRef }) => {
       // Hata durumları
       if (error.code === "PURCHASE_CANCELLED") {
         // Kullanıcı satın almayı iptal etti
-        Alert.alert("İptal", "Satın alma işlemi iptal edildi");
+        Alert.alert("Cancel", "Purchase cancelled");
       } else if (error.code === "PRODUCT_NOT_AVAILABLE") {
-        Alert.alert("Hata", "Bu ürün şu anda mevcut değil");
+        Alert.alert("Error", "This product is currently unavailable");
       } else if (error.code === "PAYMENT_PENDING") {
-        Alert.alert("Beklemede", "Ödemeniz işlem görüyor, lütfen bekleyin");
+        Alert.alert("Pending", "Your payment is being processed, please wait");
       } else if (error.code === "STORE_PROBLEM") {
-        Alert.alert("Mağaza Hatası", "App Store ile bağlantı sorunu yaşanıyor");
+        Alert.alert("Store Error", "There is a connection problem");
       } else if (error.code === "NETWORK_ERROR") {
-        Alert.alert("Bağlantı Hatası", "İnternet bağlantınızı kontrol edin");
+        Alert.alert("Connection Error", "Check your internet connection");
       } else {
-        Alert.alert("Hata", "Satın alma işlemi sırasında bir hata oluştu");
+        Alert.alert("Error", "An error occurred during the purchase process");
       }
     } finally {
       setIsLoading(false);

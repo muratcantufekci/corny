@@ -46,6 +46,8 @@ import Button from "../../components/Button";
 import PremiumSheet from "../../components/PremiumSheet";
 import PremiumAlertSheet from "../../components/PremiumAlertSheet";
 import UtilitySheet from "../../components/UtilitySheet";
+import usePremiumPackagesStore from "../../store/usePremiumPackagesStore";
+import { mapRevenueCatDataToStaticFormat } from "../../helper/rcDataToStatic";
 
 const registerForPushNotificationsAsync = async (
   setAlertSheetProps,
@@ -153,6 +155,11 @@ const ExploreScreen = ({ route }) => {
   const premiumSheetRef = useRef(null);
   const premiumAlertSheetRef = useRef(null);
   const utilitySheetRef = useRef(null);
+  const premiumStore = usePremiumPackagesStore();
+  const superlikeSubscriptionData = mapRevenueCatDataToStaticFormat(
+    premiumStore.superlikePackages,
+    "superlike"
+  );
 
   const premiumAletSheetProps = {
     img: require("../../assets/images/corny-chair.png"),
@@ -160,30 +167,6 @@ const ExploreScreen = ({ route }) => {
     desc: t("SHARE_PASSION_DESC"),
     btnText: t("GET_PREMIUM"),
   };
-
-  const superlikeSubscriptionData = [
-    {
-      id: 1,
-      duration: "1",
-      price: "US$ 10.99",
-      pricePerMonth: "US$ 10.00/each",
-      label: "",
-    },
-    {
-      id: 2,
-      duration: "3",
-      price: "US$ 20.00",
-      pricePerMonth: "US$ 16.67/each",
-      label: "POPULAR",
-    },
-    {
-      id: 3,
-      duration: "6",
-      price: "US$ 30.00",
-      pricePerMonth: "US$ 11.67/each",
-      label: "-80%",
-    },
-  ];
 
   useEffect(() => {
     getMatches();

@@ -1,3 +1,5 @@
+import { t } from "i18next";
+
 export const mapRevenueCatDataToStaticFormat = (revenueCatData, type = 'subscription') => {
     return revenueCatData.map((item, index) => {
       let duration = "";
@@ -34,7 +36,7 @@ export const mapRevenueCatDataToStaticFormat = (revenueCatData, type = 'subscrip
   
           // Subscription label belirleme
           if (item.packageType === "THREE_MONTH") {
-            label = "POPULAR";
+            label = t("POPULAR");
           } else if (item.packageType === "SIX_MONTH") {
             // 6 aylık pakette indirim hesapla
             const monthlyPrice = revenueCatData.find((s) => s.packageType === "MONTHLY")?.product?.price || 0;
@@ -63,7 +65,7 @@ export const mapRevenueCatDataToStaticFormat = (revenueCatData, type = 'subscrip
   
           // Joker/Superlike label belirleme
           if (index === 1) {
-            label = "POPULAR";
+            label = t("POPULAR");
           } else if (itemCount === "15" || itemCount === "20") {
             label = "-20%";
           }

@@ -449,6 +449,13 @@
     "SUPERLIKE_SHEET_DESC": "Multiply your chances of being liked and get more attention!",
     "JOKER_SHEET_DESC": "Answer the questions using the joker and increase your chances of matching!",
     "SHARE_PASSION": "Share your passion!",
-    "SHARE_PASSION_DESC": "Unlock endless connections and dates with people that share your passions for tv series and movies !"
+    "SHARE_PASSION_DESC": "Unlock endless connections and dates with people that share your passions for tv series and movies !",
+    "POPULAR": "POPULAR",
+    "UNLIMITED_MATCHES": "Unlimited matching",
+    "MORE_VISIBILITY": "More visibility",
+    "PREMIUM_FILTERS": "Premium filters",
+    "EXTRA_PHOTO": "Extra photo space",
+    "MONTHLY_JOKER": "10 jokers per month",
+    "MONTHLY_SUPERLIKE": "10 superlikes per month"
   }
 }

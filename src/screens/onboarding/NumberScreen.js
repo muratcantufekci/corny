@@ -156,7 +156,7 @@ const NumberScreen = () => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() =>
-                    handleLinkPress("https://cornyapp.com/kullanim-kosullari/")
+                    handleLinkPress("https://cornyapp.com/sartlar-ve-kosullar/")
                   }
                 >
                   <CustomText style={styles.policy}>

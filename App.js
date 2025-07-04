@@ -1168,7 +1168,7 @@ export default function App() {
         customerId: revenueCatCustomer.originalAppUserId,
         provider: "RevenueCat",
       });
-
+      
       userStore.setIsUserPremium(
         revenueCatCustomer.activeSubscriptions.length > 0 ? true : false
       );

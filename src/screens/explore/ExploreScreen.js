@@ -604,6 +604,7 @@ const ExploreScreen = ({ route }) => {
               <Pressable
                 style={styles.actionBoxLittle}
                 onPress={handleLeftPress}
+                disabled={isSwipingEnabled}
               >
                 <Cross style={{ color: "#FFAC24" }} />
               </Pressable>

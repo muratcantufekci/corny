@@ -439,7 +439,6 @@ const ExploreScreen = ({ route }) => {
 
   const handleLeftPress = () => {
     if (isSwipingEnabled) {
-      setModalVisible(true);
       return;
     }
 
@@ -604,7 +603,7 @@ const ExploreScreen = ({ route }) => {
               <Pressable
                 style={styles.actionBoxLittle}
                 onPress={handleLeftPress}
-                disabled={isSwipingEnabled}
+                disabled={isButtonDisabled}
               >
                 <Cross style={{ color: "#FFAC24" }} />
               </Pressable>

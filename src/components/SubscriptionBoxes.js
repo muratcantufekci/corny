@@ -85,7 +85,7 @@ const SubscriptionBoxes = ({
           >
             {text}
           </CustomText>
-          {item.pricePerMonth ? (
+          {/* {item.pricePerMonth ? (
             <CustomText
               style={[
                 styles.pricePerMonthText,
@@ -100,7 +100,7 @@ const SubscriptionBoxes = ({
             <CustomText style={[styles.pricePerMonthText]}>
               {item.pricePerMonth}
             </CustomText>
-          )}
+          )} */}
           <CustomText
             style={[
               styles.priceText,
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   },
   labelText: {
     fontWeight: "500",
-    fontSize: 12,
+    fontSize: 10,
     lineHeight: 16,
     color: "#000000",
   },
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
   },
   priceText: {
     fontWeight: "500",
-    fontSize: 16,
+    fontSize: 14,
     lineHeight: 21,
     marginTop: 8,
   },

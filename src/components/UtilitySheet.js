@@ -1,8 +1,15 @@
 import React, { useCallback, useState } from "react";
-import { Alert, Image, Platform, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Image,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import CustomText from "./CustomText";
 import Button from "./Button";
-import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { t } from "i18next";
 import Cross from "../assets/svg/cross.svg";
 import SubscriptionBoxes from "./SubscriptionBoxes";
@@ -29,29 +36,29 @@ const UtilitySheet = ({ sheetProps, sheetRef }) => {
   const getQuantity = (productId, packageData) => {
     // Yazı ile yazılmış sayıları sayıya çevirme
     // Örnek: "five_hint_pack" -> 5, "ten_coin_pack" -> 10
-    
+
     const textToNumber = {
-      'five': 5,
-      'ten': 10,
-      'fifteen': 15,
+      five: 5,
+      ten: 10,
+      fifteen: 15,
     };
-    
+
     // Product ID'yi küçük harflere çevir ve kelimeler halinde ayır
     const words = productId.toLowerCase().split(/[_\-\s]+/);
-    
+
     // Sayı karşılığı olan kelimeleri bul
     for (const word of words) {
       if (textToNumber[word]) {
         return textToNumber[word];
       }
     }
-    
+
     // Eğer yazı bulunamazsa, orijinal regex ile sayısal değer arama
     const match = productId.match(/(\d+)/);
     if (match) {
       return parseInt(match[1]);
     }
-    
+
     // Varsayılan 1
     return 1;
   };
@@ -62,28 +69,33 @@ const UtilitySheet = ({ sheetProps, sheetRef }) => {
       Alert.alert("Error", "Please choose a package");
       return;
     }
-  
+
     setIsLoading(true);
-  
+
     try {
       const packageData = selectedPackage.originalData;
       const product = packageData.product;
-      
+
       // Revenue Cat ile satın alma işlemi
       const purchaserInfo = await Purchases.purchasePackage(packageData);
-      
+
       // Consumable ürünlerde entitlements kontrolü yapmıyoruz
       // Direkt satın alma başarısını kontrol ediyoruz
       if (purchaserInfo && purchaserInfo.customerInfo) {
         // Non-consumable transactions kontrol et
-        const nonConsumableTransactions = purchaserInfo.customerInfo.nonSubscriptionTransactions;
-        
+        const nonConsumableTransactions =
+          purchaserInfo.customerInfo.nonSubscriptionTransactions;
+
         // Son satın alınan ürünü kontrol et
-        const latestTransaction = nonConsumableTransactions && nonConsumableTransactions.length > 0 
-          ? nonConsumableTransactions[nonConsumableTransactions.length - 1] 
-          : null;
-        
-        if (latestTransaction && latestTransaction.productId === packageData.product.identifier) {
+        const latestTransaction =
+          nonConsumableTransactions && nonConsumableTransactions.length > 0
+            ? nonConsumableTransactions[nonConsumableTransactions.length - 1]
+            : null;
+
+        if (
+          latestTransaction &&
+          latestTransaction.productId === packageData.product.identifier
+        ) {
           Alert.alert(
             "Successful!",
             "Your purchase has been completed successfully!",
@@ -94,7 +106,10 @@ const UtilitySheet = ({ sheetProps, sheetRef }) => {
                   sheetRef.current?.dismiss();
                   // Başarılı satın alma sonrası işlemler
                   sheetProps.onPurchaseSuccess &&
-                    sheetProps.onPurchaseSuccess(purchaserInfo, latestTransaction);
+                    sheetProps.onPurchaseSuccess(
+                      purchaserInfo,
+                      latestTransaction
+                    );
                 },
               },
             ]
@@ -119,28 +134,30 @@ const UtilitySheet = ({ sheetProps, sheetRef }) => {
         }
         const data = {
           consumableType: sheetProps.title === "Joker" ? "Hint" : "SuperLike",
-          paymentChannel: Platform.OS === 'ios' ? 'AppleIap' : 'GoogleIap',
-          currency: product.currencyCode || 'USD',
+          paymentChannel: Platform.OS === "ios" ? "AppleIap" : "GoogleIap",
+          currency: product.currencyCode || "USD",
           quantity: getQuantity(product.identifier, packageData),
           totalPrice: parseFloat(product.price),
-          unitPrice: parseFloat(product.price) / getQuantity(product.identifier, packageData),
+          unitPrice:
+            parseFloat(product.price) /
+            getQuantity(product.identifier, packageData),
           purchaseSuccessful: true,
           errorMessage: null,
         };
 
-        const consumableResponse = await purchaseConsumable(data)
-        
-        if( consumableResponse.isSuccess) {
-          if(sheetProps.title === "Joker") {
-            userStore.setJokerCount(current => current + data.quantity)
+        const consumableResponse = await purchaseConsumable(data);
+
+        if (consumableResponse.isSuccess) {
+          if (sheetProps.title === "Joker") {
+            userStore.setJokerCount((current) => current + data.quantity);
           } else {
-            userStore.setSuperlikeCount(current => current + data.quantity)
+            userStore.setSuperlikeCount((current) => current + data.quantity);
           }
         }
       }
     } catch (error) {
       console.log("Purchase Error:", error);
-      
+
       // Hata durumları
       if (error.code === "PURCHASE_CANCELLED") {
         // Kullanıcı satın almayı iptal etti
@@ -170,7 +187,11 @@ const UtilitySheet = ({ sheetProps, sheetRef }) => {
       backdropComponent={renderBackdrop}
       backgroundStyle={{ backgroundColor: sheetProps.backgroundColor }}
     >
-      <View style={styles.container}>
+      <BottomSheetScrollView
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+        nestedScrollEnabled={true}
+      >
         <View style={styles.wrapper}>
           <TouchableOpacity
             style={styles.close}
@@ -202,14 +223,13 @@ const UtilitySheet = ({ sheetProps, sheetRef }) => {
         >
           {t("CONTİNUE")}
         </Button>
-      </View>
+      </BottomSheetScrollView>
     </BottomSheetModal>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     paddingHorizontal: 16,
     paddingVertical: 32,
     alignItems: "center",

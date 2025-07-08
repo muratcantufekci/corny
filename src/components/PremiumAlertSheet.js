@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import CustomText from "./CustomText";
 import Button from "./Button";
-import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import Cross from "../assets/svg/cross.svg";
 
 const PremiumAlertSheet = ({ sheetProps, sheetRef, premiumSheetRef }) => {
@@ -18,9 +18,9 @@ const PremiumAlertSheet = ({ sheetProps, sheetRef, premiumSheetRef }) => {
   );
 
   const btnPressHandler = () => {
-    sheetRef.current?.dismiss()
-    premiumSheetRef.current?.present()
-  }
+    sheetRef.current?.dismiss();
+    premiumSheetRef.current?.present();
+  };
 
   return (
     <BottomSheetModal
@@ -30,11 +30,18 @@ const PremiumAlertSheet = ({ sheetProps, sheetRef, premiumSheetRef }) => {
       enablePanDownToClose={true}
       backdropComponent={renderBackdrop}
     >
-      <View style={styles.container}>
+      <BottomSheetScrollView
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+        nestedScrollEnabled={true}
+      >
         <View style={styles.wrapper}>
-            <TouchableOpacity style={styles.close} onPress={() => sheetRef.current?.close()}>
-                <Cross style={styles.cross} width={18} />
-            </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.close}
+            onPress={() => sheetRef.current?.close()}
+          >
+            <Cross style={styles.cross} width={18} />
+          </TouchableOpacity>
         </View>
         <Image source={sheetProps.img} style={styles.img} />
         <CustomText style={styles.title}>{sheetProps.title}</CustomText>
@@ -42,7 +49,7 @@ const PremiumAlertSheet = ({ sheetProps, sheetRef, premiumSheetRef }) => {
         <Button variant="primary" style={styles.btn} onPress={btnPressHandler}>
           {sheetProps.btnText}
         </Button>
-      </View>
+      </BottomSheetScrollView>
     </BottomSheetModal>
   );
 };
@@ -51,6 +58,7 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
     alignItems: "center",
+    paddingBottom: 24
   },
   img: {
     width: 316,
@@ -78,7 +86,7 @@ const styles = StyleSheet.create({
   wrapper: {
     width: "100%",
     alignItems: "flex-end",
-    marginBottom: 30
+    marginBottom: 30,
   },
   close: {
     alignItems: "center",
@@ -86,11 +94,11 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: "#EFEFF1"
+    backgroundColor: "#EFEFF1",
   },
   cross: {
-    color: "#51525C"
-  }
+    color: "#51525C",
+  },
 });
 
 export default PremiumAlertSheet;

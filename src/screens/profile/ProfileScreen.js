@@ -236,7 +236,6 @@ const ProfileScreen = () => {
         const premiumResponse = await purchasePremium(data);
         if (premiumResponse.isSuccess) {
           userStore.setIsUserPremium(true);
-          // await Updates.reloadAsync();
         }
         Alert.alert("Successful!", `Your subscription has been restored!`);
       } else {

@@ -276,7 +276,10 @@ const ExploreScreen = ({ route }) => {
 
   useEffect(() => {
     if (quizAnswer?.answer === true) {
-      handlePostSwipe(quizAnswer?.isSuperlike, quizAnswer?.isSuperlike && cardIndex);
+      handlePostSwipe(
+        quizAnswer?.isSuperlike,
+        quizAnswer?.isSuperlike && cardIndex
+      );
     }
   }, [quizAnswer]);
 
@@ -451,7 +454,11 @@ const ExploreScreen = ({ route }) => {
   };
 
   const handleRightPress = () => {
-    if (isSwipingEnabled || isRightSwipingEnabled) {
+    if (
+      (isSwipingEnabled || isRightSwipingEnabled) &&
+      swipeUsage >= swipeLimit &&
+      !userStore.isUserPremium
+    ) {
       setModalVisible(true);
       return;
     }
@@ -465,7 +472,11 @@ const ExploreScreen = ({ route }) => {
   };
 
   const handleSuperlikePress = () => {
-    if (isSwipingEnabled || isRightSwipingEnabled) {
+    if (
+      (isSwipingEnabled || isRightSwipingEnabled) &&
+      swipeUsage >= swipeLimit &&
+      !userStore.isUserPremium
+    ) {
       setModalVisible(true);
       return;
     }

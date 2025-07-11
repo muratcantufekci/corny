@@ -11,6 +11,9 @@ const SubscriptionBoxes = ({
 }) => {
   const [selectedBox, setSelectedBox] = useState(2);
 
+  console.log("subscriptionData",subscriptionData);
+  
+
   // İlk yüklemede varsayılan seçili paketi parent'a bildir
   useEffect(() => {
     if (subscriptionData && subscriptionData.length > 0) {
@@ -29,6 +32,14 @@ const SubscriptionBoxes = ({
     },
     [onPackageSelect]
   );
+
+  const formatPrice = (price) => {
+    if (price.startsWith("TRY")) {
+      const numericPart = price.replace(/TRY\s?/, ""); 
+      return `${numericPart} ₺`;
+    }
+    return price;
+  };
 
   return (
     <View style={styles.container}>
@@ -109,7 +120,7 @@ const SubscriptionBoxes = ({
                 : { color: "#000" },
             ]}
           >
-            {item.price}
+            {formatPrice(item.price)}
           </CustomText>
         </TouchableOpacity>
       ))}
